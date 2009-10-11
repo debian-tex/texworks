@@ -1,0 +1,5 @@
+texworks (0.2.3-1) unstable; urgency=low
+
+  * Initial release (Closes: #538211)
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Sun, 11 Oct 2009 15:25:52 +0900

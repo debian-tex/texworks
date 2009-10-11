@@ -1,0 +1,17 @@
+texworks for Debian
+-------------------
+
+An environment for authoring TeX (LaTeX, ConTeXt, etc) documents, with
+a Unicode-based, TeX-aware editor, integrated PDF viewer, and a clean,
+simple interface accessible to casual and non-technical users.
+
+Temporary modifications:
+1. I borrowed texworks.desktop, texworks.xpm and texworks.1 by
+Stefan Löffler <st.loeffler@gmail.com> in texworks-0.1.0~svn335~jaunty1
+and I modified them a bit for Debian, especially, texworks.xpm 
+was converted from texworks.png
+
+2. I enabled to print PDF directly with a patch in
+    http://code.google.com/p/texworks/issues/detail?id=78
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Sun, 11 Oct 2009 15:25:52 +0900

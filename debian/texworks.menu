@@ -1,0 +1,3 @@
+?package(texworks):needs="X11" section="Applications/Editors"\
+  title="texworks" command="/usr/bin/texworks"\
+  icon="/usr/share/pixmaps/texworks.xpm"
