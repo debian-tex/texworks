@@ -9,6 +9,8 @@ Homepage: http://www.tug.org/texworks/
 Package: texworks
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: texlive-latex-base
+Suggests: texlive-xetex
 Description: An environment for authoring TeX (LaTeX, ConTeXt, etc) documents
  An environment for authoring TeX (LaTeX, ConTeXt, etc) documents, with
  a Unicode-based, TeX-aware editor, integrated PDF viewer, and a clean,

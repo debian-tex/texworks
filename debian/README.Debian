@@ -5,6 +5,9 @@ An environment for authoring TeX (LaTeX, ConTeXt, etc) documents, with
 a Unicode-based, TeX-aware editor, integrated PDF viewer, and a clean,
 simple interface accessible to casual and non-technical users.
 
+Note to use synctex feature you need to install TeX Live 2009 which
+will be in Debian soon.
+
 Temporary modifications:
 1. I borrowed texworks.desktop, texworks.xpm and texworks.1 by
 Stefan Löffler <st.loeffler@gmail.com> in texworks-0.1.0~svn335~jaunty1

@@ -1,3 +1,15 @@
+texworks (0.2.3-2) unstable; urgency=low
+
+  * Rebuild under poppler 0.12  (Closes: #551435)
+  * Added note on synctex feature in README.Debian
+  * Fixed copyright file to express Jérôme Laurens correctly
+  * Added texlive-latex-base and texlive-xetex to Recommends and Suggests
+    respectively.
+  * Moved "uudecode debian/document-print.png.enc" to configure-stamp
+    from build-stamp because configure searched it.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Sun, 18 Oct 2009 19:16:52 +0900
+
 texworks (0.2.3-1) unstable; urgency=low
 
   * Initial release (Closes: #538211)

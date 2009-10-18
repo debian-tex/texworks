@@ -16,6 +16,8 @@ configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 	patch -p1 < ./debian/patch-print
+	uudecode debian/document-print.png.enc
+	mv document-print.png res/tango/
 	qmake-qt4
 
 	touch configure-stamp
@@ -27,8 +29,6 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	uudecode debian/document-print.png.enc
-	mv document-print.png res/tango/
 	$(MAKE)
 	#docbook-to-man debian/texworks.sgml > texworks.1
 
