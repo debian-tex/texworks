@@ -1,3 +1,9 @@
+texworks (0.3~svn569-1) experimental; urgency=low
+
+  * SVN version for experiment.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Mon, 15 Feb 2010 22:09:05 +0900
+
 texworks (0.2.3-2) unstable; urgency=low
 
   * Rebuild under poppler 0.12  (Closes: #551435)

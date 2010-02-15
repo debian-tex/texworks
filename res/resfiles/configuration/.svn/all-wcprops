@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/488/trunk/res/resfiles/configuration
+END
+syntax-patterns.txt
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/488/trunk/res/resfiles/configuration/syntax-patterns.txt
+END
+auto-indent-patterns.txt
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/167/trunk/res/resfiles/configuration/auto-indent-patterns.txt
+END
+tag-patterns.txt
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/350/trunk/res/resfiles/configuration/tag-patterns.txt
+END
+texworks-config.txt
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/378/trunk/res/resfiles/configuration/texworks-config.txt
+END
+smart-quotes-modes.txt
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/244/trunk/res/resfiles/configuration/smart-quotes-modes.txt
+END
+delimiter-pairs.txt
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/185/trunk/res/resfiles/configuration/delimiter-pairs.txt
+END

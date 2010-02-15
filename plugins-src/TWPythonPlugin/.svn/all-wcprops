@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/566/trunk/plugins-src/TWPythonPlugin
+END
+TWPythonPlugin.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/540/trunk/plugins-src/TWPythonPlugin/TWPythonPlugin.h
+END
+TWPythonPlugin.pro
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/566/trunk/plugins-src/TWPythonPlugin/TWPythonPlugin.pro
+END
+TWPythonPlugin.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/564/trunk/plugins-src/TWPythonPlugin/TWPythonPlugin.cpp
+END

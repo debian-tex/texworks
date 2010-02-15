@@ -1,13 +1,13 @@
 --- texworks-0.0.1~svn337.orig/src/TeXDocument.h
 +++ texworks-0.0.1~svn337/src/TeXDocument.h
-@@ -116,6 +116,7 @@
+@@ -124,6 +124,7 @@
  	void selectWindow(bool activate = true);
  	void typeset();
  	void interrupt();
 +	void print();
- 	
- private slots:
  	void newFile();
+ 	void newFromTemplate();
+ 	void open();
 --- texworks-0.0.1~svn337.orig/src/PDFDocument.cpp
 +++ texworks-0.0.1~svn337/src/PDFDocument.cpp
 @@ -50,6 +50,11 @@
@@ -22,7 +22,7 @@
  
  #include <math.h>
  
-@@ -1100,6 +1105,7 @@
+@@ -1115,6 +1120,7 @@
  	connect(actionNew, SIGNAL(triggered()), qApp, SLOT(newFile()));
  	connect(actionNew_from_Template, SIGNAL(triggered()), qApp, SLOT(newFromTemplate()));
  	connect(actionOpen, SIGNAL(triggered()), qApp, SLOT(open()));
@@ -30,7 +30,7 @@
  
  	connect(actionQuit_TeXworks, SIGNAL(triggered()), TWApp::instance(), SLOT(maybeQuit()));
  
-@@ -1710,3 +1716,203 @@
+@@ -1733,3 +1739,203 @@
  	}
  }
  
@@ -236,7 +236,7 @@
 +}
 --- texworks-0.0.1~svn337.orig/src/TeXDocument.ui
 +++ texworks-0.0.1~svn337/src/TeXDocument.ui
-@@ -183,7 +183,7 @@
+@@ -163,7 +163,7 @@
       <x>0</x>
       <y>0</y>
       <width>780</width>
@@ -245,7 +245,7 @@
      </rect>
     </property>
     <widget class="QMenu" name="menuFile">
-@@ -199,6 +199,7 @@
+@@ -179,6 +179,7 @@
      <addaction name="actionSave"/>
      <addaction name="actionSave_As"/>
      <addaction name="actionRevert_to_Saved"/>
@@ -253,7 +253,7 @@
      <addaction name="separator"/>
      <addaction name="actionRemove_Aux_Files"/>
      <addaction name="separator"/>
-@@ -1025,6 +1026,18 @@
+@@ -1084,6 +1085,18 @@
      <enum>QAction::NoRole</enum>
     </property>
    </action>
@@ -274,7 +274,7 @@
    <customwidget>
 --- texworks-0.0.1~svn337.orig/src/TeXDocument.cpp
 +++ texworks-0.0.1~svn337/src/TeXDocument.cpp
-@@ -56,6 +56,8 @@
+@@ -58,6 +58,8 @@
  #include <QPushButton>
  #include <QFileSystemWatcher>
  #include <QDebug>
@@ -283,7 +283,7 @@
  
  #ifdef Q_WS_WIN
  #include <windows.h>
-@@ -135,6 +137,7 @@
+@@ -167,6 +169,7 @@
  	connect(actionSave_As, SIGNAL(triggered()), this, SLOT(saveAs()));
  	connect(actionRevert_to_Saved, SIGNAL(triggered()), this, SLOT(revert()));
  	connect(actionClose, SIGNAL(triggered()), this, SLOT(close()));
@@ -291,7 +291,7 @@
  
  	connect(actionRemove_Aux_Files, SIGNAL(triggered()), this, SLOT(removeAuxFiles()));
  
-@@ -2441,3 +2444,26 @@
+@@ -2794,3 +2797,26 @@
  		pdfDoc = NULL;
  	}
  }
@@ -337,7 +337,7 @@
      <addaction name="separator"/>
      <addaction name="actionClose"/>
      <addaction name="separator"/>
-@@ -677,6 +678,18 @@
+@@ -729,6 +730,18 @@
      <enum>QAction::NoRole</enum>
     </property>
    </action>
@@ -358,14 +358,14 @@
    <include location="../res/resources.qrc"/>
 --- texworks-0.0.1~svn337.orig/src/PDFDocument.h
 +++ texworks-0.0.1~svn337/src/PDFDocument.h
-@@ -244,6 +244,7 @@
+@@ -250,6 +250,7 @@
  	void selectWindow(bool activate = true);
  	void texClosed(QObject *obj);
  	void reload();
 +	void print();
- 	
- private slots:
- 	void updateRecentFileActions();
+ 	void retypeset();
+ 	void interrupt();
+ 	void sideBySide();
 --- texworks-0.0.1~svn337.orig/res/resources.qrc
 +++ texworks-0.0.1~svn337/res/resources.qrc
 @@ -19,6 +19,7 @@
