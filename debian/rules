@@ -10,6 +10,8 @@
 #export DH_VERBOSE=1
 
 USDIR=$(CURDIR)/debian/texworks/usr/share
+PLIDIR=plugins-src/TWLuaPlugin
+PLIPYT=plugins-src/TWPythonPlugin
 
 configure: configure-stamp
 configure-stamp:
@@ -18,6 +20,7 @@ configure-stamp:
 	patch -p1 < ./debian/patch-print
 	uudecode debian/document-print.png.enc
 	mv document-print.png res/tango/
+	patch -p1 < ./debian/patch-plugin
 	qmake-qt4
 
 	touch configure-stamp
@@ -30,6 +33,10 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	$(MAKE)
+	# Lua plugin
+	cd $(PLIDIR) && qmake-qt4 -after 'target.path = /usr/lib/texworks' && $(MAKE)
+	# Python plugin
+	cd $(PLIPYT) && qmake-qt4 -after 'target.path = /usr/lib/texworks' && $(MAKE)
 	#docbook-to-man debian/texworks.sgml > texworks.1
 
 	touch $@
@@ -42,12 +49,26 @@ clean:
 	# Add here commands to clean up after the build process.
 	if [ -f Makefile ]; then $(MAKE) clean; fi
 	rm -f ./texworks ./Makefile src/DefaultBinaryPaths.h
-	if [ -d moc ];then rmdir moc; fi
-	if [ -d obj ];then rmdir obj; fi
-	if [ -d rcc ];then rmdir rcc; fi
-	if [ -d ui ];then rmdir ui; fi
+	if [ -d moc ]; then rmdir moc; fi
+	if [ -d obj ]; then rmdir obj; fi
+	if [ -d rcc ]; then rmdir rcc; fi
+	if [ -d ui ]; then rmdir ui; fi
+	if [ -f $(PLIDIR)/Makefile ]; then cd $(PLIDIR) && $(MAKE) clean; fi
+	if [ -d $(PLIDIR)/moc ]; then rmdir $(PLIDIR)/moc; fi
+	if [ -d $(PLIDIR)/obj ]; then rmdir $(PLIDIR)/obj; fi
+	if [ -d $(PLIDIR)/rcc ]; then rmdir $(PLIDIR)/rcc; fi
+	if [ -d $(PLIDIR)/ui ]; then rmdir $(PLIDIR)/ui; fi
+	if [ -f $(PLIPYT)/Makefile ]; then cd $(PLIPYT) && $(MAKE) clean; fi
+	if [ -d $(PLIPYT)/moc ]; then rmdir $(PLIPYT)/moc; fi
+	if [ -d $(PLIPYT)/obj ]; then rmdir $(PLIPYT)/obj; fi
+	if [ -d $(PLIPYT)/rcc ]; then rmdir $(PLIPYT)/rcc; fi
+	if [ -d $(PLIPYT)/ui ]; then rmdir $(PLIPYT)/ui; fi
 	patch -NRp1 < ./debian/patch-print || true
+	patch -NRp1 < ./debian/patch-plugin || true
+
 	rm -f document-print.png res/tango/document-print.png
+	rm -f $(PLIDIR)/libTWLuaPlugin.so
+	rm -f $(PLIPYT)/libTWPythonPlugin.so
 
 	dh_clean 
 
@@ -55,13 +76,17 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_prep  
-	dh_installdirs
+	dh_installdirs -A
 
 	# Add here commands to install the package into debian/texworks.
 #	$(MAKE) DESTDIR=$(CURDIR)/debian/texworks install
-	cp ./texworks $(CURDIR)/debian/texworks/usr/bin
+	install -m 755 -p ./texworks $(CURDIR)/debian/texworks/usr/bin
 	cp debian/texworks.xpm $(USDIR)/pixmaps/
 	cp debian/texworks.desktop $(USDIR)/applications/
+	install -m 755 -p "$(PLIDIR)/libTWLuaPlugin.so" \
+	$(CURDIR)/debian/texworks-scripting-lua/usr/lib/texworks
+	install -m 755 -p "$(PLIPYT)/libTWPythonPlugin.so" \
+	$(CURDIR)/debian/texworks-scripting-python/usr/lib/texworks
 
 # Build architecture-independent files here.
 binary-indep: install

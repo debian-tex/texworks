@@ -2,7 +2,7 @@ Source: texworks
 Section: editors
 Priority: extra
 Maintainer: Atsuhito KOHDA <kohda@debian.org>
-Build-Depends: debhelper (>= 7), libhunspell-dev, qt4-dev-tools, libpoppler-qt4-dev, libdbus-1-dev, sharutils
+Build-Depends: debhelper (>= 7), libhunspell-dev, qt4-dev-tools, libpoppler-qt4-dev, libdbus-1-dev, sharutils, liblua5.1-0-dev, python2.6-dev
 Standards-Version: 3.8.3
 Homepage: http://www.tug.org/texworks/
 
@@ -10,7 +10,7 @@ Package: texworks
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: texlive-latex-base
-Suggests: texlive-xetex
+Suggests: texlive-xetex, texworks-scripting-lua, texworks-scripting-python
 Description: An environment for authoring TeX (LaTeX, ConTeXt, etc) documents
  An environment for authoring TeX (LaTeX, ConTeXt, etc) documents, with
  a Unicode-based, TeX-aware editor, integrated PDF viewer, and a clean,
@@ -21,3 +21,19 @@ Description: An environment for authoring TeX (LaTeX, ConTeXt, etc) documents
  a wider community of users, without a technical or intimidating face.
  The goal of TeXworks is to deliver a similarly integrated, easy-to-use
  environment for users on other platforms, especially GNU/Linux and Windows.
+
+Package: texworks-scripting-lua
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, texworks
+Recommends: texworks
+Description: Plugin to bring Lua scripting to TeXworks
+ .
+ For further information, see http://tug.org/texworks/
+
+Package: texworks-scripting-python
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, texworks
+Recommends: texworks
+Description: Plugin to bring Python scripting to TeXworks
+ .
+ For further information, see http://tug.org/texworks/

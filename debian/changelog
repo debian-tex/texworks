@@ -1,3 +1,11 @@
+texworks (0.3~svn569-2) experimental; urgency=low
+
+  * Added Lua and Python scripting plugins.  These are called
+    texworks-scripting-lua and texworks-scripting-python following packages
+    (Ubuntu version) of Stefan Löffler.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Thu, 18 Feb 2010 09:14:31 +0900
+
 texworks (0.3~svn569-1) experimental; urgency=low
 
   * SVN version for experiment.
