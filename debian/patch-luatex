@@ -1,0 +1,11 @@
+--- texworks-0.3/src/TWApp.cpp.orig	2010-02-22 13:19:33.000000000 +0900
++++ texworks-0.3/src/TWApp.cpp	2010-02-22 13:20:27.000000000 +0900
+@@ -587,6 +587,8 @@
+ 		<< Engine("pdfLaTeX", "pdflatex" EXE, QStringList("$synctexoption") << "$fullname", true)
+ 		<< Engine("XeTeX", "xetex" EXE, QStringList("$synctexoption") << "$fullname", true)
+ 		<< Engine("XeLaTeX", "xelatex" EXE, QStringList("$synctexoption") << "$fullname", true)
++		<< Engine("LuaTeX", "luatex" EXE, QStringList("$synctexoption") << "$fullname", true)
++		<< Engine("LuaLaTeX", "lualatex" EXE, QStringList("$synctexoption") << "$fullname", true)
+ 		<< Engine("ConTeXt", "texmfstart" EXE, QStringList("texexec") << "$fullname", true)
+ 		<< Engine("XeConTeXt", "texmfstart" EXE, QStringList("texexec") << "--xtx" << "$fullname", true)
+ 		<< Engine("BibTeX", "bibtex" EXE, QStringList("$basename"), false)

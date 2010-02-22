@@ -1,3 +1,13 @@
+texworks (0.3~svn569-3) experimental; urgency=low
+
+  * Fixed TWPythonPlugin compilation problems on AMD64 by consulting
+    a package of Stefan Löffler.  (Closes: #570841)
+  * Modified TW_HELPPATH as a package of Stefan Löffler.  I expect one can
+    use a texworks-help-en package by Stefan Löffler now.
+  * Added LuaTeX in a list of Typeset engines for experiment.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Mon, 22 Feb 2010 12:52:39 +0900
+
 texworks (0.3~svn569-2) experimental; urgency=low
 
   * Added Lua and Python scripting plugins.  These are called

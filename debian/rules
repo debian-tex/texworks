@@ -21,6 +21,7 @@ configure-stamp:
 	uudecode debian/document-print.png.enc
 	mv document-print.png res/tango/
 	patch -p1 < ./debian/patch-plugin
+	patch -p1 < ./debian/patch-luatex
 	qmake-qt4
 
 	touch configure-stamp
@@ -63,6 +64,7 @@ clean:
 	if [ -d $(PLIPYT)/obj ]; then rmdir $(PLIPYT)/obj; fi
 	if [ -d $(PLIPYT)/rcc ]; then rmdir $(PLIPYT)/rcc; fi
 	if [ -d $(PLIPYT)/ui ]; then rmdir $(PLIPYT)/ui; fi
+	patch -NRp1 < ./debian/patch-luatex || true
 	patch -NRp1 < ./debian/patch-print || true
 	patch -NRp1 < ./debian/patch-plugin || true
 
