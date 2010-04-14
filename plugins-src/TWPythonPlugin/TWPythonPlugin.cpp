@@ -20,6 +20,7 @@
 */
 
 #include "TWPythonPlugin.h"
+#include "TWScriptAPI.h"
 
 #include <QCoreApplication>
 #include <QtPlugin>
@@ -36,6 +37,11 @@
 #endif
 #ifndef Py_RETURN_FALSE
 #define Py_RETURN_FALSE return Py_INCREF(Py_False), Py_False
+#endif
+
+/* Py_ssize_t is new in Python 2.5 */
+#if PY_VERSION_HEX < 0x02050000
+typedef int Py_ssize_t;
 #endif
 
 /** \brief	Structure to hold data for the pyQObject wrapper */
@@ -89,7 +95,7 @@ TWScript* TWPythonPlugin::newScript(const QString& fileName)
 Q_EXPORT_PLUGIN2(TWPythonPlugin, TWPythonPlugin)
 
 
-bool PythonScript::execute(TWInterface *tw) const
+bool PythonScript::execute(TWScriptAPI *tw) const
 {
 	PyObject * tmp;
 	
@@ -99,10 +105,13 @@ bool PythonScript::execute(TWInterface *tw) const
 		// handle error
 		return false;
 	}
-	QTextStream stream(&scriptFile);
-	QString contents = stream.readAll();
+	QString contents = QString::fromUtf8(scriptFile.readAll());
 	scriptFile.close();
 
+	// Python seems to require Unix style line endings
+	if (contents.contains("\r"))
+		contents.replace(QRegExp("\r\n?"), "\n");
+	
 	// Create a separate sub-interpreter for this script
 	PyThreadState* interpreter = Py_NewInterpreter();
 
@@ -387,7 +396,14 @@ PyObject * PythonScript::VariantToPython(const QVariant & v)
 			return Py_BuildValue("K", v.toULongLong());
 		case QVariant::Char:
 		case QVariant::String:
-			return Py_BuildValue("s", qPrintable(v.toString()));
+#ifdef Py_UNICODE_WIDE
+			{
+				QVector<uint> tmp = v.toString().toUcs4();
+				return Py_BuildValue("u#", tmp.constData(), tmp.count());
+			}
+#else
+			return Py_BuildValue("u", v.toString().constData());
+#endif
 		case QVariant::List:
 		case QVariant::StringList:
 			list = v.toList();
@@ -431,7 +447,7 @@ QVariant PythonScript::PythonToVariant(PyObject * o)
 	QVariantList list;
 	QVariantMap map;
 	PyObject * key, * value;
-	int i = 0;
+	Py_ssize_t i = 0;
 	QString str;
 
 	// in Python 3.x, the PyInt_* were removed in favor of PyLong_*

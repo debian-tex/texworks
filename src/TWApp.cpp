@@ -58,7 +58,9 @@
 
 #define SETUP_FILE_NAME "texworks-setup.ini"
 
-const int kDefaultMaxRecentFiles = 10;
+#define DEFAULT_ENGINE_NAME "pdfLaTeX"
+
+const int kDefaultMaxRecentFiles = 20;
 
 TWApp *TWApp::theAppInstance = NULL;
 
@@ -261,7 +263,7 @@ void TWApp::about()
 	aboutText += "<p>&#xA9; 2007-2010 Jonathan Kew &amp; Stefan L&#xF6;ffler";
 	aboutText += tr("<br>Version %1 (r.%2)").arg(TEXWORKS_VERSION).arg(SVN_REVISION);
 	aboutText += tr("<p>Distributed under the <a href=\"http://www.gnu.org/licenses/gpl-2.0.html\">GNU General Public License</a>, version 2.");
-	aboutText += tr("<p><a href=\"http://trolltech.com/products/\">Qt4</a> application framework by Qt Software, a division of Nokia Corporation.");
+	aboutText += tr("<p><a href=\"http://qt.nokia.com/\">Qt application framework</a> v%1 by Qt Software, a division of Nokia Corporation.").arg(qVersion());
 	aboutText += tr("<br><a href=\"http://poppler.freedesktop.org/\">Poppler</a> PDF rendering library by Kristian H&#xF8;gsberg, Albert Astals Cid and others.");
 	aboutText += tr("<br><a href=\"http://hunspell.sourceforge.net/\">Hunspell</a> spell checker by L&#xE1;szl&#xF3; N&#xE9;meth.");
 	aboutText += tr("<br>Concept and resources from <a href=\"http://www.uoregon.edu/~koch/texshop/\">TeXShop</a> by Richard Koch.");
@@ -353,18 +355,26 @@ void TWApp::openRecentFile()
 		openFile(action->data().toString());
 }
 
-QStringList TWApp::getOpenFileNames()
+QStringList TWApp::getOpenFileNames(QString selectedFilter)
 {
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString();
-	return QFileDialog::getOpenFileNames(NULL, QString(tr("Open File")), lastOpenDir, TWUtils::filterList()->join(";;"));
+	QStringList filters = *TWUtils::filterList();
+	if (!selectedFilter.isNull() && !filters.contains(selectedFilter))
+		filters.prepend(selectedFilter);
+	return QFileDialog::getOpenFileNames(NULL, QString(tr("Open File")), lastOpenDir,
+										 filters.join(";;"), &selectedFilter);
 }
 
-QString TWApp::getOpenFileName()
+QString TWApp::getOpenFileName(QString selectedFilter)
 {
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString();
-	return QFileDialog::getOpenFileName(NULL, QString(tr("Open File")), lastOpenDir, TWUtils::filterList()->join(";;"));
+	QStringList filters = *TWUtils::filterList();
+	if (!selectedFilter.isNull() && !filters.contains(selectedFilter))
+		filters.prepend(selectedFilter);
+	return QFileDialog::getOpenFileName(NULL, QString(tr("Open File")), lastOpenDir,
+										filters.join(";;"), &selectedFilter);
 }
 
 QString TWApp::getSaveFileName(const QString& defaultName)
@@ -583,6 +593,8 @@ void TWApp::setDefaultEngineList()
 	else
 		engineList->clear();
 	*engineList
+		<< Engine("LaTeXmk", "latexmk" EXE, QStringList("-e") << 
+				  "$pdflatex=q/pdflatex -synctex=1 %O %S/" << "-pdf" << "$fullname", true)
 		<< Engine("pdfTeX", "pdftex" EXE, QStringList("$synctexoption") << "$fullname", true)
 		<< Engine("pdfLaTeX", "pdflatex" EXE, QStringList("$synctexoption") << "$fullname", true)
 		<< Engine("XeTeX", "xetex" EXE, QStringList("$synctexoption") << "$fullname", true)
@@ -641,7 +653,7 @@ const QList<Engine> TWApp::getEngineList()
 
 		if (!foundList)
 			setDefaultEngineList();
-		setDefaultEngine(settings.value("defaultEngine").toString());
+		setDefaultEngine(settings.value("defaultEngine", DEFAULT_ENGINE_NAME).toString());
 	}
 	return *engineList;
 }
@@ -773,21 +785,46 @@ void TWApp::applyTranslation(const QString& locale)
 	emit updatedTranslators();
 }
 
-void TWApp::addToRecentFiles(const QString& fileName)
+void TWApp::addToRecentFiles(const QMap<QString,QVariant>& fileProperties)
 {
-	QFileInfo info(fileName);
-	QString canonical = info.canonicalFilePath();
-	if (canonical.isEmpty())
-		return;
-
 	QSETTINGS_OBJECT(settings);
-	QStringList files = settings.value("recentFileList").toStringList();
-	files.removeAll(fileName);
-	files.prepend(fileName);
-	while (files.size() > maxRecentFiles())
-		files.removeLast();
-	settings.setValue("recentFileList", files);
+
+	QString fileName = fileProperties.value("path").toString();
+	if (fileName.isEmpty())
+		return;
+	
+	QList<QVariant> fileList = settings.value("recentFiles").toList();
+	QList<QVariant>::iterator i = fileList.begin();
+	while (i != fileList.end()) {
+		QMap<QString,QVariant> h = i->toMap();
+		if (h.value("path").toString() == fileName)
+			i = fileList.erase(i);
+		else
+			++i;
+	}
+
+	fileList.prepend(fileProperties);
+
+	while (fileList.size() > maxRecentFiles())
+		fileList.removeLast();
+
+	settings.setValue("recentFiles", QVariant::fromValue(fileList));
+
 	updateRecentFileActions();
+}
+
+QMap<QString,QVariant> TWApp::getFileProperties(const QString& path)
+{
+	QSETTINGS_OBJECT(settings);
+	QList<QVariant> fileList = settings.value("recentFiles").toList();
+	QList<QVariant>::iterator i = fileList.begin();
+	while (i != fileList.end()) {
+		QMap<QString,QVariant> h = i->toMap();
+		if (h.value("path").toString() == path)
+			return h;
+		++i;
+	}
+	return QMap<QString,QVariant>();
 }
 
 void TWApp::openHelpFile(const QString& helpDirName)

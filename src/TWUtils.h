@@ -26,7 +26,6 @@
 #include <QAction>
 #include <QString>
 #include <QList>
-#include <QHash>
 #include <QDir>
 #include <QMap>
 #include <QPair>
@@ -38,6 +37,7 @@
 class QMainWindow;
 class QCompleter;
 class TeXDocument;
+class PDFDocument;
 
 // static utility methods
 class TWUtils

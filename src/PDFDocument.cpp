@@ -40,7 +40,6 @@
 #include <QScrollBar>
 #include <QRegion>
 #include <QVector>
-#include <QHash>
 #include <QList>
 #include <QStack>
 #include <QInputDialog>
@@ -441,7 +440,15 @@ void PDFWidget::doLink(const Poppler::Link *link)
 			{
 				const Poppler::LinkBrowse *browse = dynamic_cast<const Poppler::LinkBrowse*>(link);
 				Q_ASSERT(browse != NULL);
-				TWApp::instance()->openUrl(QUrl::fromEncoded(browse->url().toAscii()));
+				QUrl url = QUrl::fromEncoded(browse->url().toAscii());
+				if (url.scheme() == "file") {
+					PDFDocument *doc = qobject_cast<PDFDocument*>(window());
+					if (doc) {
+						QFileInfo fi(QFileInfo(doc->fileName()).canonicalPath(), url.toLocalFile());
+						url = QUrl::fromLocalFile(fi.canonicalFilePath());
+					}
+				}
+				TWApp::instance()->openUrl(url);
 			}
 			break;
 // unsupported link types:
@@ -1033,18 +1040,27 @@ QScrollArea* PDFWidget::getScrollArea()
 QList<PDFDocument*> PDFDocument::docList;
 
 PDFDocument::PDFDocument(const QString &fileName, TeXDocument *texDoc)
-	: watcher(NULL), reloadTimer(NULL), scanner(NULL)
+	: watcher(NULL), reloadTimer(NULL), scanner(NULL), openedManually(false)
 {
 	init();
 
 	if (texDoc == NULL) {
-		TWApp::instance()->addToRecentFiles(fileName);
+		openedManually = true;
 		watcher = new QFileSystemWatcher(this);
 		connect(watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reloadWhenIdle()));
 	}
 
 	loadFile(fileName);
 
+	QMap<QString,QVariant> properties = TWApp::instance()->getFileProperties(curFile);
+	if (properties.contains("geometry"))
+		restoreGeometry(properties.value("geometry").toByteArray());
+	else
+		TWUtils::zoomToHalfScreen(this, true);
+
+	if (properties.contains("state"))
+		restoreState(properties.value("state").toByteArray(), kPDFWindowStateVersion);
+	
 	if (texDoc != NULL) {
 		stackUnder((QWidget*)texDoc);
 		actionSide_by_Side->setEnabled(true);
@@ -1204,8 +1220,6 @@ PDFDocument::init()
 	
 	TWUtils::insertHelpMenuItems(menuHelp);
 	TWUtils::installCustomShortcuts(this);
-
-	TWUtils::zoomToHalfScreen(this, true);
 }
 
 void PDFDocument::changeEvent(QEvent *event)
@@ -1253,16 +1267,6 @@ void PDFDocument::updateWindowMenu()
 	TWUtils::updateWindowMenu(this, menuWindow);
 }
 
-void PDFDocument::selectWindow(bool activate)
-{
-	show();
-	raise();
-	if (activate)
-		activateWindow();
-	if (isMinimized())
-		showNormal();
-}
-
 void PDFDocument::sideBySide()
 {
 	if (sourceDocList.count() > 0) {
@@ -1272,44 +1276,6 @@ void PDFDocument::sideBySide()
 	}
 	else
 		placeOnRight();
-}
-
-void PDFDocument::placeOnLeft()
-{
-	TWUtils::zoomToHalfScreen(this, false);
-}
-
-void PDFDocument::placeOnRight()
-{
-	TWUtils::zoomToHalfScreen(this, true);
-}
-
-void PDFDocument::hideFloatersUnlessThis(QWidget* currWindow)
-{
-	PDFDocument* p = qobject_cast<PDFDocument*>(currWindow);
-	if (p == this)
-		return;
-	foreach (QObject* child, children()) {
-		QToolBar* tb = qobject_cast<QToolBar*>(child);
-		if (tb && tb->isVisible() && tb->isFloating()) {
-			latentVisibleWidgets.append(tb);
-			tb->hide();
-			continue;
-		}
-		QDockWidget* dw = qobject_cast<QDockWidget*>(child);
-		if (dw && dw->isVisible() && dw->isFloating()) {
-			latentVisibleWidgets.append(dw);
-			dw->hide();
-			continue;
-		}
-	}
-}
-
-void PDFDocument::showFloaters()
-{
-	foreach (QWidget* w, latentVisibleWidgets)
-		w->show();
-	latentVisibleWidgets.clear();
 }
 
 bool PDFDocument::event(QEvent *event)
@@ -1328,7 +1294,19 @@ bool PDFDocument::event(QEvent *event)
 void PDFDocument::closeEvent(QCloseEvent *event)
 {
 	event->accept();
+	if (openedManually) {
+		saveRecentFileInfo();
+	}
 	deleteLater();
+}
+
+void PDFDocument::saveRecentFileInfo()
+{
+	QMap<QString,QVariant> fileProperties;
+	fileProperties.insert("path", curFile);
+	fileProperties.insert("geometry", saveGeometry());
+	fileProperties.insert("state", saveState(kPDFWindowStateVersion));
+	TWApp::instance()->addToRecentFiles(fileProperties);
 }
 
 void PDFDocument::loadFile(const QString &fileName)

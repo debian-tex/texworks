@@ -20,6 +20,7 @@
  */
 
 #include "TWScriptable.h"
+#include "TWScriptAPI.h"
 #include "ScriptManager.h"
 #include "TWApp.h"
 
@@ -30,6 +31,8 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QToolBar>
+#include <QDockWidget>
 #include <QtDebug>
 #include <QtScript>
 #if QT_VERSION >= 0x040500
@@ -58,7 +61,7 @@ QVariant convertValue(const QScriptValue& value)
 		return value.toVariant();
 }
 
-bool JSScript::execute(TWInterface *tw) const
+bool JSScript::execute(TWScriptAPI *tw) const
 {
 	QFile scriptFile(m_Filename);
 	if (!scriptFile.open(QIODevice::ReadOnly)) {
@@ -336,7 +339,6 @@ TWScriptable::addScriptsToMenu(QMenu *menu, TWScriptList *scripts)
 			if (!script->isEnabled())
 				continue;
 			if (script->getContext().isEmpty() || script->getContext() == metaObject()->className()) {
-				printf("Adding script: %s  enabled=%d\n", script->getTitle().toAscii().data(), script->isEnabled());
 				QAction *a = menu->addAction(script->getTitle());
 				if (!script->getKeySequence().isEmpty())
 					a->setShortcut(script->getKeySequence());
@@ -423,4 +425,52 @@ void
 TWScriptable::doManageScripts()
 {
 	ScriptManager::showManageScripts();
+}
+
+void TWScriptable::hideFloatersUnlessThis(QWidget* currWindow)
+{
+	TWScriptable* p = qobject_cast<TWScriptable*>(currWindow);
+	if (p == this)
+		return;
+	foreach (QObject* child, children()) {
+		QToolBar* tb = qobject_cast<QToolBar*>(child);
+		if (tb && tb->isVisible() && tb->isFloating()) {
+			latentVisibleWidgets.append(tb);
+			tb->hide();
+			continue;
+		}
+		QDockWidget* dw = qobject_cast<QDockWidget*>(child);
+		if (dw && dw->isVisible() && dw->isFloating()) {
+			latentVisibleWidgets.append(dw);
+			dw->hide();
+			continue;
+		}
+	}
+}
+
+void TWScriptable::showFloaters()
+{
+	foreach (QWidget* w, latentVisibleWidgets)
+	w->show();
+	latentVisibleWidgets.clear();
+}
+
+void TWScriptable::placeOnLeft()
+{
+	TWUtils::zoomToHalfScreen(this, false);
+}
+
+void TWScriptable::placeOnRight()
+{
+	TWUtils::zoomToHalfScreen(this, true);
+}
+
+void TWScriptable::selectWindow(bool activate)
+{
+	show();
+	raise();
+	if (activate)
+		activateWindow();
+	if (isMinimized())
+		showNormal();
 }

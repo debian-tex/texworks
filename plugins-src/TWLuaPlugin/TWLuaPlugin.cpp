@@ -20,6 +20,7 @@
 */
 
 #include "TWLuaPlugin.h"
+#include "TWScriptAPI.h"
 
 #include <QCoreApplication>
 #include <QTextStream>
@@ -52,7 +53,7 @@ TWScript* TWLuaPlugin::newScript(const QString& fileName)
 Q_EXPORT_PLUGIN2(TWLuaPlugin, TWLuaPlugin)
 
 
-bool LuaScript::execute(TWInterface *tw) const
+bool LuaScript::execute(TWScriptAPI *tw) const
 {
 	int status;
 	lua_State * L = m_LuaPlugin->getLuaState();
@@ -147,7 +148,7 @@ int LuaScript::pushVariant(lua_State * L, const QVariant & v, const bool throwEr
 			return 1;
 		case QVariant::Char:
 		case QVariant::String:
-			lua_pushstring(L, qPrintable(v.toString()));
+			lua_pushstring(L, v.toString().toUtf8().constData());
 			return 1;
 		case QVariant::List:
 		case QVariant::StringList:
@@ -325,7 +326,7 @@ QVariant LuaScript::getLuaStackValue(lua_State * L, int idx, const bool throwErr
 		case LUA_TBOOLEAN:
 			return QVariant(lua_toboolean(L, idx) == 1);
 		case LUA_TSTRING:
-			return QVariant(lua_tostring(L, idx));
+			return QVariant(QString::fromUtf8(lua_tostring(L, idx)));
 		case LUA_TTABLE:
 			// Special treatment for tables
 			// If all keys are in the form 1..n, we can convert it to a QList
