@@ -43,6 +43,8 @@ const bool kDefault_CircularMagnifier = true;
 const int kDefault_PreviewScaleOption = 1;
 const int kDefault_PreviewScale = 200;
 
+const int kPDFWindowStateVersion = 1;
+
 class QAction;
 class QMenu;
 class QToolBar;
@@ -247,14 +249,11 @@ protected:
 	virtual void dropEvent(QDropEvent *event);
 
 public slots:
-	void selectWindow(bool activate = true);
 	void texClosed(QObject *obj);
 	void reload();
 	void retypeset();
 	void interrupt();
 	void sideBySide();
-	void placeOnLeft();
-	void placeOnRight();
 	void doFindDialog();
 	void doFindAgain(bool newSearch = false);
 	void goToSource();
@@ -268,7 +267,6 @@ private slots:
 	void enableZoomActions(qreal);
 	void adjustScaleActions(autoScaleOption);
 	void syncClick(int page, const QPointF& pos);
-	void hideFloatersUnlessThis(QWidget* currWindow);
 	void reloadWhenIdle();
 
 signals:
@@ -280,7 +278,7 @@ private:
 	void loadFile(const QString &fileName);
 	void setCurrentFile(const QString &fileName);
 	void loadSyncData();
-	void showFloaters();
+	void saveRecentFileInfo();
 
 	QString curFile;
 	
@@ -298,13 +296,13 @@ private:
 	QMenu *menuRecent;
 	QShortcut *exitFullscreen;
 
-	QList<QWidget*> latentVisibleWidgets;
-
 	QFileSystemWatcher *watcher;
 	QTimer *reloadTimer;
 	
 	synctex_scanner_t scanner;
 
+	bool openedManually;
+	
 	static QList<PDFDocument*> docList;
 	
 	PDFSearchResult lastSearchResult;

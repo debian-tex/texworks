@@ -73,8 +73,11 @@ public:
 
 	int maxRecentFiles() const;
 	void setMaxRecentFiles(int value);
-	void addToRecentFiles(const QString& fileName);
+	void addToRecentFiles(const QMap<QString,QVariant>& fileProperties);
+
 	void emitHighlightLineOptionChanged();
+	
+	QMap<QString,QVariant> getFileProperties(const QString& path);
 	
 	void setBinaryPaths(const QStringList& paths);
 	void setEngineList(const QList<Engine>& engines);
@@ -164,8 +167,8 @@ public slots:
 
 	QObject* openFile(const QString& fileName);
 
-	QString getOpenFileName();
-	QStringList getOpenFileNames();
+	QString getOpenFileName(QString selectedFilter = QString());
+	QStringList getOpenFileNames(QString selectedFilter = QString());
 	QString getSaveFileName(const QString& defaultName);
 	
 	// for script access to arbitrary commands

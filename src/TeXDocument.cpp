@@ -149,6 +149,7 @@ void TeXDocument::init()
 	engine->setFocusPolicy(Qt::NoFocus);
 #if defined(Q_WS_MAC) && (QT_VERSION >= 0x040600)
 	engine->setStyleSheet("padding:4px;");
+	engine->setMinimumWidth(150);
 #endif
 	toolBar_run->addWidget(engine);
 	updateEngineList();
@@ -165,6 +166,7 @@ void TeXDocument::init()
 
 	connect(actionSave, SIGNAL(triggered()), this, SLOT(save()));
 	connect(actionSave_As, SIGNAL(triggered()), this, SLOT(saveAs()));
+	connect(actionSave_All, SIGNAL(triggered()), this, SLOT(saveAll()));
 	connect(actionRevert_to_Saved, SIGNAL(triggered()), this, SLOT(revert()));
 	connect(actionClose, SIGNAL(triggered()), this, SLOT(close()));
 
@@ -586,38 +588,11 @@ void TeXDocument::closeEvent(QCloseEvent *event)
 */
 	if (maybeSave()) {
 		event->accept();
+		saveRecentFileInfo();
 		deleteLater();
 	}
 	else
 		event->ignore();
-}
-
-void TeXDocument::hideFloatersUnlessThis(QWidget* currWindow)
-{
-	TeXDocument* p = qobject_cast<TeXDocument*>(currWindow);
-	if (p == this)
-		return;
-	foreach (QObject* child, children()) {
-		QToolBar* tb = qobject_cast<QToolBar*>(child);
-		if (tb && tb->isVisible() && tb->isFloating()) {
-			latentVisibleWidgets.append(tb);
-			tb->hide();
-			continue;
-		}
-		QDockWidget* dw = qobject_cast<QDockWidget*>(child);
-		if (dw && dw->isVisible() && dw->isFloating()) {
-			latentVisibleWidgets.append(dw);
-			dw->hide();
-			continue;
-		}
-	}
-}
-
-void TeXDocument::showFloaters()
-{
-	foreach (QWidget* w, latentVisibleWidgets)
-		w->show();
-	latentVisibleWidgets.clear();
 }
 
 bool TeXDocument::event(QEvent *event) // based on example at doc.trolltech.com/qq/qq18-macfeatures.html
@@ -702,6 +677,19 @@ bool TeXDocument::save()
 		return saveAs();
 	else
 		return saveFile(curFile);
+}
+
+bool TeXDocument::saveAll()
+{
+	bool savedAll = true;
+	foreach (TeXDocument* doc, docList) {
+		if (doc->textEdit->document()->isModified()) {
+			if (!doc->save()) {
+				savedAll = false;
+			}
+		}
+	}
+	return savedAll;
 }
 
 bool TeXDocument::saveAs()
@@ -954,18 +942,64 @@ void TeXDocument::loadFile(const QString &fileName, bool asTemplate, bool inBack
 	else {
 		setCurrentFile(fileName);
 		if (!inBackground) {
-			show(); // ensure window is shown before the PDF, if opening a new doc
-			showPdfIfAvailable();
-			selectWindow();
+			openPdfIfAvailable(false);
 		}
 
 		statusBar()->showMessage(tr("File \"%1\" loaded").arg(TWUtils::strippedName(curFile)),
 								 kStatusMessageDuration);
 		setupFileWatcher();
 	}
-	textEdit->updateLineNumberAreaWidth(0);
 	maybeEnableSaveAndRevert(false);
 
+	bool autoPlace = true;
+	QMap<QString,QVariant> properties = TWApp::instance()->getFileProperties(curFile);
+	if (properties.contains("geometry")) {
+		restoreGeometry(properties.value("geometry").toByteArray());
+		autoPlace = false;
+	}
+	if (properties.contains("state"))
+		restoreState(properties.value("state").toByteArray(), kTeXWindowStateVersion);
+
+	if (properties.contains("selStart")) {
+		QTextCursor c(textEdit->document());
+		c.setPosition(properties.value("selStart").toInt());
+		c.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, properties.value("selLength", 0).toInt());
+		textEdit->setTextCursor(c);
+	}
+
+	if (properties.contains("quotesMode"))
+		setSmartQuotesMode(properties.value("quotesMode").toString());
+	if (properties.contains("indentMode"))
+		setAutoIndentMode(properties.value("indentMode").toString());
+	if (properties.contains("syntaxMode"))
+		setSyntaxColoringMode(properties.value("syntaxMode").toString());
+	if (properties.contains("wrapLines"))
+		setWrapLines(properties.value("wrapLines").toBool());
+	if (properties.contains("lineNumbers"))
+		setLineNumbers(properties.value("lineNumbers").toBool());
+	
+	if (pdfDoc) {
+		if (properties.contains("pdfgeometry")) {
+			pdfDoc->restoreGeometry(properties.value("pdfgeometry").toByteArray());
+			autoPlace = false;
+		}
+		if (properties.contains("pdfstate"))
+			pdfDoc->restoreState(properties.value("pdfstate").toByteArray(), kPDFWindowStateVersion);
+	}
+
+	if (autoPlace)
+		sideBySide();
+	
+	show(); // ensure window is shown before the PDF, if opening a new doc
+	editor()->updateLineNumberAreaWidth(0);
+
+	if (pdfDoc)
+		pdfDoc->show();
+
+	selectWindow();
+
+	saveRecentFileInfo();
+	
 	runHooks("LoadFile");
 }
 
@@ -1067,7 +1101,7 @@ bool TeXDocument::getPreviewFileName(QString &pdfName)
 	return fi.exists();
 }
 
-bool TeXDocument::showPdfIfAvailable()
+bool TeXDocument::openPdfIfAvailable(bool show)
 {
 	detachPdf();
 	actionSide_by_Side->setEnabled(false);
@@ -1084,8 +1118,8 @@ bool TeXDocument::showPdfIfAvailable()
 		}
 		else {
 			pdfDoc = new PDFDocument(pdfName, this);
-			TWUtils::sideBySide(this, pdfDoc);
-			pdfDoc->show();
+			if (show)
+				pdfDoc->show();
 		}
 	}
 
@@ -1221,12 +1255,35 @@ void TeXDocument::setCurrentFile(const QString &fileName)
 
 	setWindowTitle(tr("%1[*] - %2").arg(TWUtils::strippedName(curFile)).arg(tr(TEXWORKS_NAME)));
 
-	if (!isUntitled)
-		TWApp::instance()->addToRecentFiles(curFile);
-	
 	actionRemove_Aux_Files->setEnabled(!isUntitled);
 	
 	TWApp::instance()->updateWindowMenus();
+}
+
+void TeXDocument::saveRecentFileInfo()
+{
+	if (isUntitled)
+		return;
+	
+	QMap<QString,QVariant> fileProperties;
+
+	fileProperties.insert("path", curFile);
+	fileProperties.insert("geometry", saveGeometry());
+	fileProperties.insert("state", saveState(kTeXWindowStateVersion));
+	fileProperties.insert("selStart", selectionStart());
+	fileProperties.insert("selLength", selectionLength());
+	fileProperties.insert("quotesMode", textEdit->getQuotesMode());
+	fileProperties.insert("indentMode", textEdit->getIndentMode());
+	fileProperties.insert("syntaxMode", highlighter->getSyntaxMode());
+	fileProperties.insert("lineNumbers", textEdit->getLineNumbersVisible());
+	fileProperties.insert("wrapLines", textEdit->wordWrapMode() == QTextOption::WordWrap);
+
+	if (pdfDoc) {
+		fileProperties.insert("pdfgeometry", pdfDoc->saveGeometry());
+		fileProperties.insert("pdfstate", pdfDoc->saveState(kPDFWindowStateVersion));
+	}
+
+	TWApp::instance()->addToRecentFiles(fileProperties);
 }
 
 void TeXDocument::updateRecentFileActions()
@@ -1356,16 +1413,6 @@ void TeXDocument::encodingPopup(const QPoint loc)
 	}
 }
 
-void TeXDocument::selectWindow(bool activate)
-{
-	show();
-	raise();
-	if (activate)
-		activateWindow();
-	if (isMinimized())
-		showNormal();
-}
-
 void TeXDocument::sideBySide()
 {
 	if (pdfDoc != NULL) {
@@ -1375,16 +1422,6 @@ void TeXDocument::sideBySide()
 	}
 	else
 		placeOnLeft();
-}
-
-void TeXDocument::placeOnLeft()
-{
-	TWUtils::zoomToHalfScreen(this, false);
-}
-
-void TeXDocument::placeOnRight()
-{
-	TWUtils::zoomToHalfScreen(this, true);
 }
 
 TeXDocument *TeXDocument::findDocument(const QString &fileName)
@@ -1767,17 +1804,52 @@ void TeXDocument::doHardWrap(int lineWidth, bool rewrap)
 
 void TeXDocument::setLineNumbers(bool displayNumbers)
 {
+	actionLine_Numbers->setChecked(displayNumbers);
 	textEdit->setLineNumberDisplay(displayNumbers);
 }
 
 void TeXDocument::setWrapLines(bool wrap)
 {
+	actionWrap_Lines->setChecked(wrap);
 	textEdit->setWordWrapMode(wrap ? QTextOption::WordWrap : QTextOption::NoWrap);
 }
 
 void TeXDocument::setSyntaxColoring(int index)
 {
 	highlighter->setActiveIndex(index);
+}
+
+void TeXDocument::setSyntaxColoringMode(const QString& mode)
+{
+	QList<QAction*> actionList = menuSyntax_Coloring->actions();
+	for (int i = 0; i < actionList.count(); ++i) {
+		if (actionList[i]->isCheckable() && actionList[i]->text().compare(mode, Qt::CaseInsensitive) == 0) {
+			actionList[i]->trigger();
+			return;
+		}
+	}
+}
+
+void TeXDocument::setSmartQuotesMode(const QString& mode)
+{
+	QList<QAction*> actionList = menuSmart_Quotes_Mode->actions();
+	for (int i = 0; i < actionList.count(); ++i) {
+		if (actionList[i]->isCheckable() && actionList[i]->text().compare(mode, Qt::CaseInsensitive) == 0) {
+			actionList[i]->trigger();
+			return;
+		}
+	}
+}
+
+void TeXDocument::setAutoIndentMode(const QString& mode)
+{
+	QList<QAction*> actionList = menuAuto_indent_Mode->actions();
+	for (int i = 0; i < actionList.count(); ++i) {
+		if (actionList[i]->isCheckable() && actionList[i]->text().compare(mode, Qt::CaseInsensitive) == 0) {
+			actionList[i]->trigger();
+			return;
+		}
+	}
 }
 
 void TeXDocument::doFindAgain(bool fromDialog)
@@ -2375,7 +2447,7 @@ void TeXDocument::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 		if (getPreviewFileName(pdfName) && QFileInfo(pdfName).lastModified() != oldPdfTime) {
 			// only open/refresh the PDF if it was changed by the typeset process
 			if (pdfDoc == NULL) {
-				if (showPdfWhenFinished && showPdfIfAvailable())
+				if (showPdfWhenFinished && openPdfIfAvailable(true))
 					pdfDoc->selectWindow();
 			}
 			else {
@@ -2517,7 +2589,7 @@ void TeXDocument::goToPreview()
 	if (pdfDoc != NULL)
 		pdfDoc->selectWindow();
 	else {
-		if (!showPdfIfAvailable()) {
+		if (!openPdfIfAvailable(true)) {
 			// This should only fail if the user has done something sneaky like closing the
 			// preview window and then renaming the PDF file, since we opened the source
 			// and checked that it exists (otherwise Go to Preview would have been disabled).

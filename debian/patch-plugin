@@ -13,9 +13,9 @@
  
 --- texworks-0.3~svn569/plugins-src/TWPythonPlugin/TWPythonPlugin.cpp	2010-02-16 12:38:52.000000000 +0900
 +++ texworks-scripting-python-0.3.0~svn558~karmic1/plugins-src/TWPythonPlugin/TWPythonPlugin.cpp	2010-01-31 18:00:06.000000000 +0900
-@@ -27,17 +27,6 @@
- #include <QStringList>
- #include <QTextStream>
+@@ -44,17 +44,6 @@
+ typedef int Py_ssize_t;
+ #endif
  
 -/* macros that may not be available in older python headers */
 -#ifndef Py_RETURN_NONE
@@ -31,7 +31,7 @@
  /** \brief	Structure to hold data for the pyQObject wrapper */
  typedef struct {
  	PyObject_HEAD
-@@ -431,7 +420,7 @@
+@@ -458,7 +447,7 @@
  	QVariantList list;
  	QVariantMap map;
  	PyObject * key, * value;

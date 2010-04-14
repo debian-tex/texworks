@@ -382,8 +382,31 @@ QString TWUtils::strippedName(const QString &fullFileName)
 void TWUtils::updateRecentFileActions(QObject *parent, QList<QAction*> &actions, QMenu *menu) /* static */
 {
 	QSETTINGS_OBJECT(settings);
-	QStringList files = settings.value("recentFileList").toStringList();
-	int numRecentFiles = files.size();
+	QStringList fileList;
+	if (settings.contains("recentFiles")) {
+		QList<QVariant> files = settings.value("recentFiles").toList();
+		foreach (const QVariant& v, files) {
+			QMap<QString,QVariant> map = v.toMap();
+			if (map.contains("path"))
+				fileList.append(map.value("path").toString());
+		}
+	}
+	else {
+		// check for an old "recentFilesList" entry, and migrate it
+		if (settings.contains("recentFileList")) {
+			fileList = settings.value("recentFileList").toStringList();
+			QList<QVariant> files;
+			foreach (const QString& path, fileList) {
+				QMap<QString,QVariant> map;
+				map.insert("path", path);
+				files.append(QVariant(map));
+			}
+			settings.remove("recentFileList");
+			settings.setValue("recentFiles", files);
+		}
+	}
+	
+	int numRecentFiles = fileList.size();
 
 	while (actions.size() < numRecentFiles) {
 		QAction *act = new QAction(parent);
@@ -399,9 +422,10 @@ void TWUtils::updateRecentFileActions(QObject *parent, QList<QAction*> &actions,
 	}
 
 	for (int i = 0; i < numRecentFiles; ++i) {
-		QString text = TWUtils::strippedName(files[i]);
+		QString path = fileList[i];
+		QString text = TWUtils::strippedName(path);
 		actions[i]->setText(text);
-		actions[i]->setData(files[i]);
+		actions[i]->setData(path);
 		actions[i]->setVisible(true);
 	}
 }
@@ -488,6 +512,41 @@ void TWUtils::zoomToHalfScreen(QWidget *window, bool rhs)
 	QRect r = desktop->availableGeometry(window);
 	int wDiff = window->frameGeometry().width() - window->width();
 	int hDiff = window->frameGeometry().height() - window->height();
+
+	if (hDiff == 0 && wDiff == 0) {
+		// window may not be decorated yet, so we don't know how large
+		// the title bar etc. is. Try to extrapolate from other top-level
+		// windows (if some are available). We assume that if either
+		// hDiff or wDiff is non-zero, we have found a decorated window
+		// and can use its values.
+		foreach (QWidget * widget, QApplication::topLevelWidgets()) {
+			if (!qobject_cast<QMainWindow*>(widget))
+				continue;
+			hDiff = widget->frameGeometry().height() - widget->height();
+			wDiff = widget->frameGeometry().width() - widget->width();
+			if (hDiff != 0 || wDiff != 0)
+				break;
+		}
+		if (hDiff == 0 && wDiff == 0) {
+			// Give the user the possibility to specify his own values by
+			// hacking the config files.
+			// (Note: this should only be necessary in some special cases, e.g.
+			// on X11 systems with special effects enabled)
+			QSETTINGS_OBJECT(settings);
+			wDiff = qMax(0, settings.value("windowWDiff", 0).toInt());
+			hDiff = qMax(0, settings.value("windowHDiff", 0).toInt());
+		}
+		// If we still have no valid value for hDiff/wDiff, just guess (on some
+		// platforms)
+		if (hDiff == 0 && wDiff == 0) {
+#ifdef Q_WS_WIN
+			// (these values were determined on WinXP with default theme)
+			hDiff = 34;
+			wDiff = 8;
+#endif
+		}
+	}
+	
 	if (rhs) {
 		r.setLeft(r.left() + r.right() / 2);
 		window->move(r.left(), r.top());
@@ -502,8 +561,20 @@ void TWUtils::zoomToHalfScreen(QWidget *window, bool rhs)
 
 void TWUtils::sideBySide(QWidget *window1, QWidget *window2)
 {
-	zoomToHalfScreen(window1, false);
-	zoomToHalfScreen(window2, true);
+	QDesktopWidget *desktop = QApplication::desktop();
+
+	// if the windows reside on the same screen zoom each so that it occupies 
+	// half of that screen
+	if (desktop->screenNumber(window1) == desktop->screenNumber(window2)) {
+		zoomToHalfScreen(window1, false);
+		zoomToHalfScreen(window2, true);
+	}
+	// if the windows reside on different screens zoom each so that it uses
+	// its whole screen
+	else {
+		zoomToScreen(window1);
+		zoomToScreen(window2);
+	}
 }
 
 void TWUtils::tileWindowsInRect(const QWidgetList& windows, const QRect& bounds)
