@@ -26,6 +26,9 @@
 #include <QList>
 #include <QAction>
 #include <QSettings>
+#include <QClipboard>
+#include <QVariant>
+#include <QHash>
 
 #include "TWUtils.h"
 #include "TWScriptable.h"
@@ -37,6 +40,13 @@
 #define PATH_LIST_SEP   ':'
 #define EXE
 #endif
+
+#ifndef TW_BUILD_ID
+#define TW_BUILD_ID unknown build
+#endif
+#define STRINGIFY_2(s) #s
+#define STRINGIFY(s) STRINGIFY_2(s)
+#define TW_BUILD_ID_STR STRINGIFY(TW_BUILD_ID)
 
 class QString;
 class QMenu;
@@ -82,7 +92,12 @@ public:
 	void setBinaryPaths(const QStringList& paths);
 	void setEngineList(const QList<Engine>& engines);
 
-	const QStringList getBinaryPaths();
+	const QStringList getBinaryPaths(QStringList& sysEnv);
+		// runtime paths, including $PATH;
+		// also modifies passed-in sysEnv to include paths from prefs
+	QString findProgram(const QString& program, const QStringList& binPaths);
+
+	const QStringList getPrefsBinaryPaths(); // only paths from prefs
 	const QList<Engine> getEngineList();
 	void saveEngineList();
 	
@@ -116,6 +131,24 @@ public:
 	void bringToFront();
 #endif
 
+	Q_INVOKABLE QList<QVariant> getOpenWindows() const;
+
+	Q_PROPERTY(QString clipboard READ clipboardText WRITE setClipboardText)
+
+	Q_INVOKABLE QString clipboardText(QClipboard::Mode mode = QClipboard::Clipboard) const {
+		return clipboard()->text(mode);
+	}
+
+	// USE CAREFULLY
+	// i.e., never put new text into the clipboard without notifying the user
+	Q_INVOKABLE void setClipboardText(const QString& str, QClipboard::Mode mode = QClipboard::Clipboard) {
+		clipboard()->setText(str, mode);
+	}
+
+	Q_INVOKABLE void setGlobal(const QString& key, const QVariant& val);
+	Q_INVOKABLE bool hasGlobal(const QString& key) const { return m_globals.contains(key); }
+	Q_INVOKABLE QVariant getGlobal(const QString& key) const { return m_globals[key]; }
+	
 #ifdef Q_WS_MAC
 private:
 	// on the Mac only, we have a top-level app menu bar, including its own copy of the recent files menu
@@ -165,7 +198,7 @@ public slots:
 	void stackWindows();
 	void tileWindows();
 
-	QObject* openFile(const QString& fileName);
+	QObject* openFile(const QString& fileName, const int pos = -1);
 
 	QString getOpenFileName(QString selectedFilter = QString());
 	QStringList getOpenFileNames(QString selectedFilter = QString());
@@ -204,6 +237,8 @@ private slots:
 
 	void changeLanguage();
 
+	void globalDestroyed(QObject * obj);
+
 protected:
 	virtual bool event(QEvent *);
 
@@ -227,6 +262,8 @@ private:
 	QSettings::Format settingsFormat;
 	
 	TWScriptManager *scriptManager;
+
+ 	QHash<QString, QVariant> m_globals;
 	
 #ifdef Q_WS_WIN
 	HWND messageTargetWindow;
@@ -261,8 +298,8 @@ public:
 		{ }
 	
 public slots:
-	Q_NOREPLY void openFile(const QString& fileName)
-		{ app->openFile(fileName); }
+	Q_NOREPLY void openFile(const QString& fileName, const int position = -1)
+		{ app->openFile(fileName, position); }
 	Q_NOREPLY void bringToFront()
 		{ app->bringToFront(); }
 };

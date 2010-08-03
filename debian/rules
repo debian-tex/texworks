@@ -69,8 +69,8 @@ clean:
 	patch -NRp1 < ./debian/patch-plugin || true
 
 	rm -f document-print.png res/tango/document-print.png
-	rm -f $(PLIDIR)/libTWLuaPlugin.so
-	rm -f $(PLIPYT)/libTWPythonPlugin.so
+	rm -f $(PLIDIR)/libTWLuaPlugin.so $(PLIDIR)/Makefile
+	rm -f $(PLIPYT)/libTWPythonPlugin.so $(PLIPYT)/Makefile
 
 	dh_clean 
 

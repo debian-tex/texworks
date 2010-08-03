@@ -1,6 +1,6 @@
 --- texworks-0.3~svn569.orig/TeXworks.pro
 +++ texworks-0.3~svn569/TeXworks.pro
-@@ -87,8 +87,8 @@
+@@ -95,8 +95,8 @@
  
  	# Enclose the path in \\\" (which later gets expanded to \", which in turn
  	# gets expanded to " in the c++ code)
@@ -11,32 +11,3 @@
  	QMAKE_CXXFLAGS += -DTW_DICPATH=\\\"/usr/share/myspell/dicts\\\"
  }
  
---- texworks-0.3~svn569/plugins-src/TWPythonPlugin/TWPythonPlugin.cpp	2010-02-16 12:38:52.000000000 +0900
-+++ texworks-scripting-python-0.3.0~svn558~karmic1/plugins-src/TWPythonPlugin/TWPythonPlugin.cpp	2010-01-31 18:00:06.000000000 +0900
-@@ -44,17 +44,6 @@
- typedef int Py_ssize_t;
- #endif
- 
--/* macros that may not be available in older python headers */
--#ifndef Py_RETURN_NONE
--#define Py_RETURN_NONE return Py_INCREF(Py_None), Py_None
--#endif
--#ifndef Py_RETURN_TRUE
--#define Py_RETURN_TRUE return Py_INCREF(Py_True), Py_True
--#endif
--#ifndef Py_RETURN_FALSE
--#define Py_RETURN_FALSE return Py_INCREF(Py_False), Py_False
--#endif
--
- /** \brief	Structure to hold data for the pyQObject wrapper */
- typedef struct {
- 	PyObject_HEAD
-@@ -458,7 +447,7 @@
- 	QVariantList list;
- 	QVariantMap map;
- 	PyObject * key, * value;
--	int i = 0;
-+	Py_ssize_t i = 0;
- 	QString str;
- 
- 	// in Python 3.x, the PyInt_* were removed in favor of PyLong_*

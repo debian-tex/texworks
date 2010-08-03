@@ -1,3 +1,10 @@
+texworks (0.3~svn671-1) experimental; urgency=low
+
+  * New Upstream Release. (Rev.671)
+  * Updated patches.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Tue, 03 Aug 2010 15:31:17 +0900
+
 texworks (0.3~svn606-1) experimental; urgency=low
 
   * New Upstream Release. (Rev.606)

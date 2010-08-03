@@ -303,23 +303,30 @@ QStringList* TWUtils::getTranslationList()
 			*translationList << locName;
 	}
 	
+	// English is always available, and it has to be the first item
+	translationList->removeAll("en");
+	translationList->prepend("en");
+	
 	return translationList;
 }
 
-QStringList* TWUtils::dictionaryList = NULL;
+QHash<QString, QString>* TWUtils::dictionaryList = NULL;
 
-QStringList* TWUtils::getDictionaryList()
+QHash<QString, QString>* TWUtils::getDictionaryList(const bool forceReload /*= false*/)
 {
-	if (dictionaryList != NULL)
-		return dictionaryList;
+	if (dictionaryList != NULL) {
+		if (!forceReload)
+			return dictionaryList;
+		delete dictionaryList;
+	}
 
-	dictionaryList = new QStringList;
+	dictionaryList = new QHash<QString, QString>();
 	QDir dicDir(TWUtils::getLibraryPath("dictionaries"));
 	foreach (QFileInfo affFileInfo, dicDir.entryInfoList(QStringList("*.aff"),
 				QDir::Files | QDir::Readable, QDir::Name | QDir::IgnoreCase)) {
 		QFileInfo dicFileInfo(affFileInfo.dir(), affFileInfo.completeBaseName() + ".dic");
 		if (dicFileInfo.isReadable())
-			*dictionaryList << dicFileInfo.completeBaseName();
+			dictionaryList->insertMulti(affFileInfo.canonicalFilePath(), affFileInfo.completeBaseName());
 	}
 	
 	return dictionaryList;
@@ -448,7 +455,13 @@ void TWUtils::updateWindowMenu(QWidget *window, QMenu *menu) /* static */
 		if (first && !menu->actions().isEmpty())
 			menu->addSeparator();
 		first = false;
-		SelWinAction *selWin = new SelWinAction(menu, texDoc->fileName());
+		QString label = texDoc->fileName();
+		SelWinAction *selWin = new SelWinAction(menu, label);
+		if (texDoc->isModified()) {
+			QFont f(selWin->font());
+			f.setItalic(true);
+			selWin->setFont(f);
+		}
 		if (texDoc == qobject_cast<TeXDocument*>(window)) {
 			selWin->setCheckable(true);
 			selWin->setChecked(true);

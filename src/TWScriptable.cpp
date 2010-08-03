@@ -69,6 +69,7 @@ bool JSScript::execute(TWScriptAPI *tw) const
 		return false;
 	}
 	QTextStream stream(&scriptFile);
+	stream.setCodec(m_Codec);
 	QString contents = stream.readAll();
 	scriptFile.close();
 	
@@ -112,7 +113,7 @@ TWScript* JSScriptInterface::newScript(const QString& fileName)
 TWScriptManager::TWScriptManager()
 {
 	loadPlugins();
-	loadScripts();
+	reloadScripts();
 }
 
 void
@@ -179,6 +180,12 @@ void TWScriptManager::loadPlugins()
 
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+#if QT_VERSION >= 0x040400
+		// (At least) Python 2.6 requires the symbols in the secondary libraries
+		// to be put in the global scope if modules are imported that load
+		// additional shared libraries (e.g. datetime)
+		loader.setLoadHints(QLibrary::ExportExternalSymbolsHint);
+#endif
 		QObject *plugin = loader.instance();
 		TWScriptLanguageInterface *s = qobject_cast<TWScriptLanguageInterface*>(plugin);
 		if (s)
@@ -186,20 +193,57 @@ void TWScriptManager::loadPlugins()
 	}
 }
 
-void TWScriptManager::loadScripts()
+void TWScriptManager::reloadScripts(bool forceAll /*= false*/)
 {
 	QSETTINGS_OBJECT(settings);
 	QStringList disabled = settings.value("disabledScripts", QStringList()).toStringList();
+	QStringList processed;
 	
 	// canonicalize the paths
 	QDir scriptsDir(TWUtils::getLibraryPath("scripts"));
 	for (int i = 0; i < disabled.size(); ++i)
 		disabled[i] = QFileInfo(scriptsDir.absoluteFilePath(disabled[i])).canonicalFilePath();
-	
-	addScriptsInDirectory(scriptsDir, disabled);
+
+	if (forceAll)
+		clear();
+
+	reloadScriptsInList(&m_Scripts, processed);
+	reloadScriptsInList(&m_Hooks, processed);
+
+	addScriptsInDirectory(scriptsDir, disabled, processed);
 	
 	ScriptManager::refreshScriptList();
 }
+
+void TWScriptManager::reloadScriptsInList(TWScriptList * list, QStringList & processed)
+{
+	foreach(QObject * item, list->children()) {
+		if (qobject_cast<TWScriptList*>(item))
+			reloadScriptsInList(qobject_cast<TWScriptList*>(item), processed);
+		else if(qobject_cast<TWScript*>(item)) {
+			TWScript * s = qobject_cast<TWScript*>(item);
+			if (s->hasChanged()) {
+				// File has been removed
+				if (!(QFileInfo(s->getFilename()).exists())) {
+					delete s;
+					continue;
+				}
+				// File has been changed - reparse; if an error occurs or the
+				// script type has changed treat it as if has been removed (and
+				// possibly re-add it later)
+				TWScript::ScriptType oldType = s->getType();
+				if (!s->parseHeader() || s->getType() != oldType) {
+					delete s;
+					continue;
+				}
+			}
+			processed << s->getFilename();
+		}
+		else {
+		} // should never happen
+	}
+}
+
 
 void TWScriptManager::clear()
 {
@@ -212,6 +256,8 @@ void TWScriptManager::clear()
 
 bool TWScriptManager::addScript(QObject* scriptList, TWScript* script)
 {
+	/// \TODO This no longer works since we introduced multiple levels of scripts
+/*
 	foreach (QObject* obj, scriptList->children()) {
 		TWScript *s = qobject_cast<TWScript*>(obj);
 		if (!s)
@@ -219,28 +265,43 @@ bool TWScriptManager::addScript(QObject* scriptList, TWScript* script)
 		if (*s == *script)
 			return false;
 	}
-	
+*/
 	script->setParent(scriptList);
 	return true;
 }
 
+static bool scriptListLessThan(const TWScriptList* l1, const TWScriptList* l2)
+{
+	return l1->getName().toLower() < l2->getName().toLower();
+}
+
+static bool scriptLessThan(const TWScript* s1, const TWScript* s2)
+{
+	return s1->getTitle().toLower() < s2->getTitle().toLower();
+}
+
+
 void TWScriptManager::addScriptsInDirectory(TWScriptList *scriptList,
 											TWScriptList *hookList,
 											const QDir& dir,
-											const QStringList& disabled)
+											const QStringList& disabled,
+											const QStringList& ignore)
 {
 	foreach (const QFileInfo& info,
 			 dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Readable, QDir::DirsLast)) {
 		if (info.isDir()) {
 			TWScriptList *subScriptList = new TWScriptList(scriptList, info.fileName());
 			TWScriptList *subHookList = new TWScriptList(hookList, info.fileName());
-			addScriptsInDirectory(subScriptList, subHookList, info.absoluteFilePath(), disabled);
+			addScriptsInDirectory(subScriptList, subHookList, info.absoluteFilePath(), disabled, ignore);
 			if (subScriptList->children().isEmpty())
 				delete subScriptList;
 			if (subHookList->children().isEmpty())
 				delete subHookList;
 			continue;
 		}
+		
+		if (ignore.contains(info.absoluteFilePath()))
+			continue;
 
 		foreach (TWScriptLanguageInterface* i, scriptLanguages) {
 			if (!i->canHandleFile(info))
@@ -269,6 +330,42 @@ void TWScriptManager::addScriptsInDirectory(TWScriptList *scriptList,
 			}
 		}
 	}
+	
+	// perform custom sorting
+	// since QObject::children() is const, we have to work around that limitation
+	// by unsetting all parents first, sort, and finally reset parents in the
+	// correct order
+
+	QList<TWScriptList*> childLists; 
+	QList<TWScript*> childScripts;
+
+	// Note: we can't use QObject::findChildren here because it's recursive
+	const QObjectList& children = scriptList->children();
+	foreach (QObject *obj, children) {
+		if (TWScript *script = qobject_cast<TWScript*>(obj))
+			childScripts.append(script);
+		else if (TWScriptList *list = qobject_cast<TWScriptList*>(obj))
+			childLists.append(list);
+		else { // shouldn't happen
+		}
+	}
+	
+	// unset parents; this effectively removes the objects from
+	// scriptList->children()
+	foreach (TWScript* childScript, childScripts)
+		childScript->setParent(NULL);
+	foreach (TWScriptList* childList, childLists)
+		childList->setParent(NULL);
+	
+	// sort the sublists
+	qSort(childLists.begin(), childLists.end(), scriptListLessThan);
+	qSort(childScripts.begin(), childScripts.end(), scriptLessThan);
+	
+	// add the scripts again, one-by-one
+	foreach (TWScript* childScript, childScripts)
+		childScript->setParent(scriptList);
+	foreach (TWScriptList* childList, childLists)
+		childList->setParent(scriptList);
 }
 
 QList<TWScript*> TWScriptManager::getHookScripts(const QString& hook) const

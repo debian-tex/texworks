@@ -51,12 +51,10 @@
 #include <QTextCodec>
 #include <QSignalMapper>
 #include <QDockWidget>
-#include <QTableView>
-#include <QHeaderView>
-#include <QStandardItemModel>
 #include <QAbstractButton>
 #include <QPushButton>
 #include <QFileSystemWatcher>
+#include <QTextBrowser>
 #include <QDebug>
 
 #ifdef Q_WS_WIN
@@ -91,6 +89,10 @@ TeXDocument::~TeXDocument()
 {
 	docList.removeAll(this);
 	updateWindowMenu();
+}
+
+static bool dictActionLessThan(const QAction * a1, const QAction * a2) {
+	return a1->text().toLower() < a2->text().toLower();
 }
 
 void TeXDocument::init()
@@ -366,17 +368,42 @@ void TeXDocument::init()
 	QActionGroup *group = new QActionGroup(this);
 	group->addAction(actionNone);
 
-	QString defLang = settings.value("language", tr("None")).toString();
-	foreach (QString lang, *TWUtils::getDictionaryList()) {
-		QAction *act = menuSpelling->addAction(lang);
+	QString defDict = settings.value("language", "None").toString();
+	
+	QList<QAction*> dictActions;
+	foreach (const QString& dictKey, TWUtils::getDictionaryList()->uniqueKeys()) {
+		QAction *act;
+		QString dict, label;
+		QLocale loc;
+
+		foreach (dict, TWUtils::getDictionaryList()->values(dictKey)) {
+			loc = QLocale(dict);
+			if (loc.language() != QLocale::C) break;
+		}
+
+		if (loc.language() == QLocale::C)
+			label = dict;
+		else {
+			label = QLocale::languageToString(loc.language());
+			QLocale::Country country = loc.country();
+			if (country != QLocale::AnyCountry)
+				label += " - " + QLocale::countryToString(country);
+			label += " (" + dict + ")";
+		}
+
+		act = new QAction(label, NULL);
 		act->setCheckable(true);
 		connect(act, SIGNAL(triggered()), mapper, SLOT(map()));
-		mapper->setMapping(act, lang);
+		mapper->setMapping(act, dict);
 		group->addAction(act);
-		if (lang == defLang)
+		if (TWUtils::getDictionaryList()->values(dictKey).contains(defDict))
 			act->trigger();
+		dictActions << act;
 	}
-	
+	qSort(dictActions.begin(), dictActions.end(), dictActionLessThan);
+	foreach (QAction* dictAction, dictActions)
+		menuSpelling->addAction(dictAction);
+
 	menuShow->addAction(toolBar_run->toggleViewAction());
 	menuShow->addAction(toolBar_edit->toggleViewAction());
 	menuShow->addSeparator();
@@ -442,7 +469,7 @@ void TeXDocument::setSpellcheckLanguage(const QString& lang)
 	if (menuSpelling) {
 		QAction *chosen = menuSpelling->actions()[0]; // default is None
 		foreach (QAction *act, menuSpelling->actions()) {
-			if (act->text() == lang) {
+			if (act->text() == lang || act->text().contains("(" + lang + ")")) {
 				chosen = act;
 				break;
 			}
@@ -721,7 +748,10 @@ bool TeXDocument::saveAs()
 			fileName.append(ext);
 	}
 	
-	if (fileName != curFile) {
+	if (fileName != curFile && pdfDoc) {
+		// For the pdf, it is as if it's source doc was closed
+		// Note that this may result in the pdf being closed!
+		pdfDoc->texClosed(this);
 		// The pdf connection is no longer (necessarily) valid. Detach it for
 		// now (the correct connection will be reestablished on next typeset).
 		detachPdf();
@@ -737,11 +767,15 @@ bool TeXDocument::maybeSave()
 {
 	if (textEdit->document()->isModified()) {
 		QMessageBox::StandardButton ret;
-		ret = QMessageBox::warning(this, tr(TEXWORKS_NAME),
-					 tr("The document \"%1\" has been modified.\n"
-						"Do you want to save your changes?")
-						.arg(TWUtils::strippedName(curFile)),
-					 QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+		QMessageBox msgBox(QMessageBox::Warning, tr(TEXWORKS_NAME),
+						   tr("The document \"%1\" has been modified.\n"
+							  "Do you want to save your changes?")
+						   .arg(TWUtils::strippedName(curFile)),
+						   QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+						   this);
+		msgBox.button(QMessageBox::Discard)->setShortcut(QKeySequence(tr("Ctrl+D", "shortcut: Don't Save")));
+		msgBox.setWindowModality(Qt::WindowModal);
+		ret = (QMessageBox::StandardButton)msgBox.exec();
 		if (ret == QMessageBox::Save)
 			return save();
 		else if (ret == QMessageBox::Cancel)
@@ -774,7 +808,9 @@ void TeXDocument::revert()
 					tr("Do you want to discard all changes to the document \"%1\", and revert to the last saved version?")
 					   .arg(TWUtils::strippedName(curFile)), QMessageBox::Cancel, this);
 		QAbstractButton *revertButton = messageBox.addButton(tr("Revert"), QMessageBox::DestructiveRole);
+		revertButton->setShortcut(QKeySequence(tr("Ctrl+R", "shortcut: Revert")));
 		messageBox.setDefaultButton(QMessageBox::Cancel);
+		messageBox.setWindowModality(Qt::WindowModal);
 		messageBox.exec();
 		if (messageBox.clickedButton() == revertButton)
 			loadFile(curFile);
@@ -2277,65 +2313,26 @@ void TeXDocument::typeset()
 #endif
 	process->setWorkingDirectory(workingDir);
 
-#ifdef Q_WS_WIN
-#define PATH_CASE_SENSITIVE	Qt::CaseInsensitive
-#else
-#define PATH_CASE_SENSITIVE	Qt::CaseSensitive
-#endif
-	QStringList binPaths = TWApp::instance()->getBinaryPaths();
 	QStringList env = QProcess::systemEnvironment();
-	QMutableStringListIterator envIter(env);
-	while (envIter.hasNext()) {
-		QString& envVar = envIter.next();
-		if (envVar.startsWith("PATH=", PATH_CASE_SENSITIVE)) {
-			foreach (const QString& s, envVar.mid(5).split(QChar(PATH_LIST_SEP), QString::SkipEmptyParts))
-			if (!binPaths.contains(s))
-				binPaths.append(s);
-			envVar = envVar.left(5) + binPaths.join(QChar(PATH_LIST_SEP));
-			break;
-		}
-	}
+	QStringList binPaths = TWApp::instance()->getBinaryPaths(env);
 	
-	bool foundCommand = false;
-	QFileInfo exeFileInfo;
-	QStringListIterator pathIter(binPaths);
-#ifdef Q_WS_WIN
-	QStringList executableTypes = QStringList() << "exe" << "com" << "cmd" << "bat";
-#endif
-	while (pathIter.hasNext() && !foundCommand) {
-		QString path = pathIter.next();
-		exeFileInfo = QFileInfo(path, e.program());
-		foundCommand = exeFileInfo.exists() && exeFileInfo.isExecutable();
-#ifdef Q_WS_WIN
-		// try adding common executable extensions, if one was not already present
-		if (!foundCommand && !executableTypes.contains(exeFileInfo.suffix())) {
-			QStringListIterator extensions(executableTypes);
-			while (extensions.hasNext() && !foundCommand) {
-				exeFileInfo = QFileInfo(path, e.program() + "." + extensions.next());
-				foundCommand = exeFileInfo.exists() && exeFileInfo.isExecutable();
-			}
-		}
-#endif
-	}
+	QString exeFilePath = TWApp::instance()->findProgram(e.program(), binPaths);
 	
-	if (foundCommand) {
+#ifndef Q_WS_MAC // not supported on OS X yet :(
+	// Add a (customized) TEXEDIT environment variable
+	env << QString("TEXEDIT=%1 --position=%%d %%s").arg(QCoreApplication::applicationFilePath());
+#endif
+	
+	if (!exeFilePath.isEmpty()) {
 		QStringList args = e.arguments();
 		
 		// for old MikTeX versions: delete $synctexoption if it causes an error
 		static bool checkedForSynctex = false;
 		static bool synctexSupported = true;
 		if (!checkedForSynctex) {
-			QStringListIterator pi(binPaths);
-			QFileInfo chkFileInfo;
-			bool found = false;
-			while (pi.hasNext() && !found) {
-				QString path = pi.next();
-				chkFileInfo = QFileInfo(path, "pdftex" EXE);
-				if (chkFileInfo.exists())
-					found = true;
-			}
-			if (found) {
-				int result = QProcess::execute(chkFileInfo.absoluteFilePath(), QStringList() << "-synctex=1" << "-version");
+			QString pdftex = TWApp::instance()->findProgram("pdftex", binPaths);
+			if (!pdftex.isEmpty()) {
+				int result = QProcess::execute(pdftex, QStringList() << "-synctex=1" << "-version");
 				synctexSupported = (result == 0);
 			}
 			checkedForSynctex = true;
@@ -2374,7 +2371,7 @@ void TeXDocument::typeset()
 		else
 			oldPdfTime = QDateTime();
 		
-		process->start(exeFileInfo.absoluteFilePath(), args);
+		process->start(exeFilePath, args);
 	}
 	else {
 		process->deleteLater();
@@ -2482,40 +2479,17 @@ void TeXDocument::executeAfterTypesetHooks()
 		QVariant result;
 		bool success = s->run(this, result);
 		if (success && !result.isNull()) {
-			if (result.type() == QVariant::List) {
-				const QVariantList list = result.toList();
-				int columns = 1;
-				QTableWidget *table = new QTableWidget(list.count(), columns, this);
-				table->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-				table->horizontalHeader()->setStretchLastSection(true);
-				table->horizontalHeader()->hide();
-				table->verticalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-				table->setSelectionBehavior(QAbstractItemView::SelectRows);
-				table->setSelectionMode(QAbstractItemView::SingleSelection);
-				table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-				connect(table, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(errorLineClicked(QTableWidgetItem*)));
-				for (int i = 0; i < list.count(); ++i) {
-					const QVariant item = list.at(i);
-					if (item.type() == QVariant::List) {
-						const QVariantList rowList = item.toList();
-						if (rowList.count() > columns) {
-							columns = rowList.count();
-							table->setColumnCount(columns);
-						}
-						for (int j = 0; j < rowList.count(); ++j) {
-							table->setItem(i, j, new QTableWidgetItem(rowList.at(j).toString()));
-						}
-					}
-					else {
-						table->setItem(i, 0, new QTableWidgetItem(item.toString()));
-						table->setSpan(i, 0, 1, columns);
-					}
-				}
-				consoleTabs->addTab(table, s->getTitle());
+			QString res = result.toString();
+			if (res.startsWith("<html>", Qt::CaseInsensitive)) {
+				QTextBrowser *browser = new QTextBrowser(this);
+				browser->setOpenLinks(false);
+				connect(browser, SIGNAL(anchorClicked(const QUrl&)), this, SLOT(anchorClicked(const QUrl&)));
+				browser->setHtml(res);
+				consoleTabs->addTab(browser, s->getTitle());
 			}
 			else {
 				QTextEdit *textEdit = new QTextEdit(this);
-				textEdit->setPlainText(result.toString());
+				textEdit->setPlainText(res);
 				textEdit->setReadOnly(true);
 				consoleTabs->addTab(textEdit, s->getTitle());
 			}
@@ -2523,14 +2497,18 @@ void TeXDocument::executeAfterTypesetHooks()
 	}
 }
 
-void TeXDocument::errorLineClicked(QTableWidgetItem * i)
+void TeXDocument::anchorClicked(const QUrl& url)
 {
-	QTableWidget * table = i->tableWidget();
-	int row = i->row();
-	QString filename = table->item(row, 0)->text();
-	int line = table->item(row, 1)->text().toInt();
-	
-	openDocument(QFileInfo(curFile).absoluteDir().filePath(filename), true, true, line);
+	if (url.scheme() == "texworks") {
+		int line = 0;
+		if (url.hasFragment()) {
+			line = url.fragment().toLong();
+		}
+		openDocument(QFileInfo(curFile).absoluteDir().filePath(url.path()), true, true, line);
+	}
+	else {
+		TWApp::instance()->openUrl(url);
+	}
 }
 
 // showConsole() and hideConsole() are used internally to update the visibility;

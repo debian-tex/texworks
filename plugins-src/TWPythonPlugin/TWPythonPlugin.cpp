@@ -44,17 +44,6 @@
 typedef int Py_ssize_t;
 #endif
 
-/* macros that may not be available in older python headers */
-#ifndef Py_RETURN_NONE
-#define Py_RETURN_NONE return Py_INCREF(Py_None), Py_None
-#endif
-#ifndef Py_RETURN_TRUE
-#define Py_RETURN_TRUE return Py_INCREF(Py_True), Py_True
-#endif
-#ifndef Py_RETURN_FALSE
-#define Py_RETURN_FALSE return Py_INCREF(Py_False), Py_False
-#endif
-
 /** \brief	Structure to hold data for the pyQObject wrapper */
 typedef struct {
 	PyObject_HEAD
@@ -85,9 +74,6 @@ static void QObjectMethodDealloc(pyQObjectMethodObject * self) {
 
 TWPythonPlugin::TWPythonPlugin()
 {
-	// Base class constructor
-	QObject::QObject();
-	
 	// Initialize the python interpretor
 	Py_Initialize();
 }
@@ -116,7 +102,7 @@ bool PythonScript::execute(TWScriptAPI *tw) const
 		// handle error
 		return false;
 	}
-	QString contents = QString::fromUtf8(scriptFile.readAll());
+	QString contents = m_Codec->toUnicode(scriptFile.readAll());
 	scriptFile.close();
 
 	// Python seems to require Unix style line endings
@@ -269,6 +255,9 @@ PyObject* PythonScript::getAttribute(PyObject * o, PyObject * attr_name)
 		return NULL;
 	}
 	
+	if (propName.length() > 1 && propName.endsWith(QChar('_')))
+		propName.chop(1);
+	
 	switch (doGetProperty(obj, propName, result)) {
 		case Property_DoesNotExist:
 			PyErr_Format(PyExc_AttributeError, qPrintable(tr("getattr: object doesn't have property/method %s")), qPrintable(propName));
@@ -336,6 +325,7 @@ int PythonScript::setAttribute(PyObject * o, PyObject * attr_name, PyObject * v)
 /*static*/
 PyObject * PythonScript::callMethod(PyObject * o, PyObject * pyArgs, PyObject * kw)
 {
+	Q_UNUSED(kw)
 	QObject * obj;
 	QString methodName;
 	QVariantList args;
@@ -353,7 +343,8 @@ PyObject * PythonScript::callMethod(PyObject * o, PyObject * pyArgs, PyObject * 
 	for (i = 0; i < PyTuple_Size(pyArgs); ++i) {
 		args.append(PythonScript::PythonToVariant(PyTuple_GetItem(pyArgs, i)));
 	}
-	
+	if (methodName.length() > 1 && methodName.endsWith(QChar('_')))
+		methodName.chop(1);
 	switch (doCallMethod(obj, methodName, args, result)) {
 		case Method_OK:
 			return PythonScript::VariantToPython(result);
@@ -443,8 +434,9 @@ PyObject * PythonScript::VariantToPython(const QVariant & v)
 			}
 			return pyDict;
 		case QMetaType::QObjectStar:
-		case QMetaType::QWidgetStar:
 			return PythonScript::QObjectToPython(v.value<QObject*>());
+		case QMetaType::QWidgetStar:
+			return PythonScript::QObjectToPython(qobject_cast<QObject*>(v.value<QWidget*>()));
 		default:
 			PyErr_Format(PyExc_TypeError, qPrintable(tr("the type %s is currently not supported")), v.typeName());
 			return NULL;
@@ -458,9 +450,11 @@ QVariant PythonScript::PythonToVariant(PyObject * o)
 	QVariantList list;
 	QVariantMap map;
 	PyObject * key, * value;
-	int i = 0;
+	Py_ssize_t i = 0;
 	QString str;
 
+	if (o == Py_None)
+		return QVariant();
 	// in Python 3.x, the PyInt_* were removed in favor of PyLong_*
 #if PY_MAJOR_VERSION < 3
 	if (PyInt_Check(o)) return QVariant((int)PyInt_AsLong(o));
@@ -486,6 +480,9 @@ QVariant PythonScript::PythonToVariant(PyObject * o)
 			map.insert(PythonScript::PythonToVariant(key).toString(), PythonScript::PythonToVariant(value));
 		}
 		return map;
+	}
+	if (PyObject_TypeCheck(o, &pyQObjectType)) {
+		return QVariant::fromValue((QObject*)PyCObject_AsVoidPtr(((pyQObject*)o)->_TWcontext));
 	}
 	// \TODO Complex numbers, byte arrays
 	PyErr_Format(PyExc_TypeError, qPrintable(tr("the python type %s is currently not supported")), o->ob_type->tp_name);

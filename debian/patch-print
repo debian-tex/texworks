@@ -1,6 +1,6 @@
 --- texworks-0.0.1~svn337.orig/src/TeXDocument.h
 +++ texworks-0.0.1~svn337/src/TeXDocument.h
-@@ -127,6 +127,7 @@
+@@ -133,6 +133,7 @@
  public slots:
  	void typeset();
  	void interrupt();
@@ -22,7 +22,7 @@
  
  #include <math.h>
  
-@@ -1131,6 +1136,7 @@
+@@ -1136,6 +1141,7 @@
  	connect(actionNew, SIGNAL(triggered()), qApp, SLOT(newFile()));
  	connect(actionNew_from_Template, SIGNAL(triggered()), qApp, SLOT(newFromTemplate()));
  	connect(actionOpen, SIGNAL(triggered()), qApp, SLOT(open()));
@@ -30,7 +30,7 @@
  
  	connect(actionQuit_TeXworks, SIGNAL(triggered()), TWApp::instance(), SLOT(maybeQuit()));
  
-@@ -1711,3 +1717,203 @@
+@@ -1716,3 +1722,203 @@
  	}
  }
  
@@ -274,16 +274,16 @@
    <customwidget>
 --- texworks-0.0.1~svn337.orig/src/TeXDocument.cpp
 +++ texworks-0.0.1~svn337/src/TeXDocument.cpp
-@@ -58,6 +58,8 @@
- #include <QPushButton>
+@@ -56,6 +56,8 @@
  #include <QFileSystemWatcher>
+ #include <QTextBrowser>
  #include <QDebug>
 +#include <QPrinter>
 +#include <QPrintDialog>
  
  #ifdef Q_WS_WIN
  #include <windows.h>
-@@ -169,6 +171,7 @@
+@@ -171,6 +173,7 @@
  	connect(actionSave_All, SIGNAL(triggered()), this, SLOT(saveAll()));
  	connect(actionRevert_to_Saved, SIGNAL(triggered()), this, SLOT(revert()));
  	connect(actionClose, SIGNAL(triggered()), this, SLOT(close()));
@@ -291,7 +291,7 @@
  
  	connect(actionRemove_Aux_Files, SIGNAL(triggered()), this, SLOT(removeAuxFiles()));
  
-@@ -2866,3 +2869,26 @@
+@@ -2844,3 +2847,26 @@
  		pdfDoc = NULL;
  	}
  }
