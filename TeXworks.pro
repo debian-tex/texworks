@@ -29,24 +29,30 @@ OBJECTS_DIR = ./obj
 UI_DIR      = ./ui
 RCC_DIR     = ./rcc
 
+# packagers should override this to identify the source of the particular TeXworks build;
+# avoid spaces or other chars that would need quoting on the command line
+QMAKE_CXXFLAGS += -DTW_BUILD_ID=personal
+
 # comment this out if poppler's xpdf headers are not available on the build system
 QMAKE_CXXFLAGS += -DHAVE_POPPLER_XPDF_HEADERS
 
 # put all symbols in the dynamic symbol table to plugins can access them; if not
 # given, plugin loading may fail with a debug warning for some plugins
 # Note: only works for gnu compilers; need to check what flags to pass to other compilers
-QMAKE_LFLAGS += -Wl,--export-dynamic
+!macx {
+	QMAKE_LFLAGS += -Wl,--export-dynamic
+}
 
 unix:!macx {
 	TARGET	=	texworks
 } else {
 	TARGET	=	TeXworks
-    QMAKE_CXXFLAGS = -fexceptions
-    QMAKE_LFLAGS = -fexceptions
+    QMAKE_CXXFLAGS += -fexceptions
+    QMAKE_LFLAGS += -fexceptions
 }
 
 QT			+=	xml script scripttools
-CONFIG		+=	rtti
+CONFIG		+=	rtti uitools
 
 unix {
 	system(./getDefaultBinPaths.sh):warning("Unable to determine TeX path, guessing defaults")
@@ -64,12 +70,14 @@ macx {
 	INCLUDEPATH += /usr/local/include/poppler/qt4
 	INCLUDEPATH += /usr/local/include/hunspell
 
+	LIBS += /usr/lib/libQtUiTools.a
 	LIBS += -L/usr/local/lib
 	LIBS += -lpoppler
 	LIBS += -lpoppler-qt4
 	LIBS += -lhunspell-1.2
 	LIBS += -lgcc_eh
 	LIBS += -lz
+	LIBS += -framework CoreServices
 
 	QMAKE_INFO_PLIST = TeXworks.plist
 
@@ -96,6 +104,8 @@ linux-g++ {
 	# Qt/dbus config on Debian is broken, hence the lines below
 	LIBS		+= -lQtDBus
 	INCLUDEPATH	+= /usr/include/qt4/QtDBus
+	# needed to link successfully on Fedora, apparently
+	LIBS		+= -lz
 }
 
 openbsd-g++ {
@@ -138,6 +148,7 @@ HEADERS	+=	src/TWApp.h \
 			src/TWScript.h \
 			src/TWScriptAPI.h \
 			src/TeXDocument.h \
+			src/CommandlineParser.h \
 			src/CompletingEdit.h \
 			src/TeXHighlighter.h \
 			src/TeXDocks.h \
@@ -172,7 +183,9 @@ SOURCES	+=	src/main.cpp \
 			src/TWUtils.cpp \
 			src/TWScriptable.cpp \
 			src/TWScript.cpp \
+			src/TWScriptAPI.cpp \
 			src/TeXDocument.cpp \
+			src/CommandlineParser.cpp \
 			src/CompletingEdit.cpp \
 			src/TeXHighlighter.cpp \
 			src/TeXDocks.cpp \
@@ -209,3 +222,23 @@ TRANSLATIONS	+=	trans/TeXworks_af.ts \
 					trans/TeXworks_tr.ts \
 					trans/TeXworks_zh_CN.ts
 
+unix:!macx { # installation on Unix-ish platforms
+	isEmpty(INSTALL_PREFIX):INSTALL_PREFIX = /usr/local
+	isEmpty(BIN_DIR):BIN_DIR = $$INSTALL_PREFIX/bin
+	isEmpty(DATA_DIR):DATA_DIR = $$INSTALL_PREFIX/share
+	isEmpty(DOCS_DIR):DOCS_DIR = $$DATA_DIR/doc/texworks
+	isEmpty(ICON_DIR):ICON_DIR = $$DATA_DIR/pixmaps
+	isEmpty(MAN_DIR):MAN_DIR = $$DATA_DIR/man/man1
+	isEmpty(DESKTOP_DIR):DESKTOP_DIR = $$DATA_DIR/applications
+
+	target.path = $$BIN_DIR
+	documentation.files = COPYING README
+	documentation.path = $$DOCS_DIR
+	icon.files = res/images/TeXworks.png
+	icon.path = $$ICON_DIR
+	man.files = man/texworks.1
+	man.path = $$MAN_DIR
+	desktop.files = texworks.desktop
+	desktop.path = $$DESKTOP_DIR
+	INSTALLS = target documentation icon man desktop
+}
