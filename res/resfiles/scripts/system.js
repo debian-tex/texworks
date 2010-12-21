@@ -9,8 +9,11 @@
 
 var cmd = TW.target.selection;
 if (cmd != "") {
-  var result = TW.app.system(cmd);
-  if (result != null) {
-    TW.target.insertText(result);
+  var result = TW.system(cmd);
+  if (result.status == 0) {
+    TW.target.insertText(result.output);
+  }
+  else {
+    TW.target.insertText("ERROR: " + result.message);
   }
 }

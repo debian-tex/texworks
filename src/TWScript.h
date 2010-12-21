@@ -1,22 +1,22 @@
 /*
- This is part of TeXworks, an environment for working with TeX documents
- Copyright (C) 2007-2010  Stefan Löffler & Jonathan Kew
- 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- 
- For links to further information, or to contact the author,
- see <http://texworks.org/>.
+	This is part of TeXworks, an environment for working with TeX documents
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+	For links to further information, or to contact the author,
+	see <http://texworks.org/>.
 */
 
 #ifndef TWScript_H
@@ -144,7 +144,7 @@ public:
 	 */
 	const QKeySequence& getKeySequence() const { return m_KeySequence; }
 	
-	const TWScriptLanguageInterface * getScriptLanguageInterface() const { return m_Interface; }
+	const QObject * getScriptLanguagePlugin() const { return m_Plugin; }
 	
 	/** \brief Run the script (public method called from the TeXworks application).
 	 *
@@ -173,6 +173,9 @@ public:
 	Q_INVOKABLE bool hasGlobal(const QString& key) const { return m_globals.contains(key); }
 	Q_INVOKABLE QVariant getGlobal(const QString& key) const { return m_globals[key]; }
 
+	bool mayExecuteSystemCommand(const QString& cmd, QObject * context) const;
+	bool mayWriteFile(const QString& filename, QObject * context) const;
+	bool mayReadFile(const QString& filename, QObject * context) const;
 
 protected:
 	/** \brief	Constructor
@@ -180,7 +183,7 @@ protected:
 	 * Initializes a script object from the given file.
 	 * Does not invoke parseHeader(), so the script object may not actually be usable.
 	 */
-	TWScript(TWScriptLanguageInterface *interface, const QString& filename);
+	TWScript(QObject * plugin, const QString& filename);
 
 	/** \brief  Execute the actual script
 	 *
@@ -282,7 +285,7 @@ protected:
 	 */
 	static TWScript::MethodResult doCallMethod(QObject * obj, const QString& name, QVariantList & arguments, QVariant & result);
 	
-	TWScriptLanguageInterface * m_Interface; ///< pointer to the language interface for this script
+	QObject * m_Plugin; ///< pointer to the language interface for this script
 	QString m_Filename;	///< the name of the file the script is stored in
 	ScriptType m_Type;	///< the type of the script (ScriptUnknown indicates invalid)
 	QString m_Title;	///< the title (e.g. for display in menus)

@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2010  Jonathan Kew
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
 #ifndef TWUtils_H
 #define TWUtils_H
 
-#include <QDebug>
+#include "SvnRev.h"
+
 #include <QAction>
 #include <QString>
 #include <QList>
@@ -50,7 +51,7 @@ public:
 
 	// return the path to our "library" folder for resources like templates, completion lists, etc
 	static const QString getLibraryPath(const QString& subdir);
-	static void copyResources(const QDir& resDir, const QString& libPath);
+	static void updateLibraryResources(const QDir& srcRootDir, const QDir& destRootDir, const QString& libPath);
 
 	static void insertHelpMenuItems(QMenu* helpMenu);
 
@@ -69,6 +70,7 @@ public:
 	// list of filename filters for the Open/Save dialogs
 	static QStringList* filterList();
 	static void setDefaultFilters();
+	static QString chooseDefaultFilter(const QString & filename, const QStringList & filters);
 
 	// perform the updates to a menu; used by the documents to update their own menus
 	static void updateRecentFileActions(QObject *parent, QList<QAction*> &actions, QMenu *menu);
@@ -182,6 +184,33 @@ private:
 	QString f_program;
 	QStringList f_arguments;
 	bool f_showPdf;
+};
+
+class FileVersionDatabase
+{
+public:
+	struct Record {
+		QFileInfo filePath;
+		unsigned int version;
+		QByteArray hash;
+	};
+	
+	FileVersionDatabase() { }
+	virtual ~FileVersionDatabase() { }
+
+	static QByteArray hashForFile(const QString & path);
+
+	static FileVersionDatabase load(const QString & path);
+	bool save(const QString & path) const;
+	
+	void addFileRecord(const QFileInfo & file, const QByteArray & hash, const unsigned int version);
+	bool hasFileRecord(const QFileInfo & file) const;
+	Record getFileRecord(const QFileInfo & file) const;
+	const QList<Record> & getFileRecords() const { return m_records; }
+	QList<Record> & getFileRecords() { return m_records; }
+	
+private:
+	QList<Record> m_records;
 };
 
 #endif

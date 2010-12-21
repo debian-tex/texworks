@@ -1,22 +1,22 @@
 /*
- This is part of TeXworks, an environment for working with TeX documents
- Copyright (C) 2007-2010  Stefan Löffler & Jonathan Kew
- 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- 
- For links to further information, or to contact the author,
- see <http://texworks.org/>.
+	This is part of TeXworks, an environment for working with TeX documents
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+	For links to further information, or to contact the author,
+	see <http://texworks.org/>.
 */
 
 #ifndef TWScriptAPI_H
@@ -49,6 +49,12 @@ public:
 	
 	void SetResult(const QVariant& rval);
 	
+	enum SystemAccessResult {
+		SystemAccess_OK = 0,
+		SystemAccess_Failed,
+		SystemAccess_PermissionDenied
+	};
+	
 	// provide utility functions for scripts, implemented as methods on the TW object
 
 	// length of a string in UTF-16 code units, useful if script language uses a different encoding form
@@ -58,7 +64,43 @@ public:
 	// return the host platform name
 	Q_INVOKABLE
 	QString platform() const;
+	
+	// return the Qt version Tw was built against (0xMMNNPP)
+	Q_INVOKABLE
+	int getQtVersion() const { return QT_VERSION; }
 
+	// System access
+	// for script access to arbitrary commands
+	// Returned is a map with the fields:
+	// - "status" => one of SystemAccessResult
+	// - "result" => the return code of the command
+	// - "message" => warning/error message
+	// - "output" => the output of the command
+	Q_INVOKABLE
+	QMap<QString, QVariant> system(const QString& cmdline, bool waitForResult = true);
+
+	// launch file from the desktop with default app
+	// Returned is a map with the fields:
+	// - "status" => one of SystemAccessResult
+	// - "message" => warning/error message
+	// Note: SystemAccess_OK is no guarantee the file was actually opened, as
+	//       error reporting on this is system dependent
+	Q_INVOKABLE
+	QMap<QString, QVariant> launchFile(const QString& fileName) const;
+	
+	// Return type is one of SystemAccessResult
+	// Content is written in text-mode in utf8 encoding
+	Q_INVOKABLE
+	int writeFile(const QString& filename, const QString& content) const;
+
+	// Returned is a map with the fields:
+	// - "status" => one of SystemAccessResult
+	// - "result" => content of file
+	// - "message" => warning/error message
+	// Content is read in text-mode in utf8 encoding
+	Q_INVOKABLE
+	QMap<QString, QVariant> readFile(const QString& filename) const;
+	
 	// QMessageBox functions to display alerts
 	Q_INVOKABLE
 	int information(QWidget* parent,
