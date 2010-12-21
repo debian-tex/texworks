@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2010  Jonathan Kew
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -113,6 +113,7 @@ public:
 	Q_PROPERTY(QString consoleOutput READ consoleText STORED false);
 	Q_PROPERTY(QString text READ text STORED false);
     Q_PROPERTY(QString fileName READ fileName);
+	Q_PROPERTY(QString rootFileName READ getRootFilePath STORED false);
 	Q_PROPERTY(bool untitled READ untitled STORED false);
 	Q_PROPERTY(bool modified READ isModified WRITE setModified STORED false);
 	
@@ -120,6 +121,7 @@ signals:
 	void syncFromSource(const QString&, int, bool);
 	void activatedWindow(QWidget*);
 	void tagListUpdated();
+	void asyncFlashStatusBarMessage(const QString & msg, const int timeout = 0);
 
 protected:
 	virtual void changeEvent(QEvent *event);

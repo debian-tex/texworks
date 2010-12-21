@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2010  Jonathan Kew
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "PDFDocument.h"
 #include "PrefsDialog.h"
 #include "TemplateDialog.h"
+#include "TWSystemCmd.h"
 
 #include "TWVersion.h"
 #include "SvnRev.h"
@@ -76,13 +77,12 @@ const int kDefaultMaxRecentFiles = 20;
 TWApp *TWApp::theAppInstance = NULL;
 
 TWApp::TWApp(int &argc, char **argv)
-	: QApplication(argc, argv)
+	: ConfigurableApp(argc, argv)
 	, defaultCodec(NULL)
 	, binaryPaths(NULL)
 	, defaultBinPaths(NULL)
 	, engineList(NULL)
 	, defaultEngineIndex(0)
-	, settingsFormat(QSettings::NativeFormat)
 	, scriptManager(NULL)
 #ifdef Q_WS_WIN
 	, messageTargetWindow(NULL)
@@ -274,7 +274,7 @@ void TWApp::about()
 {
 	QString aboutText = tr("<p>%1 is a simple environment for editing, typesetting, and previewing TeX documents.</p>").arg(TEXWORKS_NAME);
 	aboutText += "<small>";
-	aboutText += "<p>&#xA9; 2007-2010 Jonathan Kew &amp; Stefan L&#xF6;ffler";
+	aboutText += "<p>&#xA9; 2007-2011  Jonathan Kew, Stefan L&#xF6;ffler";
 	aboutText += tr("<br>Version %1 r.%2 (%3)").arg(TEXWORKS_VERSION).arg(SVN_REVISION).arg(TW_BUILD_ID_STR);
 	aboutText += tr("<p>Distributed under the <a href=\"http://www.gnu.org/licenses/gpl-2.0.html\">GNU General Public License</a>, version 2.");
 	aboutText += tr("<p><a href=\"http://qt.nokia.com/\">Qt application framework</a> v%1 by Qt Software, a division of Nokia Corporation.").arg(qVersion());
@@ -307,7 +307,7 @@ void TWApp::goToHomePage()
 /* based on MSDN sample code from http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx */
 typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
 
-QString GetWindowsVersionString()
+QString TWApp::GetWindowsVersionString()
 {
 	OSVERSIONINFOEXA osvi;
 	SYSTEM_INFO si;
@@ -394,6 +394,19 @@ QString GetWindowsVersionString()
 	}
 	
 	return result;
+}
+
+unsigned int TWApp::GetWindowsVersion()
+{
+	OSVERSIONINFOEXA osvi;
+	
+	memset(&osvi, 0, sizeof(OSVERSIONINFOEXA));
+	
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXA);
+	if ( !GetVersionExA ((OSVERSIONINFOA *) &osvi) )
+		return 0;
+	
+	return (osvi.dwMajorVersion << 24) | (osvi.dwMinorVersion << 16) | (osvi.wServicePackMajor << 8) | (osvi.wServicePackMinor << 0);
 }
 #endif
 
@@ -511,6 +524,8 @@ void TWApp::writeToMailingList()
 
 void TWApp::launchAction()
 {
+	scriptManager->runHooks("TeXworksLaunched");
+
 	if (TeXDocument::documentList().size() > 0 || PDFDocument::documentList().size() > 0)
 		return;
 
@@ -548,6 +563,7 @@ void TWApp::newFile()
 	TeXDocument *doc = new TeXDocument;
 	doc->show();
 	doc->editor()->updateLineNumberAreaWidth(0);
+	doc->runHooks("NewFile");
 }
 
 void TWApp::newFromTemplate()
@@ -559,6 +575,7 @@ void TWApp::newFromTemplate()
 			doc->makeUntitled();
 			doc->selectWindow();
 			doc->editor()->updateLineNumberAreaWidth(0);
+			doc->runHooks("NewFromTemplate");
 		}
 	}
 }
@@ -572,36 +589,44 @@ void TWApp::openRecentFile()
 
 QStringList TWApp::getOpenFileNames(QString selectedFilter)
 {
+	QFileDialog::Options	options = 0;
+#ifdef Q_WS_WIN
+	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
+#endif
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString();
 	QStringList filters = *TWUtils::filterList();
 	if (!selectedFilter.isNull() && !filters.contains(selectedFilter))
 		filters.prepend(selectedFilter);
 	return QFileDialog::getOpenFileNames(NULL, QString(tr("Open File")), lastOpenDir,
-										 filters.join(";;"), &selectedFilter);
+										 filters.join(";;"), &selectedFilter, options);
 }
 
 QString TWApp::getOpenFileName(QString selectedFilter)
 {
+	QFileDialog::Options	options = 0;
+#ifdef Q_WS_WIN
+	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
+#endif
 	QSETTINGS_OBJECT(settings);
 	QString lastOpenDir = settings.value("openDialogDir").toString();
 	QStringList filters = *TWUtils::filterList();
 	if (!selectedFilter.isNull() && !filters.contains(selectedFilter))
 		filters.prepend(selectedFilter);
 	return QFileDialog::getOpenFileName(NULL, QString(tr("Open File")), lastOpenDir,
-										filters.join(";;"), &selectedFilter);
+										filters.join(";;"), &selectedFilter, options);
 }
 
 QString TWApp::getSaveFileName(const QString& defaultName)
 {
-#ifdef Q_WS_WIN
-	QFileDialog::Options	options = QFileDialog::DontUseNativeDialog;
-#else
 	QFileDialog::Options	options = 0;
+#ifdef Q_WS_WIN
+	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
 #endif
 	QString selectedFilter;
 	if (!TWUtils::filterList()->isEmpty())
-		selectedFilter = TWUtils::filterList()->last();
+		selectedFilter = TWUtils::chooseDefaultFilter(defaultName, *(TWUtils::filterList()));
+		
 	QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save File"), defaultName,
 													TWUtils::filterList()->join(";;"),
 													&selectedFilter, options);
@@ -1065,59 +1090,6 @@ void TWApp::showScriptsFolder()
 	QDesktopServices::openUrl(QUrl::fromLocalFile(TWUtils::getLibraryPath("scripts")));
 }
 
-QVariant TWApp::launchFile(const QString& fileName, bool waitForResult)
-{
-	// first check if command execution is permitted
-	QSETTINGS_OBJECT(settings);
-
-	// it's OK to "launch" a directory, as that doesn't normally execute anything
-	QFileInfo finfo(fileName);
-	if (finfo.isDir() || settings.value("allowSystemCommands", false).toBool())
-		return waitForResult ? QDesktopServices::openUrl(QUrl::fromLocalFile(fileName)) : QVariant();
-	else
-		return waitForResult ? QVariant(tr("System command execution is disabled (see Preferences)")) : QVariant();
-}
-
-QVariant TWApp::system(const QString& cmdline, bool waitForResult)
-{
-	// first check if command execution is permitted
-	QSETTINGS_OBJECT(settings);
-	if (settings.value("allowSystemCommands", false).toBool()) {
-		TWSystemCmd *process = new TWSystemCmd(this, waitForResult);
-		if (waitForResult) {
-			process->setProcessChannelMode(QProcess::MergedChannels);
-			process->start(cmdline);			
-			// make sure events (in particular GUI update events that should
-			// inform the user of the progress) are processed before we make a
-			// call that possibly blocks for a considerable amount of time
-			processEvents(QEventLoop::ExcludeUserInputEvents, 100);
-			if (!process->waitForStarted()) {
-				process->deleteLater();
-				return QVariant(tr("Failed to execute system command: %1").arg(cmdline));
-			}
-			processEvents(QEventLoop::ExcludeUserInputEvents, 100);
-			if (!process->waitForFinished()) {
-				process->deleteLater();
-				return QVariant(tr("Error executing system command: %1").arg(cmdline));
-			}
-			return QVariant(process->getResult());
-		}
-		else {
-			process->closeReadChannel(QProcess::StandardOutput);
-			process->closeReadChannel(QProcess::StandardError);
-			process->start(cmdline);
-			return QVariant();
-		}
-	}
-	else {
-		if (waitForResult) {
-			return QVariant(tr("System command execution is disabled (see Preferences)"));
-		}
-		// else result is null
-		return QVariant();
-	}
-}
-
 #ifdef Q_WS_WIN	// support for the Windows single-instance code
 #include <windows.h>
 
@@ -1252,3 +1224,56 @@ void TWApp::globalDestroyed(QObject * obj)
 		}
 	}
 }
+
+/*Q_INVOKABLE static*/
+int TWApp::getVersion()
+{
+	return (VER_MAJOR << 16) | (VER_MINOR << 8) | VER_BUGFIX;
+}
+
+//Q_INVOKABLE
+QMap<QString, QVariant> TWApp::openFileFromScript(const QString& fileName, QObject * scriptApiObj, const int pos /* = -1 */, const bool askUser /* = false */)
+{
+	QSETTINGS_OBJECT(settings);
+	QMap<QString, QVariant> retVal;
+	QObject * doc = NULL;
+	TWScript * script;
+	QFileInfo fi(fileName);
+	TWScriptAPI * scriptApi = qobject_cast<TWScriptAPI*>(scriptApiObj);
+
+	retVal["status"] = TWScriptAPI::SystemAccess_PermissionDenied;
+
+	// for absolute paths and full reading permissions, we don't have to care
+	// about peculiarities of the script; in that case, this even succeeds
+	// if no valid scriptApi is passed; otherwise, we need to investigate further
+	if (fi.isRelative() || !settings.value("allowScriptFileReading", false).toBool()) {
+		if (!scriptApi)
+			return retVal;
+		script = qobject_cast<TWScript*>(scriptApi->GetScript());
+		if (!script)
+			return retVal; // this should never happen
+	
+		// relative paths are taken to be relative to the folder containing the
+		// executing script's file
+		QDir scriptDir(QFileInfo(script->getFilename()).dir());
+		QString path = scriptDir.absoluteFilePath(fileName);
+	
+		if (!script->mayReadFile(path, scriptApi->GetTarget())) {
+			// Possibly ask user to override the permissions
+			if (!askUser)
+				return retVal;
+			if (QMessageBox::warning(qobject_cast<QWidget*>(scriptApi->GetTarget()), 
+				tr("Permission request"),
+				tr("The script \"%1\" is trying to open the file \"%2\" without sufficient permissions. Do you want to open the file?")\
+					.arg(script->getTitle()).arg(path),
+				QMessageBox::Yes | QMessageBox::No, QMessageBox::No
+			) != QMessageBox::Yes)
+				return retVal;
+		}
+	}
+	doc = openFile(fileName, pos);
+	retVal["result"] = QVariant::fromValue(doc);
+	retVal["status"] = (doc != NULL ? TWScriptAPI::SystemAccess_OK : TWScriptAPI::SystemAccess_Failed);
+	return retVal;
+}
+

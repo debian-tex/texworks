@@ -17,12 +17,12 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	patch -p1 < ./debian/patch-print
-	uudecode debian/document-print.png.enc
-	mv document-print.png res/tango/
+#	patch -p1 < ./debian/patch-print
+#	uudecode debian/document-print.png.enc
+#	mv document-print.png res/tango/
 	patch -p1 < ./debian/patch-plugin
 	patch -p1 < ./debian/patch-luatex
-	qmake-qt4
+#	qmake-qt4 
 
 	touch configure-stamp
 
@@ -33,11 +33,11 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE)
 	# Lua plugin
 	cd $(PLIDIR) && qmake-qt4 -after 'target.path = /usr/lib/texworks' && $(MAKE)
 	# Python plugin
 	cd $(PLIPYT) && qmake-qt4 -after 'target.path = /usr/lib/texworks' && $(MAKE)
+	qmake-qt4 && $(MAKE)
 	#docbook-to-man debian/texworks.sgml > texworks.1
 
 	touch $@
@@ -65,10 +65,10 @@ clean:
 	if [ -d $(PLIPYT)/rcc ]; then rmdir $(PLIPYT)/rcc; fi
 	if [ -d $(PLIPYT)/ui ]; then rmdir $(PLIPYT)/ui; fi
 	patch -NRp1 < ./debian/patch-luatex || true
-	patch -NRp1 < ./debian/patch-print || true
+#	patch -NRp1 < ./debian/patch-print || true
 	patch -NRp1 < ./debian/patch-plugin || true
 
-	rm -f document-print.png res/tango/document-print.png
+#	rm -f document-print.png res/tango/document-print.png
 	rm -f $(PLIDIR)/libTWLuaPlugin.so $(PLIDIR)/Makefile
 	rm -f $(PLIPYT)/libTWPythonPlugin.so $(PLIPYT)/Makefile
 

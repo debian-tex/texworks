@@ -1,22 +1,22 @@
 /*
- This is part of TeXworks, an environment for working with TeX documents
- Copyright (C) 2007-2010  Jonathan Kew
- 
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- 
- For links to further information, or to contact the author,
- see <http://texworks.org/>.
+	This is part of TeXworks, an environment for working with TeX documents
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+	For links to further information, or to contact the author,
+	see <http://texworks.org/>.
 */
 
 #ifndef TWScriptable_H
@@ -65,8 +65,8 @@ class JSScript : public TWScript
 	Q_INTERFACES(TWScript)
 	
 public:
-	JSScript(TWScriptLanguageInterface* interface, const QString& filename)
-		: TWScript(interface, filename) { }
+	JSScript(QObject * plugin, const QString& filename)
+		: TWScript(plugin, filename) { }
 		
 	virtual bool parseHeader() { return doParseHeader("", "", "//"); };
 
@@ -108,7 +108,15 @@ public:
 	TWScriptList* getHookScripts() { return &m_Hooks; }
 	QList<TWScript*> getHookScripts(const QString& hook) const;
 
-	const QList<TWScriptLanguageInterface*>& languages() const { return scriptLanguages; }
+	bool runScript(QObject * script, QObject * context, QVariant & result, TWScript::ScriptType scriptType = TWScript::ScriptStandalone);
+	// Convenience overload if no result is required
+	bool runScript(QObject * script, QObject * context, TWScript::ScriptType scriptType = TWScript::ScriptStandalone) {
+		QVariant result;
+		return runScript(script, context, result, scriptType);
+	}
+	void runHooks(const QString& hookName, QObject * context = NULL);
+
+	const QList<QObject*>& languages() const { return scriptLanguages; }
 
 	void reloadScripts(bool forceAll = false);
 	void saveDisabledList();
@@ -126,7 +134,7 @@ private:
 	TWScriptList m_Scripts; // hierarchical list of standalone scripts
 	TWScriptList m_Hooks; // hierarchical list of hook scripts
 
-	QList<TWScriptLanguageInterface*> scriptLanguages;
+	QList<QObject*> scriptLanguages;
 };
 
 // parent class for document windows (i.e. both the source and PDF window types);
@@ -154,6 +162,9 @@ private slots:
 	
 	void hideFloatersUnlessThis(QWidget* currWindow);
 	
+protected slots:
+	void scriptDeleted(QObject * obj);
+	
 protected:
 	void initScriptable(QMenu* scriptsMenu,
 						QAction* aboutScriptsAction,
@@ -162,6 +173,7 @@ protected:
 						QAction* showScriptsFolderAction);
 
 	int addScriptsToMenu(QMenu *menu, TWScriptList *scripts);
+	void removeScriptsFromMenu(QMenu *menu, int startIndex = 0);
 
 	void showFloaters();
 
@@ -171,54 +183,6 @@ private:
 	int staticScriptMenuItemCount;
 
 	QList<QWidget*> latentVisibleWidgets;
-};
-
-
-class TWSystemCmd : public QProcess {
-	Q_OBJECT
-	
-public:
-	TWSystemCmd(QObject* parent, bool isOutputWanted = true)
-		: QProcess(parent), wantOutput(isOutputWanted)
-	{
-		connect(this, SIGNAL(readyReadStandardOutput()), this, SLOT(processOutput()));
-		connect(this, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processFinished(int, QProcess::ExitStatus)));
-		connect(this, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
-	}
-	virtual ~TWSystemCmd() {}
-	
-	QString getResult() { return result; }
-	
-private slots:
-	void processError(QProcess::ProcessError error) {
-		if (wantOutput)
-			result = tr("ERROR: failure code %1").arg(error);
-		deleteLater();
-	}
-	void processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-		if (wantOutput) {
-			if (exitStatus == QProcess::NormalExit) {
-				if (bytesAvailable() > 0) {
-					QByteArray ba = readAllStandardOutput();
-					result += QString::fromLocal8Bit(ba);
-				}
-			}
-			else {
-				result = tr("ERROR: exit code %1").arg(exitCode);
-			}
-		}
-		deleteLater();
-	}
-	void processOutput() {
-		if (wantOutput && bytesAvailable() > 0) {
-			QByteArray ba = readAllStandardOutput();
-			result += QString::fromLocal8Bit(ba);
-		}
-	}
-
-private:
-	bool wantOutput;
-	QString result;
 };
 
 #endif

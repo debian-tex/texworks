@@ -1,6 +1,6 @@
 --- texworks-0.0.1~svn337.orig/src/TeXDocument.h
 +++ texworks-0.0.1~svn337/src/TeXDocument.h
-@@ -133,6 +133,7 @@
+@@ -135,6 +135,7 @@
  public slots:
  	void typeset();
  	void interrupt();
@@ -291,7 +291,7 @@
  
  	connect(actionRemove_Aux_Files, SIGNAL(triggered()), this, SLOT(removeAuxFiles()));
  
-@@ -2844,3 +2847,26 @@
+@@ -2907,3 +2910,26 @@
  		pdfDoc = NULL;
  	}
  }
@@ -329,18 +329,12 @@
      </rect>
     </property>
     <widget class="QMenu" name="menuHelp">
-@@ -43,6 +43,7 @@
-     <addaction name="actionNew_from_Template"/>
-     <addaction name="actionOpen"/>
-     <addaction name="actionOpen_Recent"/>
-+    <addaction name="actionPrintPDF"/>
-     <addaction name="separator"/>
-     <addaction name="actionClose"/>
-     <addaction name="separator"/>
-@@ -729,6 +730,18 @@
-     <enum>QAction::NoRole</enum>
+@@ -736,6 +736,18 @@
     </property>
-   </action>
+    <property name="shortcut">
+     <string>Ctrl+P</string>
++   </property>
++  </action>
 +  <action name="actionPrintPDF">
 +   <property name="icon">
 +    <iconset resource="../res/resources.qrc">
@@ -351,14 +345,12 @@
 +   </property>
 +   <property name="shortcut">
 +    <string>Ctrl+P</string>
-+   </property>
-+  </action>
+    </property>
+   </action>
   </widget>
-  <resources>
-   <include location="../res/resources.qrc"/>
 --- texworks-0.0.1~svn337.orig/src/PDFDocument.h
 +++ texworks-0.0.1~svn337/src/PDFDocument.h
-@@ -251,6 +251,7 @@
+@@ -252,6 +252,7 @@
  public slots:
  	void texClosed(QObject *obj);
  	void reload();

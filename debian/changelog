@@ -1,3 +1,11 @@
+texworks (0.3~svn741-1) unstable; urgency=low
+
+  * New Upstream Release. (Rev. 741)
+  * Removed printing support.  Now it will offer to open the document
+    in the system's default viewer.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Tue, 21 Dec 2010 21:17:41 +0900
+
 texworks (0.3~svn671-2) unstable; urgency=low
 
   * Uploaded to unstable.

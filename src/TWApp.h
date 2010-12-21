@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2010  Jonathan Kew
+	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@
 
 #include "TWUtils.h"
 #include "TWScriptable.h"
+#include "ConfigurableApp.h"
+#include "TWScriptAPI.h"
 
 #ifdef Q_WS_WIN
 #define PATH_LIST_SEP   ';'
@@ -63,17 +65,7 @@ const int kNewWindowOffset = 32;
 #define TW_OPEN_FILE_MSG		(('T' << 8) + 'W')	// just a small sanity check for the receiver
 #endif
 
-#ifdef Q_WS_MAC
-#define QSETTINGS_OBJECT(s) \
-			QSettings s(TWApp::instance()->getSettingsFormat(), QSettings::UserScope, \
-						TWApp::instance()->organizationDomain(), TWApp::instance()->applicationName())
-#else
-#define QSETTINGS_OBJECT(s) \
-			QSettings s(TWApp::instance()->getSettingsFormat(), QSettings::UserScope, \
-						TWApp::instance()->organizationName(), TWApp::instance()->applicationName())
-#endif
-
-class TWApp : public QApplication
+class TWApp : public ConfigurableApp
 {
 	Q_OBJECT
 
@@ -113,25 +105,30 @@ public:
 
 	void openUrl(const QUrl& url);
 
-	QSettings::Format getSettingsFormat() const { return settingsFormat; }
-	void setSettingsFormat(QSettings::Format fmt) { settingsFormat = fmt; }
-	
 	static TWApp *instance();
 	
 	QString getPortableLibPath() const { return portableLibPath; }
 
 	TWScriptManager* getScriptManager() { return scriptManager; }
 
-	void updateScriptsMenus();
-
 #ifdef Q_WS_WIN
 	void createMessageTarget(QWidget* aWindow);
+	static QString GetWindowsVersionString();
+	static unsigned int GetWindowsVersion();
 #endif
 #ifdef Q_WS_X11
 	void bringToFront();
 #endif
 
+	QObject* openFile(const QString& fileName, const int pos = -1);
+	Q_INVOKABLE
+	QMap<QString, QVariant> openFileFromScript(const QString& fileName, QObject * scriptApiObj, const int pos = -1, const bool askUser = false);
+
 	Q_INVOKABLE QList<QVariant> getOpenWindows() const;
+	
+	// return the version of Tw (0xMMNNPP)
+	Q_INVOKABLE
+	static int getVersion();
 
 	Q_PROPERTY(QString clipboard READ clipboardText WRITE setClipboardText)
 
@@ -198,17 +195,9 @@ public slots:
 	void stackWindows();
 	void tileWindows();
 
-	QObject* openFile(const QString& fileName, const int pos = -1);
-
 	QString getOpenFileName(QString selectedFilter = QString());
 	QStringList getOpenFileNames(QString selectedFilter = QString());
 	QString getSaveFileName(const QString& defaultName);
-	
-	// for script access to arbitrary commands
-	QVariant system(const QString& cmdline, bool waitForResult = true);
-
-	// launch file from the desktop with default app
-	QVariant launchFile(const QString& fileName, bool waitForResult = true);
 	
 signals:
 	// emitted in response to updateRecentFileActions(); documents can listen to this if they have a recent files menu
@@ -258,8 +247,6 @@ private:
 	QString portableLibPath;
 
 	QList<QTranslator*> translators;
-
-	QSettings::Format settingsFormat;
 	
 	TWScriptManager *scriptManager;
 

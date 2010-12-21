@@ -1,5 +1,5 @@
 #	This is part of TeXworks, an environment for working with TeX documents
-#	Copyright (C) 2007-09  Stefan Löffler and Jonathan Kew
+#	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
 #
 #	This program is free software; you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -63,7 +63,9 @@ win32 { # paths here are specific to my setup
 # Input
 HEADERS	+=	TWLuaPlugin.h \
 			../../src/TWScript.h \
-			../../src/TWScriptAPI.h
+			../../src/TWScriptAPI.h \
+			../../src/ConfigurableApp.h \
+			../../src/TWSystemCmd.h
 
 SOURCES	+=	TWLuaPlugin.cpp \
 			../../src/TWScript.cpp \
