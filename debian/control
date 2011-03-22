@@ -25,7 +25,6 @@ Description: An environment for authoring TeX (LaTeX, ConTeXt, etc) documents
 Package: texworks-scripting-lua
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, texworks
-Recommends: texworks
 Description: Plugin to bring Lua scripting to TeXworks
  .
  For further information, see http://tug.org/texworks/
@@ -33,7 +32,6 @@ Description: Plugin to bring Lua scripting to TeXworks
 Package: texworks-scripting-python
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, texworks
-Recommends: texworks
 Description: Plugin to bring Python scripting to TeXworks
  .
  For further information, see http://tug.org/texworks/

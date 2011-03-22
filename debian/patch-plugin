@@ -9,7 +9,7 @@
  
  # comment this out if poppler's xpdf headers are not available on the build system
  QMAKE_CXXFLAGS += -DHAVE_POPPLER_XPDF_HEADERS
-@@ -95,8 +95,8 @@
+@@ -94,8 +94,8 @@
  
  	# Enclose the path in \\\" (which later gets expanded to \", which in turn
  	# gets expanded to " in the c++ code)
