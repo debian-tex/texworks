@@ -91,7 +91,6 @@ unix:!macx { # on Unix-ish platforms we rely on pkgconfig, and use dbus
 	CONFIG		+= link_pkgconfig
 	PKGCONFIG	+= hunspell
 	PKGCONFIG	+= poppler-qt4
-	PKGCONFIG	+= dbus-1
 
 	# Enclose the path in \\\" (which later gets expanded to \", which in turn
 	# gets expanded to " in the c++ code)
@@ -212,6 +211,7 @@ TRANSLATIONS	+=	trans/TeXworks_af.ts \
 					trans/TeXworks_de.ts \
 					trans/TeXworks_es.ts \
 					trans/TeXworks_fa.ts \
+					trans/TeXworks_fo.ts \
 					trans/TeXworks_fr.ts \
 					trans/TeXworks_it.ts \
 					trans/TeXworks_ja.ts \
