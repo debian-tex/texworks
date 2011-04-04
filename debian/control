@@ -2,14 +2,14 @@ Source: texworks
 Section: editors
 Priority: extra
 Maintainer: Atsuhito KOHDA <kohda@debian.org>
-Build-Depends: debhelper (>= 7), libhunspell-dev, qt4-dev-tools, libpoppler-qt4-dev, libdbus-1-dev, sharutils, liblua5.1-0-dev, python2.6-dev
+Build-Depends: debhelper (>= 7), libhunspell-dev, qt4-dev-tools, libpoppler-qt4-dev, libdbus-1-dev, liblua5.1-0-dev, python-dev
 Standards-Version: 3.8.3
 Homepage: http://www.tug.org/texworks/
 
 Package: texworks
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: texlive-latex-base
+Recommends: texlive-latex-base, texworks-help-en
 Suggests: texlive-xetex, texworks-scripting-lua, texworks-scripting-python
 Description: An environment for authoring TeX (LaTeX, ConTeXt, etc) documents
  An environment for authoring TeX (LaTeX, ConTeXt, etc) documents, with
@@ -35,3 +35,10 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, texworks
 Description: Plugin to bring Python scripting to TeXworks
  .
  For further information, see http://tug.org/texworks/
+
+Package: texworks-help-en
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: texworks
+Description: English help files for TeXworks
+ For furter information, see http://tug.org/texworks/

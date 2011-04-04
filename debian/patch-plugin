@@ -15,7 +15,7 @@
  	# gets expanded to " in the c++ code)
 -	QMAKE_CXXFLAGS += -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\"
 -	QMAKE_CXXFLAGS += -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\"
-+	QMAKE_CXXFLAGS += -DTW_HELPPATH=\\\"/usr/share/doc/texworks-help\\\"
++	QMAKE_CXXFLAGS += -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\"
 +	QMAKE_CXXFLAGS += -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\"
  	QMAKE_CXXFLAGS += -DTW_DICPATH=\\\"/usr/share/myspell/dicts\\\"
  }

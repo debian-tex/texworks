@@ -89,6 +89,8 @@ install: build
 	$(CURDIR)/debian/texworks-scripting-lua/usr/lib/texworks
 	install -m 755 -p "$(PLIPYT)/libTWPythonPlugin.so" \
 	$(CURDIR)/debian/texworks-scripting-python/usr/lib/texworks
+	# Install the manual
+	cp -r manual $(CURDIR)/debian/texworks-help-en/usr/share/texworks-help/TeXworks-manual
 
 # Build architecture-independent files here.
 binary-indep: install

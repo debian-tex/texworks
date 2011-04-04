@@ -1,3 +1,13 @@
+texworks (0.4.0-2) unstable; urgency=low
+
+  * Added english manual.
+  * Updated Build-Depends; removed sharutils and replaced python2.6-dev with
+    python-dev
+  * Removed obsolete debian/patch-print and debian/document-print.png.enc
+  * Added texworks-help-en package which included manual for texworks.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Mon, 04 Apr 2011 13:42:12 +0900
+
 texworks (0.4.0-1) unstable; urgency=low
 
   * New Upstream Release, now 0.4.0. (Rev. 759).
