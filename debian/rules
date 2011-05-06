@@ -17,10 +17,6 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-#	patch -p1 < ./debian/patch-print
-#	uudecode debian/document-print.png.enc
-#	mv document-print.png res/tango/
-	patch -p1 < ./debian/patch-plugin
 	patch -p1 < ./debian/patch-luatex
 #	qmake-qt4 
 
@@ -34,10 +30,24 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	# Lua plugin
-	cd $(PLIDIR) && qmake-qt4 -after 'target.path = /usr/lib/texworks' && $(MAKE)
+	cd $(PLIDIR) && qmake-qt4 -after \
+	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\"' \
+	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\"' \
+	'target.path = /usr/lib/texworks' \
+	&& $(MAKE)
 	# Python plugin
-	cd $(PLIPYT) && qmake-qt4 -after 'target.path = /usr/lib/texworks' && $(MAKE)
-	qmake-qt4 && $(MAKE)
+	cd $(PLIPYT) && qmake-qt4 -after \
+	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\"' \
+	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\"' \
+	'target.path = /usr/lib/texworks' \
+	&& $(MAKE)
+	qmake-qt4 \
+	'INSTALL_PREFIX = /usr' \
+	-after \
+	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\"' \
+	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\"' \
+	TeXworks.pro \
+	&& $(MAKE)
 	#docbook-to-man debian/texworks.sgml > texworks.1
 
 	touch $@
@@ -65,10 +75,7 @@ clean:
 	if [ -d $(PLIPYT)/rcc ]; then rmdir $(PLIPYT)/rcc; fi
 	if [ -d $(PLIPYT)/ui ]; then rmdir $(PLIPYT)/ui; fi
 	patch -NRp1 < ./debian/patch-luatex || true
-#	patch -NRp1 < ./debian/patch-print || true
-	patch -NRp1 < ./debian/patch-plugin || true
 
-#	rm -f document-print.png res/tango/document-print.png
 	rm -f $(PLIDIR)/libTWLuaPlugin.so $(PLIDIR)/Makefile
 	rm -f $(PLIPYT)/libTWPythonPlugin.so $(PLIPYT)/Makefile
 
@@ -81,16 +88,21 @@ install: build
 	dh_installdirs -A
 
 	# Add here commands to install the package into debian/texworks.
-#	$(MAKE) DESTDIR=$(CURDIR)/debian/texworks install
-	install -m 755 -p ./texworks $(CURDIR)/debian/texworks/usr/bin
-	cp debian/texworks.xpm $(USDIR)/pixmaps/
-	cp debian/texworks.desktop $(USDIR)/applications/
+	qmake-qt4 \
+	'INSTALL_PREFIX = /usr' \
+	-after \
+	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\"' \
+	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\"' \
+	TeXworks.pro \
+	&& $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/texworks install
+	# unnecessary file(lintial warning)
+	rm -f $(CURDIR)/debian/texworks/usr/share/doc/texworks/COPYING*
 	install -m 755 -p "$(PLIDIR)/libTWLuaPlugin.so" \
 	$(CURDIR)/debian/texworks-scripting-lua/usr/lib/texworks
 	install -m 755 -p "$(PLIPYT)/libTWPythonPlugin.so" \
 	$(CURDIR)/debian/texworks-scripting-python/usr/lib/texworks
 	# Install the manual
-	cp -r manual $(CURDIR)/debian/texworks-help-en/usr/share/texworks-help/TeXworks-manual
+#	cp -r manual $(CURDIR)/debian/texworks-help-en/usr/share/texworks-help/TeXworks-manual
 
 # Build architecture-independent files here.
 binary-indep: install
@@ -114,7 +126,7 @@ binary-arch: install
 #	dh_installinit
 #	dh_installcron
 #	dh_installinfo
-	dh_installman debian/texworks.1
+	dh_installman 
 	dh_link
 	dh_strip
 	dh_compress

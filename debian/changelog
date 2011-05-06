@@ -1,3 +1,15 @@
+texworks (0.5~svn808-1) unstable; urgency=low
+
+  * New Upstream Release (rev. 808).  (Closes: #625543)
+  * Fixed/Updated copyright file; added Stefan Löffler as Upstream Authors.
+  * Updated README.Debian a bit.
+  * Changed to use texworks.desktop, texworks.1 and .png files
+    of source trees instead of obsolete ones under debian.
+    To do so, refined rules file a bit.
+  * Updated control file and removed unnecessary texworks.menu and COPYING.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Fri, 06 May 2011 12:54:27 +0900
+
 texworks (0.4.0-2) unstable; urgency=low
 
   * Added english manual.
