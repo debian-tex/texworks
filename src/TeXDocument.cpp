@@ -275,7 +275,7 @@ void TeXDocument::init()
 	setLineNumbers(b);
 	
 	highlighter = new TeXHighlighter(textEdit->document(), this);
-	connect(textEdit, SIGNAL(rehighlight()), highlighter, SLOT(rehighlight()));
+	connect(textEdit, SIGNAL(rehighlight()), highlighter, SLOT(rehighlight()), Qt::QueuedConnection);
 
 	QString syntaxOption = settings.value("syntaxColoring").toString();
 	QStringList options = TeXHighlighter::syntaxOptions();
@@ -287,6 +287,8 @@ void TeXDocument::init()
 
 	QActionGroup *syntaxGroup = new QActionGroup(this);
 	syntaxGroup->addAction(actionSyntaxColoring_None);
+	if (syntaxOption == "")
+		QTimer::singleShot(1, actionSyntaxColoring_None, SLOT(trigger()));
 
 	int index = 0;
 	foreach (const QString& opt, options) {
@@ -295,8 +297,7 @@ void TeXDocument::init()
 		syntaxGroup->addAction(action);
 		syntaxMapper->setMapping(action, index);
 		if (opt == syntaxOption) {
-			action->setChecked(true);
-			setSyntaxColoring(index);
+			QTimer::singleShot(1, action, SLOT(trigger()));
 		}
 		++index;
 	}
@@ -402,7 +403,7 @@ void TeXDocument::init()
 		mapper->setMapping(act, dict);
 		group->addAction(act);
 		if (TWUtils::getDictionaryList()->values(dictKey).contains(defDict))
-			act->trigger();
+			QTimer::singleShot(1, act, SLOT(trigger()));
 		dictActions << act;
 	}
 	qSort(dictActions.begin(), dictActions.end(), dictActionLessThan);
@@ -501,7 +502,7 @@ void TeXDocument::setSpellcheckLanguage(const QString& lang)
 			}
 			if(found) break;
 		}
-		chosen->trigger();
+		QTimer::singleShot(1, chosen, SLOT(trigger()));
 	}
 }
 
@@ -521,7 +522,7 @@ void TeXDocument::newFile()
 {
 	TeXDocument *doc = new TeXDocument;
 	doc->selectWindow();
-	doc->textEdit->updateLineNumberAreaWidth(0);
+	QTimer::singleShot(1, doc->textEdit, SLOT(updateLineNumberAreaWidth()));
 	doc->runHooks("NewFile");
 }
 
@@ -540,7 +541,7 @@ void TeXDocument::newFromTemplate()
 		if (doc != NULL) {
 			doc->makeUntitled();
 			doc->selectWindow();
-			doc->textEdit->updateLineNumberAreaWidth(0);
+			QTimer::singleShot(1, doc->textEdit, SLOT(updateLineNumberAreaWidth()));
 			doc->runHooks("NewFromTemplate");
 		}
 	}
@@ -1064,7 +1065,7 @@ void TeXDocument::loadFile(const QString &fileName, bool asTemplate, bool inBack
 		sideBySide();
 	
 	show(); // ensure window is shown before the PDF, if opening a new doc
-	editor()->updateLineNumberAreaWidth(0);
+	QTimer::singleShot(1, editor(), SLOT(updateLineNumberAreaWidth()));
 
 	if (pdfDoc)
 		pdfDoc->show();
@@ -1343,10 +1344,18 @@ void TeXDocument::setCurrentFile(const QString &fileName)
 	isUntitled = curFile.isEmpty();
 	if (isUntitled) {
 		curFile = tr("untitled-%1.tex").arg(sequenceNumber++);
-		setWindowIcon(QIcon());
+		setWindowIcon(QApplication::windowIcon());
 	}
-	else
-		setWindowIcon(QIcon(":/images/images/TeXworks-doc.png"));
+	else {
+		QIcon winIcon;
+#ifdef Q_WS_X11
+		// The Compiz window manager doesn't seem to support icons larger than
+		// 128x128, so we add a suitable one first
+		winIcon.addFile(":/images/images/TeXworks-doc-128.png");
+#endif
+		winIcon.addFile(":/images/images/TeXworks-doc.png");
+		setWindowIcon(winIcon);
+	}
 
 	textEdit->document()->setModified(false);
 	setWindowModified(false);
@@ -1961,9 +1970,14 @@ void TeXDocument::setSyntaxColoring(int index)
 void TeXDocument::setSyntaxColoringMode(const QString& mode)
 {
 	QList<QAction*> actionList = menuSyntax_Coloring->actions();
+	
+	if (mode == "") {
+		QTimer::singleShot(1, actionSyntaxColoring_None, SLOT(trigger()));
+		return;
+	}
 	for (int i = 0; i < actionList.count(); ++i) {
 		if (actionList[i]->isCheckable() && actionList[i]->text().compare(mode, Qt::CaseInsensitive) == 0) {
-			actionList[i]->trigger();
+			QTimer::singleShot(1, actionList[i], SLOT(trigger()));
 			return;
 		}
 	}
