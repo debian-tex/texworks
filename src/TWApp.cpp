@@ -104,8 +104,15 @@ TWApp::~TWApp()
 
 void TWApp::init()
 {
-	setWindowIcon(QIcon(":/images/images/TeXworks.png"));
-
+	QIcon appIcon;
+#ifdef Q_WS_X11
+	// The Compiz window manager doesn't seem to support icons larger than
+	// 128x128, so we add a suitable one first
+	appIcon.addFile(":/images/images/TeXworks-128.png");
+#endif
+	appIcon.addFile(":/images/images/TeXworks.png");
+	setWindowIcon(appIcon);
+	
 	setOrganizationName("TUG");
 	setOrganizationDomain("tug.org");
 	setApplicationName(TEXWORKS_NAME);
@@ -565,7 +572,7 @@ void TWApp::newFile()
 {
 	TeXDocument *doc = new TeXDocument;
 	doc->show();
-	doc->editor()->updateLineNumberAreaWidth(0);
+	QTimer::singleShot(1, doc->editor(), SLOT(updateLineNumberAreaWidth()));
 	doc->runHooks("NewFile");
 }
 
@@ -577,7 +584,7 @@ void TWApp::newFromTemplate()
 		if (doc != NULL) {
 			doc->makeUntitled();
 			doc->selectWindow();
-			doc->editor()->updateLineNumberAreaWidth(0);
+			QTimer::singleShot(1, doc->editor(), SLOT(updateLineNumberAreaWidth()));
 			doc->runHooks("NewFromTemplate");
 		}
 	}
@@ -832,8 +839,9 @@ void TWApp::setDefaultEngineList()
 		<< Engine("pdfLaTeX", "pdflatex" EXE, QStringList("$synctexoption") << "$fullname", true)
 		<< Engine("XeTeX", "xetex" EXE, QStringList("$synctexoption") << "$fullname", true)
 		<< Engine("XeLaTeX", "xelatex" EXE, QStringList("$synctexoption") << "$fullname", true)
-		<< Engine("ConTeXt (MKII)", "texmfstart" EXE, QStringList("texexec") << "--synctex" << "$fullname", true)
-		<< Engine("XeConTeXt (MKII)", "texmfstart" EXE, QStringList("texexec") << "--xtx" << "--synctex" << "$fullname", true)
+		<< Engine("ConTeXt (LuaTeX)", "context" EXE, QStringList("--synctex") << "$fullname", true)
+		<< Engine("ConTeXt (pdfTeX)", "texexec" EXE, QStringList("--synctex") << "$fullname", true)
+		<< Engine("ConTeXt (XeTeX)", "texexec" EXE, QStringList("--synctex") << "--xtx" << "$fullname", true)
 		<< Engine("BibTeX", "bibtex" EXE, QStringList("$basename"), false)
 		<< Engine("MakeIndex", "makeindex" EXE, QStringList("$basename"), false);
 	defaultEngineIndex = 1;

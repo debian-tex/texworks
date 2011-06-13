@@ -1,3 +1,11 @@
+texworks (0.5~svn843-1) unstable; urgency=low
+
+  * New upstream release (rev. 846).
+    I tested to build the package on AMD64 and found no problem.
+    (Closes: #628276)
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Mon, 13 Jun 2011 17:50:43 +0900
+
 texworks (0.5~svn808-1) unstable; urgency=low
 
   * New Upstream Release (rev. 808).  (Closes: #625543)
