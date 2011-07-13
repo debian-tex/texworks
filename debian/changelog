@@ -1,3 +1,10 @@
+texworks (0.5~svn862-1) unstable; urgency=low
+
+  * New upstream release (rev 862).
+  * Installed manual borrowed from the latest stable version 0.4.3
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Thu, 14 Jul 2011 08:24:37 +0900
+
 texworks (0.5~svn843-1) unstable; urgency=low
 
   * New upstream release (rev. 846).

@@ -17,7 +17,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-#	patch -p1 < ./debian/patch-luatex
+	patch -p0 < ./debian/patch-luatex
 #	qmake-qt4 
 
 	touch configure-stamp
@@ -74,7 +74,7 @@ clean:
 	if [ -d $(PLIPYT)/obj ]; then rmdir $(PLIPYT)/obj; fi
 	if [ -d $(PLIPYT)/rcc ]; then rmdir $(PLIPYT)/rcc; fi
 	if [ -d $(PLIPYT)/ui ]; then rmdir $(PLIPYT)/ui; fi
-#	patch -NRp1 < ./debian/patch-luatex || true
+	patch -NRp0 < ./debian/patch-luatex || true
 
 	rm -f $(PLIDIR)/libTWLuaPlugin.so $(PLIDIR)/Makefile
 	rm -f $(PLIPYT)/libTWPythonPlugin.so $(PLIPYT)/Makefile
@@ -102,7 +102,8 @@ install: build
 	install -m 755 -p "$(PLIPYT)/libTWPythonPlugin.so" \
 	$(CURDIR)/debian/texworks-scripting-python/usr/lib/texworks
 	# Install the manual
-#	cp -r manual $(CURDIR)/debian/texworks-help-en/usr/share/texworks-help/TeXworks-manual
+	rm -rf $(CURDIR)/debian/texworks/usr/share/texworks-help/en
+	cp -r manual $(CURDIR)/debian/texworks-help-en/usr/share/texworks-help/TeXworks-manual
 
 # Build architecture-independent files here.
 binary-indep: install

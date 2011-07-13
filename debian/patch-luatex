@@ -1,11 +1,11 @@
---- texworks-0.3/src/TWApp.cpp.orig	2010-02-22 13:19:33.000000000 +0900
-+++ texworks-0.3/src/TWApp.cpp	2010-02-22 13:20:27.000000000 +0900
-@@ -832,6 +832,8 @@
+--- src/TWApp.cpp.org	2011-06-14 16:30:33.000000000 +0900
++++ src/TWApp.cpp	2011-06-14 16:33:43.000000000 +0900
+@@ -839,6 +839,8 @@
  		<< Engine("pdfLaTeX", "pdflatex" EXE, QStringList("$synctexoption") << "$fullname", true)
  		<< Engine("XeTeX", "xetex" EXE, QStringList("$synctexoption") << "$fullname", true)
  		<< Engine("XeLaTeX", "xelatex" EXE, QStringList("$synctexoption") << "$fullname", true)
 +		<< Engine("LuaTeX", "luatex" EXE, QStringList("$synctexoption") << "$fullname", true)
 +		<< Engine("LuaLaTeX", "lualatex" EXE, QStringList("$synctexoption") << "$fullname", true)
- 		<< Engine("ConTeXt (MKII)", "texmfstart" EXE, QStringList("texexec") << "--synctex" << "$fullname", true)
- 		<< Engine("XeConTeXt (MKII)", "texmfstart" EXE, QStringList("texexec") << "--xtx" << "--synctex" << "$fullname", true)
- 		<< Engine("BibTeX", "bibtex" EXE, QStringList("$basename"), false)
+ 		<< Engine("ConTeXt (LuaTeX)", "context" EXE, QStringList("--synctex") << "$fullname", true)
+ 		<< Engine("ConTeXt (pdfTeX)", "texexec" EXE, QStringList("--synctex") << "$fullname", true)
+ 		<< Engine("ConTeXt (XeTeX)", "texexec" EXE, QStringList("--synctex") << "--xtx" << "$fullname", true)

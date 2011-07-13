@@ -35,3 +35,10 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, texworks
 Description: Plugin to bring Python scripting to TeXworks
  .
  For further information, see http://tug.org/texworks/
+
+Package: texworks-help-en
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: texworks
+Description: English help files for TeXworks
+ For furter information, see http://tug.org/texworks/

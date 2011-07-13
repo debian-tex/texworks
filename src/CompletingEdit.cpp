@@ -77,6 +77,7 @@ CompletingEdit::CompletingEdit(QWidget *parent)
 
 		QSETTINGS_OBJECT(settings);
 		highlightCurrentLine = settings.value("highlightCurrentLine", true).toBool();
+		autocompleteEnabled = settings.value("autocompleteEnabled", true).toBool();
 	}
 		
 	loadIndentModes();
@@ -87,14 +88,14 @@ CompletingEdit::CompletingEdit(QWidget *parent)
 
 	lineNumberArea = new LineNumberArea(this);
 	
-	connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)), Qt::QueuedConnection);
+	connect(document(), SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
 	connect(this, SIGNAL(updateRequest(const QRect&, int)), this, SLOT(updateLineNumberArea(const QRect&, int)));
 	connect(this, SIGNAL(textChanged()), lineNumberArea, SLOT(update()));
 
 	connect(TWApp::instance(), SIGNAL(highlightLineOptionChanged()), this, SLOT(resetExtraSelections()));
 	
 	cursorPositionChangedSlot();
-	updateLineNumberAreaWidth();
+	updateLineNumberAreaWidth(0);
 }
 
 CompletingEdit::~CompletingEdit()
@@ -439,7 +440,7 @@ void CompletingEdit::keyPressEvent(QKeyEvent *e)
 {
 	// Shortcut key for command completion
 	bool isShortcut = (e->key() == Qt::Key_Tab || e->key() == Qt::Key_Backtab);
-	if (isShortcut) {
+	if (isShortcut && autocompleteEnabled) {
 		handleCompletionShortcut(e);
 		return;
 	}
@@ -691,8 +692,18 @@ void CompletingEdit::handleCompletionShortcut(QKeyEvent *e)
 			QApplication::beep();
 		return;
 	}
+
+	// if we are at the beginning of the line (i.e., only whitespaces before a
+	// caret cursor), insert a tab (for indentation) instead of doing completion
+	bool atLineStart = false;
+	QTextCursor lineStartCursor = textCursor();
+	if (lineStartCursor.selectionEnd() == lineStartCursor.selectionStart()) {
+		lineStartCursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
+		if(lineStartCursor.selectedText().trimmed().isEmpty())
+			atLineStart = true;
+	}
 	
-	if (c == NULL) {
+	if (c == NULL && !atLineStart) {
 		cmpCursor = textCursor();
 		if (!selectWord(cmpCursor) && textCursor().selectionStart() > 0) {
 			cmpCursor.setPosition(textCursor().selectionStart() - 1);
@@ -723,7 +734,7 @@ void CompletingEdit::handleCompletionShortcut(QKeyEvent *e)
 					cmpCursor.setPosition(start - 1);
 					cmpCursor.setPosition(end, QTextCursor::KeepAnchor);
 				}
-			}			
+			}
 		}
 		
 		while (1) {
@@ -1057,7 +1068,7 @@ bool CompletingEdit::canInsertFromMimeData(const QMimeData *source) const
 void CompletingEdit::setLineNumberDisplay(bool displayNumbers)
 {
 	lineNumberArea->setVisible(displayNumbers);
-	QTimer::singleShot(1, this, SLOT(updateLineNumberAreaWidth()));
+	updateLineNumberAreaWidth(0);
 }
 
 int CompletingEdit::lineNumberAreaWidth()
@@ -1074,7 +1085,7 @@ int CompletingEdit::lineNumberAreaWidth()
 	return space;
 }
 
-void CompletingEdit::updateLineNumberAreaWidth(int /* newBlockCount = 0 */)
+void CompletingEdit::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
 	if (lineNumberArea->isVisible()) {
 		setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
@@ -1093,7 +1104,7 @@ void CompletingEdit::updateLineNumberArea(const QRect &rect, int dy)
 		lineNumberArea->update(0, rect.y(), lineNumberArea->width(), rect.height());
 	
 	if (rect.contains(viewport()->rect()))
-		QTimer::singleShot(1, this, SLOT(updateLineNumberAreaWidth()));
+		updateLineNumberAreaWidth(0);
 }
 
 void CompletingEdit::resizeEvent(QResizeEvent *e)
@@ -1158,10 +1169,18 @@ void CompletingEdit::setHighlightCurrentLine(bool highlight)
 	}
 }
 
+void CompletingEdit::setAutocompleteEnabled(bool autocomplete)
+{
+	if (autocomplete != autocompleteEnabled) {
+    autocompleteEnabled = autocomplete;
+	}
+}
+
 QTextCharFormat	*CompletingEdit::currentCompletionFormat = NULL;
 QTextCharFormat	*CompletingEdit::braceMatchingFormat = NULL;
 QTextCharFormat	*CompletingEdit::currentLineFormat = NULL;
 bool CompletingEdit::highlightCurrentLine = true;
+bool CompletingEdit::autocompleteEnabled = true;
 
 QCompleter	*CompletingEdit::sharedCompleter = NULL;
 

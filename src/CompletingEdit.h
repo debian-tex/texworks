@@ -63,12 +63,13 @@ public:
 	static QStringList smartQuotesModes();
 	
 	static void setHighlightCurrentLine(bool highlight);
+	static void setAutocompleteEnabled(bool autocomplete);
 
 public slots:
 	void setAutoIndentMode(int index);
 	void setSmartQuotesMode(int index);
 	void smartenQuotes();
-	void updateLineNumberAreaWidth(int newBlockCount = 0);
+	void updateLineNumberAreaWidth(int newBlockCount);
 	
 signals:
 	void syncClick(int);
@@ -183,6 +184,7 @@ private:
 	static QCompleter	*sharedCompleter;
 	
 	static bool highlightCurrentLine;
+	static bool autocompleteEnabled;
 };
 
 class LineNumberArea : public QWidget
