@@ -50,6 +50,8 @@
 #define STRINGIFY(s) STRINGIFY_2(s)
 #define TW_BUILD_ID_STR STRINGIFY(TW_BUILD_ID)
 
+#define DEFAULT_ENGINE_NAME "pdfLaTeX"
+
 class QString;
 class QMenu;
 class QMenuBar;
@@ -191,7 +193,7 @@ public slots:
 
 	void about();
 	void doResourcesDialog() const;
-	void newFile();
+	QObject * newFile() const;
 	void open();
 	void stackWindows();
 	void tileWindows();
@@ -221,7 +223,7 @@ signals:
 	void highlightLineOptionChanged();
 
 private slots:	
-	void newFromTemplate();
+	QObject * newFromTemplate() const;
 	void openRecentFile();
 	void preferences();
 
