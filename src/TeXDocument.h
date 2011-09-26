@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	For links to further information, or to contact the author,
-	see <http://texworks.org/>.
+	see <http://www.tug.org/texworks/>.
 */
 
 #ifndef TeXDocument_H
@@ -191,6 +191,7 @@ private slots:
 	void doReplace(ReplaceDialog::DialogCode mode);
 	void pdfClosed();
 	void updateRecentFileActions();
+	void clearRecentFiles() { TWApp::instance()->clearRecentFiles(); }
 	void updateWindowMenu();
 	void updateEngineList();
 	void showCursorPosition();
@@ -274,7 +275,6 @@ private:
 	QDateTime oldPdfTime;
 
 	QList<QAction*> recentFileActions;
-	QMenu *menuRecent;
 
 	Hunhandle *pHunspell;
 

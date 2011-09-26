@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	For links to further information, or to contact the author,
-	see <http://texworks.org/>.
+	see <http://www.tug.org/texworks/>.
 */
 
 #include "TWApp.h"
@@ -220,6 +220,9 @@ void TWApp::init()
 	connect(actionOpen, SIGNAL(triggered()), this, SLOT(open()));
 
 	menuRecent = new QMenu(tr("Open Recent"));
+	actionClear_Recent_Files = menuRecent->addAction(tr("Clear Recent Files"));
+	actionClear_Recent_Files->setEnabled(false);
+	connect(actionClear_Recent_Files, SIGNAL(triggered()), this, SLOT(clearRecentFiles()));
 	updateRecentFileActions();
 	menuFile->addMenu(menuRecent);
 
@@ -308,7 +311,7 @@ void TWApp::openUrl(const QUrl& url)
 
 void TWApp::goToHomePage()
 {
-	openUrl(QUrl("http://texworks.org/"));
+	openUrl(QUrl("http://www.tug.org/texworks/"));
 }
 
 #ifdef Q_WS_WIN
@@ -718,7 +721,7 @@ void TWApp::setMaxRecentFiles(int value)
 void TWApp::updateRecentFileActions()
 {
 #ifdef Q_WS_MAC
-	TWUtils::updateRecentFileActions(this, recentFileActions, menuRecent);	
+	TWUtils::updateRecentFileActions(this, recentFileActions, menuRecent, actionClear_Recent_Files);
 #endif
 	emit recentFileActionsChanged();
 }
@@ -1066,6 +1069,14 @@ void TWApp::addToRecentFiles(const QMap<QString,QVariant>& fileProperties)
 
 	settings.setValue("recentFiles", QVariant::fromValue(fileList));
 
+	updateRecentFileActions();
+}
+
+void TWApp::clearRecentFiles()
+{
+	QSETTINGS_OBJECT(settings);
+	QList<QVariant> fileList;
+	settings.setValue("recentFiles", QVariant::fromValue(fileList));
 	updateRecentFileActions();
 }
 

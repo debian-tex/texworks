@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	For links to further information, or to contact the author,
-	see <http://texworks.org/>.
+	see <http://www.tug.org/texworks/>.
 */
 
 #ifndef TWApp_H
@@ -78,6 +78,7 @@ public:
 	int maxRecentFiles() const;
 	void setMaxRecentFiles(int value);
 	void addToRecentFiles(const QMap<QString,QVariant>& fileProperties);
+	void clearRecentFiles();
 
 	void emitHighlightLineOptionChanged();
 	
@@ -160,6 +161,7 @@ private:
 	QAction *actionPreferences;
 
 	QMenu *menuRecent;
+	QAction *actionClear_Recent_Files;
 	QList<QAction*> recentFileActions;
 
 	QMenu *menuHelp;

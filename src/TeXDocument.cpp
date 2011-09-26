@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	For links to further information, or to contact the author,
-	see <http://texworks.org/>.
+	see <http://www.tug.org/texworks/>.
 */
 
 #include "TeXDocument.h"
@@ -218,13 +218,10 @@ void TeXDocument::init()
 
 	connect(actionTypeset, SIGNAL(triggered()), this, SLOT(typeset()));
 
-	menuRecent = new QMenu(tr("Open Recent"), this);
 	updateRecentFileActions();
-	menuFile->insertMenu(actionOpen_Recent, menuRecent);
-	menuFile->removeAction(actionOpen_Recent);
-
 	connect(qApp, SIGNAL(recentFileActionsChanged()), this, SLOT(updateRecentFileActions()));
 	connect(qApp, SIGNAL(windowListChanged()), this, SLOT(updateWindowMenu()));
+	connect(actionClear_Recent_Files, SIGNAL(triggered()), this, SLOT(clearRecentFiles()));
 	
 	connect(qApp, SIGNAL(hideFloatersExcept(QWidget*)), this, SLOT(hideFloatersUnlessThis(QWidget*)));
 	connect(this, SIGNAL(activatedWindow(QWidget*)), qApp, SLOT(activatedWindow(QWidget*)));
@@ -443,7 +440,6 @@ void TeXDocument::changeEvent(QEvent *event)
 	if (event->type() == QEvent::LanguageChange) {
 		QString title = windowTitle();
 		retranslateUi(this);
-		menuRecent->setTitle(tr("Open Recent"));
 		TWUtils::insertHelpMenuItems(menuHelp);
 		setWindowTitle(title);
 		showCursorPosition();
@@ -1405,7 +1401,7 @@ void TeXDocument::saveRecentFileInfo()
 
 void TeXDocument::updateRecentFileActions()
 {
-	TWUtils::updateRecentFileActions(this, recentFileActions, menuRecent);
+	TWUtils::updateRecentFileActions(this, recentFileActions, menuOpen_Recent, actionClear_Recent_Files);
 }
 
 void TeXDocument::updateWindowMenu()
@@ -2594,18 +2590,23 @@ void TeXDocument::processFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
 	if (exitStatus != QProcess::CrashExit) {
 		QString pdfName;
-		if (getPreviewFileName(pdfName) && QFileInfo(pdfName).lastModified() != oldPdfTime) {
-			// only open/refresh the PDF if it was changed by the typeset process
-			if (pdfDoc == NULL || pdfName != pdfDoc->fileName()) {
-				if (showPdfWhenFinished && openPdfIfAvailable(true))
-					pdfDoc->selectWindow();
-			}
-			else {
-				pdfDoc->reload(); // always reload if it is loaded, we don't want a stale window
-				if (showPdfWhenFinished)
-					pdfDoc->selectWindow();
+		if (getPreviewFileName(pdfName)) {
+			actionGo_to_Preview->setEnabled(true);
+			if (QFileInfo(pdfName).lastModified() != oldPdfTime) {
+				// only open/refresh the PDF if it was changed by the typeset process
+				if (pdfDoc == NULL || pdfName != pdfDoc->fileName()) {
+					if (showPdfWhenFinished && openPdfIfAvailable(true))
+						pdfDoc->selectWindow();
+				}
+				else {
+					pdfDoc->reload(); // always reload if it is loaded, we don't want a stale window
+					if (showPdfWhenFinished)
+						pdfDoc->selectWindow();
+				}
 			}
 		}
+		else
+			actionGo_to_Preview->setEnabled(true);
 	}
 
 	executeAfterTypesetHooks();
