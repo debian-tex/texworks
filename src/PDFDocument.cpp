@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	For links to further information, or to contact the author,
-	see <http://texworks.org/>.
+	see <http://www.tug.org/texworks/>.
 */
 
 #include "PDFDocument.h"
@@ -1241,13 +1241,10 @@ PDFDocument::init()
 	
 	connect(actionFind_Again, SIGNAL(triggered()), this, SLOT(doFindAgain()));
 
-	menuRecent = new QMenu(tr("Open Recent"), this);
 	updateRecentFileActions();
-	menuFile->insertMenu(actionOpen_Recent, menuRecent);
-	menuFile->removeAction(actionOpen_Recent);
-
 	connect(qApp, SIGNAL(recentFileActionsChanged()), this, SLOT(updateRecentFileActions()));
 	connect(qApp, SIGNAL(windowListChanged()), this, SLOT(updateWindowMenu()));
+	connect(actionClear_Recent_Files, SIGNAL(triggered()), this, SLOT(clearRecentFiles()));
 
 	connect(qApp, SIGNAL(hideFloatersExcept(QWidget*)), this, SLOT(hideFloatersUnlessThis(QWidget*)));
 	connect(this, SIGNAL(activatedWindow(QWidget*)), qApp, SLOT(activatedWindow(QWidget*)));
@@ -1301,7 +1298,6 @@ void PDFDocument::changeEvent(QEvent *event)
 	if (event->type() == QEvent::LanguageChange) {
 		QString title = windowTitle();
 		retranslateUi(this);
-		menuRecent->setTitle(tr("Open Recent"));
 		TWUtils::insertHelpMenuItems(menuHelp);
 		setWindowTitle(title);
 		if (pdfWidget)
@@ -1333,7 +1329,7 @@ void PDFDocument::texClosed(QObject *obj)
 
 void PDFDocument::updateRecentFileActions()
 {
-	TWUtils::updateRecentFileActions(this, recentFileActions, menuRecent);
+	TWUtils::updateRecentFileActions(this, recentFileActions, menuOpen_Recent, actionClear_Recent_Files);
 }
 
 void PDFDocument::updateWindowMenu()

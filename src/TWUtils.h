@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	For links to further information, or to contact the author,
-	see <http://texworks.org/>.
+	see <http://www.tug.org/texworks/>.
 */
 
 #ifndef TWUtils_H
@@ -74,7 +74,7 @@ public:
 	static QString chooseDefaultFilter(const QString & filename, const QStringList & filters);
 
 	// perform the updates to a menu; used by the documents to update their own menus
-	static void updateRecentFileActions(QObject *parent, QList<QAction*> &actions, QMenu *menu);
+	static void updateRecentFileActions(QObject *parent, QList<QAction*> &actions, QMenu *menu, QAction * clearAction);
 
 	// update the SelWinActions in a menu, used by the documents
 	static void updateWindowMenu(QWidget *window, QMenu *menu);

@@ -9,6 +9,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+export PYTHON = $(shell pyversions -d)
+
 USDIR=$(CURDIR)/debian/texworks/usr/share
 PLIDIR=plugins-src/TWLuaPlugin
 PLIPYT=plugins-src/TWPythonPlugin

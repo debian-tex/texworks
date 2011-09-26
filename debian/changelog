@@ -1,3 +1,11 @@
+texworks (0.5~svn939-1) unstable; urgency=low
+
+  * New upstream release (rev 939).
+  * Applied a patch suggested by Jakub Wilk <jwilk AT debian.org>
+    (Closes: #632393)
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Mon, 26 Sep 2011 15:39:22 +0900
+
 texworks (0.5~svn930-1) unstable; urgency=low
 
   * New upstream release (rev 930).
