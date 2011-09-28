@@ -1,3 +1,11 @@
+texworks (0.5~svn939-2) unstable; urgency=low
+
+  * I failed to apply a patch suggested by Jakub Wilk in the previous
+    upload.  This time I believe the patch is applied.  (Closes: #632393)
+  * Removed unnecessary patch for luatex.  It was included in the upstream.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Thu, 29 Sep 2011 07:48:29 +0900
+
 texworks (0.5~svn939-1) unstable; urgency=low
 
   * New upstream release (rev 939).

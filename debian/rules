@@ -19,7 +19,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	patch -p0 < ./debian/patch-luatex
+	patch -p1 < ./debian/patch-py
 #	qmake-qt4 
 
 	touch configure-stamp
@@ -77,7 +77,7 @@ clean:
 	if [ -d $(PLIPYT)/obj ]; then rmdir $(PLIPYT)/obj; fi
 	if [ -d $(PLIPYT)/rcc ]; then rmdir $(PLIPYT)/rcc; fi
 	if [ -d $(PLIPYT)/ui ]; then rmdir $(PLIPYT)/ui; fi
-	patch -NRp0 < ./debian/patch-luatex || true
+	patch -NRp1 < ./debian/patch-py || true
 
 	rm -f $(PLIDIR)/libTWLuaPlugin.so $(PLIDIR)/Makefile
 	rm -f $(PLIPYT)/libTWPythonPlugin.so $(PLIPYT)/Makefile
