@@ -1,3 +1,11 @@
+texworks (0.5~svn956-1) unstable; urgency=low
+
+  * New Upstream Release (rev 956).
+  * Fixed hunspell dictionaries problem with a setting -DTW_DICPATH in rules.
+    (Closes: #657702)
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Tue, 31 Jan 2012 08:55:10 +0900
+
 texworks (0.5~svn952-1) unstable; urgency=low
 
   * New Upstream Release (rev 952).

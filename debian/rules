@@ -47,8 +47,8 @@ build-stamp: configure-stamp
 	qmake-qt4 \
 	'INSTALL_PREFIX = /usr' \
 	-after \
-	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\"' \
-	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\"' \
+	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\" -DTW_DICPATH=\\\"/usr/share/myspell/dicts\\\"' \
+	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\" -DTW_DICPATH=\\\"/usr/share/hunspell\\\"' \
 	TeXworks.pro \
 	&& $(MAKE)
 	#docbook-to-man debian/texworks.sgml > texworks.1
@@ -94,8 +94,8 @@ install: build
 	qmake-qt4 \
 	'INSTALL_PREFIX = /usr' \
 	-after \
-	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\"' \
-	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\"' \
+	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\" -DTW_DICPATH=\\\"/usr/share/myspell/dicts\\\"' \
+	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\" -DTW_DICPATH=\\\"/usr/share/hunspell\\\"' \
 	TeXworks.pro \
 	&& $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/texworks install
 	# unnecessary file(lintial warning)
