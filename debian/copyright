@@ -8,12 +8,14 @@ Upstream Authors:
 
     Jonathan Kew <jfkthame AT googlemail DOT com>
     Stefan Löffler <st DOT loeffler AT gmail DOT com>
+    Charlie Sharpsteen <chuck AT sharpsteen DOT net>
     Jérôme Laurens <jerome DOT laurens AT u-bourgogne DOT fr>
     Till Tantau <tantau AT users DOT sourceforge DOT net>
 
 Copyright:
 
-    TeXworks is copyright (C) 2007-2011 by Jonathan Kew and Stefan Löffler.
+    TeXworks is copyright (C) 2007-2012 by Jonathan Kew, Stefan Löffler, 
+    and Charlie Sharpsteen.
     The SyncTeX code is copyright (c) 2008, 2009 by Jérôme Laurens
     Beamer templates are Copyright 2004 by Till Tantau 
 

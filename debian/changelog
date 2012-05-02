@@ -1,3 +1,10 @@
+texworks (0.5~svn1007-1) unstable; urgency=low
+
+  * New Upstream Release (rev 1007).
+  * Updated copyright file: added Charlie Sharpsteen as Upstream Authors.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Wed, 02 May 2012 16:27:37 +0900
+
 texworks (0.5~svn956-1) unstable; urgency=low
 
   * New Upstream Release (rev 956).

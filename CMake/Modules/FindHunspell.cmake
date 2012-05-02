@@ -4,9 +4,9 @@
 #  HUNSPELL_FOUND - system has Hunspell
 #  HUNSPELL_INCLUDE_DIR - the Hunspell include directory
 #  HUNSPELL_LIBRARIES - Link these to use Hunspell
-# Redistribution and use is allowed according to the terms of the BSD license.
-# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
 #
+# Redistribution and use of this file is allowed according to the terms of the
+# MIT license. For details see the file COPYING-CMAKE-MODULES.
 
 
 if ( HUNSPELL_INCLUDE_DIR AND HUNSPELL_LIBRARIES )
@@ -31,7 +31,7 @@ FIND_PATH(HUNSPELL_INCLUDE_DIR NAMES hunspell.h
   PATH_SUFFIXES hunspell
 )
 
-FIND_LIBRARY(HUNSPELL_LIBRARIES NAMES hunspell hunspell-1.2 hunspell-1.3 ${HUNSPELL_PKG_LIBRARIES}
+FIND_LIBRARY(HUNSPELL_LIBRARIES NAMES hunspell-1.3 hunspell-1.2 hunspell ${HUNSPELL_PKG_LIBRARIES}
   PATHS
     /usr/local
     /usr

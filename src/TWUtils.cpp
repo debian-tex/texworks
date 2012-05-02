@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2011  Jonathan Kew, Stefan Löffler
+	Copyright (C) 2007-2012  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-	For links to further information, or to contact the author,
+	For links to further information, or to contact the authors,
 	see <http://www.tug.org/texworks/>.
 */
 
@@ -39,6 +39,8 @@
 #include <QSignalMapper>
 #include <QCryptographicHash>
 #include <QTextStream>
+
+#include <hunspell.h>
 
 #pragma mark === TWUtils ===
 
@@ -415,6 +417,7 @@ QHash<QString, QString>* TWUtils::getDictionaryList(const bool forceReload /* = 
 			dictionaryList->insertMulti(dicFileInfo.canonicalFilePath(), dicFileInfo.completeBaseName());
 	}
 	
+	TWApp::instance()->notifyDictionaryListChanged();
 	return dictionaryList;
 }
 
@@ -441,6 +444,31 @@ Hunhandle* TWUtils::getDictionary(const QString& language)
 		(*dictionaries)[language] = h;
 	}
 	return h;
+}
+
+QString TWUtils::getLanguageForDictionary(const Hunhandle * pHunspell)
+{
+	if (!pHunspell || !dictionaries)
+		return QString();
+	
+	for (QHash<const QString,Hunhandle*>::const_iterator it = dictionaries->begin(); it != dictionaries->end(); ++it) {
+		if (it.value() == pHunspell)
+			return it.key();
+	}
+	return QString();
+}
+
+void TWUtils::clearDictionaries()
+{
+	if (!dictionaries)
+		return;
+	
+	for (QHash<const QString,Hunhandle*>::iterator it = dictionaries->begin(); it != dictionaries->end(); ++it) {
+		if (it.value())
+			Hunspell_destroy(it.value());
+	}
+	delete dictionaries;
+	dictionaries = NULL;
 }
 
 QStringList* TWUtils::filters;
