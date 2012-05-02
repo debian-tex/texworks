@@ -533,7 +533,7 @@
     </message>
     <message>
         <source>Clear Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Son kullanılanları temizle</translation>
     </message>
 </context>
 <context>
@@ -903,21 +903,21 @@
     </message>
     <message>
         <source>Hide output panel:</source>
-        <translation>Çıktı panelini gizle:</translation>
+        <translation type="obsolete">Çıktı panelini gizle:</translation>
     </message>
     <message>
         <source>Never</source>
-        <extracomment>&quot;Hide output panel&quot; mode</extracomment>
+        <extracomment>&quot;Hide console output&quot; mode</extracomment>
         <translation>Hiçbir zaman</translation>
     </message>
     <message>
         <source>Automatically</source>
-        <extracomment>&quot;Hide output panel&quot; mode</extracomment>
+        <extracomment>&quot;Hide console output&quot; mode</extracomment>
         <translation>Otomatik olarak</translation>
     </message>
     <message>
         <source>On success</source>
-        <extracomment>&quot;Hide output panel&quot; mode</extracomment>
+        <extracomment>&quot;Hide console output&quot; mode</extracomment>
         <translation>Hata yoksa</translation>
     </message>
     <message>
@@ -929,14 +929,28 @@
 &lt;p&gt;&lt;strong&gt;Automatically:&lt;/strong&gt; Hide the output panel after successful typesetting, but only if it was hidden before.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;On Success:&lt;/strong&gt; Hide the output panel after successful typesetting, regardless of its previous state.&lt;/p&gt;
 </source>
-        <translation>&lt;p&gt;&lt;strong&gt;Hiçbir zaman:&lt;/strong&gt; Dizgi sonrası çıktı panelini hiçbir zaman gizleme.&lt;/p&gt;
+        <translation type="obsolete">&lt;p&gt;&lt;strong&gt;Hiçbir zaman:&lt;/strong&gt; Dizgi sonrası çıktı panelini hiçbir zaman gizleme.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Otomatik olarak:&lt;/strong&gt; Dizgi başarılı ise çıktı panelini eğer önceden zaten gizli ise gizle.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Hata yoksa:&lt;/strong&gt; Dizgi başarılı ise çıktı panelini önceki durumunu dikkate almaksızın gizle.&lt;/p&gt;
 </translation>
     </message>
     <message>
         <source>Enable autocompletion</source>
-        <translation type="unfinished"></translation>
+        <translation>Kelime tamamlamayı etkinleştir</translation>
+    </message>
+    <message>
+        <source>Hide console output:</source>
+        <translation>Konsol çıktısını gizle:</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;&lt;strong&gt;Never:&lt;/strong&gt; Never hide the console output panel after typesetting.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Automatically:&lt;/strong&gt; Hide the console output panel after successful typesetting, but only if it was hidden before.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;On Success:&lt;/strong&gt; Hide the console output panel after successful typesetting, regardless of its previous state.&lt;/p&gt;
+</source>
+        <translation>&lt;p&gt;&lt;strong&gt;Asla:&lt;/strong&gt; Dizgi sonrası konsol çıktısını asla gizleme.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Otomatik:&lt;/strong&gt; Hatasız dizgi sonrası konsol çıktısını şayet önceden de gizli ise gizle.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Hata yoksa:&lt;/strong&gt; Hatasız dizgi sonrası konsol çıktısını önceki durumunu dikkate almadan gizle.&lt;/p&gt;
+</translation>
     </message>
 </context>
 <context>
@@ -989,11 +1003,11 @@
     </message>
     <message>
         <source>Log files (*.log)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kayıt dosyaları (*.log)</translation>
     </message>
     <message>
         <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation type="unfinished"></translation>
+        <translation>Yardımcı dosyalar (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
     </message>
 </context>
 <context>
@@ -1328,7 +1342,7 @@
     </message>
     <message>
         <source>Clear Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Son kullanılanları temizle</translation>
     </message>
 </context>
 <context>
@@ -1625,11 +1639,11 @@ Tercihler penceresinden %2 aracının ayarlarını ve arama yolu yapılandırmas
     </message>
     <message>
         <source>Hide Output Panel</source>
-        <translation>Çıktı Panelini Gizle</translation>
+        <translation type="obsolete">Çıktı Panelini Gizle</translation>
     </message>
     <message>
         <source>Show Output Panel</source>
-        <translation>Çıktı Panelini Göster</translation>
+        <translation type="obsolete">Çıktı Panelini Göster</translation>
     </message>
     <message>
         <source>Set engine to &quot;%1&quot;</source>
@@ -2171,36 +2185,63 @@ Mevcut değişikliklerinizi gözardı etmek, ve dosyayı diskten %1 kodlaması i
     </message>
     <message>
         <source>Clear Recent Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Son kullanılanları temizle</translation>
     </message>
     <message>
         <source>Abort typesetting?</source>
-        <translation type="unfinished"></translation>
+        <translation>Dizgi iptal edilsin mi?</translation>
     </message>
     <message>
         <source>A typesetting process is still running and must be stopped before closing this window.
 Do you want to stop it now?</source>
-        <translation type="unfinished"></translation>
+	<translation>Bir dizgi işlemi halen devam ediyor ve bu pencereyi kapatmadan önce durdurulması gerekli.
+Şimdi durdurmak istiyor musunuz?</translation>
     </message>
     <message>
         <source>You need a &lt;b&gt;TeX distribution&lt;/b&gt; like &lt;a href=&quot;http://tug.org/texlive/&quot;&gt;TeX Live&lt;/a&gt; or &lt;a href=&quot;http://miktex.org/&quot;&gt;MiKTeX&lt;/a&gt; installed on your system to typeset your document.</source>
-        <translation type="unfinished"></translation>
+        <translation>Belgenizi dizmek için sisteminize &lt;a href=&quot;http://tug.org/texlive/&quot;&gt;TeX Live&lt;/a&gt; veya &lt;a href=&quot;http://miktex.org/&quot;&gt;MiKTeX&lt;/a&gt; gibi bir &lt;b&gt;TeX dağıtımı&lt;/b&gt; kurmanız gerekiyor.</translation>
     </message>
     <message>
         <source>You need a &lt;b&gt;TeX distribution&lt;/b&gt; like &lt;a href=&quot;http://www.tug.org/mactex/&quot;&gt;MacTeX&lt;/a&gt; installed on your system to typeset your document.</source>
-        <translation type="unfinished"></translation>
+        <translation>Belgenizi dizmek için sisteminize &lt;a href=&quot;http://www.tug.org/mactex/&quot;&gt;MacTeX&lt;/a&gt; gibi bir &lt;b&gt;TeX dağıtımı&lt;/b&gt; kurmanız gerekiyor.</translation>
     </message>
     <message>
         <source>You need a &lt;b&gt;TeX distribution&lt;/b&gt; like &lt;a href=&quot;http://tug.org/texlive/&quot;&gt;TeX Live&lt;/a&gt; installed on your system to typeset your document. On most systems such a TeX distribution is available as prebuilt package.</source>
-        <translation type="unfinished"></translation>
+        <translation>Belgenizi dizmek için sisteminize &lt;a href=&quot;http://tug.org/texlive/&quot;&gt;TeX Live&lt;/a&gt; gibi bir &lt;b&gt;TeX dağıtımı&lt;/b&gt; kurmanız gerekiyor. Çoğu sistem için böyle bir TeX dağıtımı hazır paket şeklinde mevcuttur.</translation>
     </message>
     <message>
         <source>When a TeX distribution is installed you may need to tell TeXworks where to find it in Edit -&gt; Preferences -&gt; Typesetting.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bir TeX dağıtımı kurulduğunda TeXworks'e onu nerede bulabileceğini Düzenle -&gt; Tercihler -&gt; Dizgi ile anlatmanız gerekebilir.</translation>
     </message>
     <message>
         <source>Check the configuration of the %1 tool and the path settings in the Preferences dialog.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 aracının konfigürasonunu ve yol ayarlarını Tercihler penceresinden kontrol edit.</translation>
+    </message>
+    <message>
+        <source>Hide Console Output</source>
+        <translation>Konsol Çıktısını Gizle</translation>
+    </message>
+    <message>
+        <source>Layout Problem</source>
+        <translation>Yerleşim Problemi</translation>
+    </message>
+    <message>
+        <source>A problem occured while laying out the loaded document in the editor. This is caused by an issue in the underlying Qt framework and can cause TeXworks to crash under certain circumstances. The symptoms of this problem are hidden or overlapping lines. To work around this, please try one of the following:
+ -) Turn syntax highlighting off and on
+ -) Turn line numbers off and on
+ -) Resize the window
+
+We are sorry for the inconvenience.</source>
+	<translation>Yüklenen belgeyi düzenleyiciye yerleştirirken bir sorun ortaya çıktı. Bu Qt çatısından kaynaklanıyor ve bazı durumlarda TeXworks'ün çökmesine neden olabilir. Bu sorun gizli veya üst üste binen satırlar olarak gözlenebilir. Aşağıdakilerden birini deneyerek bunun üstesinden gelebilirsiniz:
+ -) Sentaks renklendirmeyi kapatıp açın
+ -) Satır numaralarını kapatıp açın
+ -) Pencereyi boyutunu değiştirin
+
+Rahatsızlık için üzgünüz.</translation>
+    </message>
+    <message>
+        <source>Show Console Output</source>
+	<translation>Konsol Çıktısını Göster</translation>
     </message>
 </context>
 <context>
