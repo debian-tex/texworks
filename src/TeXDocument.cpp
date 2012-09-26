@@ -102,6 +102,7 @@ void TeXDocument::init()
 	process = NULL;
 	highlighter = NULL;
 	pHunspell = NULL;
+	utf8BOM = false;
 #ifdef Q_WS_WIN
 	lineEndings = kLineEnd_CRLF;
 #else
@@ -121,6 +122,7 @@ void TeXDocument::init()
 	makeUntitled();
 	hideConsole();
 	keepConsoleOpen = false;
+	connect(consoleTabs, SIGNAL(requestClose()), actionShow_Hide_Console, SLOT(trigger()));
 
 	statusBar()->addPermanentWidget(lineEndingLabel = new ClickableLabel());
 	lineEndingLabel->setFrameStyle(QFrame::StyledPanel);
@@ -955,6 +957,7 @@ QString TeXDocument::readFile(const QString &fileName,
 #endif
 	}
 	
+	utf8BOM = false;
 	QFile file(fileName);
 	// Not using QFile::Text because this prevents us reading "classic" Mac files
 	// with CR-only line endings. See issue #242.
@@ -966,13 +969,14 @@ QString TeXDocument::readFile(const QString &fileName,
 		return QString();
 	}
 
-	QString peekStr(file.peek(PEEK_LENGTH));
+	QByteArray peekBytes(file.peek(PEEK_LENGTH));
+	
 	QString reqName;
 	bool hasMetadata;
 	if (forceCodec)
 		*codecUsed = forceCodec;
 	else {
-		*codecUsed = scanForEncoding(peekStr, hasMetadata, reqName);
+		*codecUsed = scanForEncoding(QString::fromUtf8(peekBytes), hasMetadata, reqName);
 		if (*codecUsed == NULL) {
 			*codecUsed = TWApp::instance()->getDefaultCodec();
 			if (hasMetadata) {
@@ -987,6 +991,12 @@ QString TeXDocument::readFile(const QString &fileName,
 			}
 		}
 	}
+
+	// When using the UTF-8 codec (mib = 106), byte order marks (BOMs) are
+	// ignored during reading and not produced when writing. To keep them in
+	// files that have them, we need to check for them ourselves.
+	if ((*codecUsed)->mibEnum() == 106 && peekBytes.size() >= 3 && peekBytes[0] == '\xEF' && peekBytes[1] == '\xBB' && peekBytes[2] == '\xBF')
+		utf8BOM = true;
 	
 	if (file.atEnd())
 		return QString("");
@@ -1368,6 +1378,13 @@ bool TeXDocument::saveFile(const QString &fileName)
 		}
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
+		
+		// When using the UTF-8 codec (mib = 106), byte order marks (BOMs) are
+		// ignored during reading and not produced when writing. To keep them in
+		// files that have them, we need to write them ourselves.
+		if (codec->mibEnum() == 106 && utf8BOM)
+			file.write("\xEF\xBB\xBF");
+		
 		if (file.write(codec->fromUnicode(theText)) == -1) {
 			QApplication::restoreOverrideCursor();
 			QMessageBox::warning(this, tr("Error writing file"),
