@@ -1,3 +1,9 @@
+texworks (0.5~svn1026-1) unstable; urgency=low
+
+  * New Upstrean Release (rev 1026).
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Thu, 26 Sep 2012 16:48:05 +0900
+
 texworks (0.5~svn1007-1) unstable; urgency=low
 
   * New Upstream Release (rev 1007).
