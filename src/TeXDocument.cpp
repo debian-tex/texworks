@@ -29,7 +29,7 @@
 #include "PDFDocument.h"
 #include "ConfirmDelete.h"
 #include "HardWrapDialog.h"
-#include "PrefsDialog.h"
+#include "DefaultPrefs.h"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -296,13 +296,13 @@ void TeXDocument::init()
 		++index;
 	}
 	// FIXME: This does not respect kDefault_SyntaxColoring defined in
-	// PrefsDialog.h. ATM, that is irrelevant because kDefault_SyntaxColoring = 0
+	// DefaultPrefs.h. ATM, that is irrelevant because kDefault_SyntaxColoring = 0
 	// corresponds to None (i.e., ""). In the future, this may change, though.
 	// However, it would require some additional logic here (e.g., handling the
 	// case that kDefault_SyntaxColoring points to an invalid index).
 	setSyntaxColoringMode(settings.value("syntaxColoring").toString());
 	
-	// kDefault_TabWidth is defined in PrefsDialog.h
+	// kDefault_TabWidth is defined in DefaultPrefs.h
 	textEdit->setTabStopWidth(settings.value("tabWidth", kDefault_TabWidth).toInt());
 	
 	// It is VITAL that this connection is queued! Calling showMessage directly
@@ -1092,14 +1092,20 @@ void TeXDocument::loadFile(const QString &fileName, bool asTemplate, bool inBack
 		lastModified = QDateTime();
 	}
 	else {
+		QSETTINGS_OBJECT(settings);
 		setCurrentFile(fileName);
-		if (!inBackground) {
+		if (!inBackground && settings.value("openPDFwithTeX", kDefault_OpenPDFwithTeX).toBool()) {
 			openPdfIfAvailable(false);
+			// Note: openPdfIfAvailable() enables/disables actionGo_to_Preview
+			// automatically.
+		}
+		else {
+			QString previewFileName;
+			actionGo_to_Preview->setEnabled(getPreviewFileName(previewFileName));
 		}
 		// set openDialogDir after openPdfIfAvailable as we want the .tex file's
 		// path to end up in that variable (which might be touched/changed when
 		// loading the pdf
-		QSETTINGS_OBJECT(settings);
 		QFileInfo info(fileName);
 		settings.setValue("openDialogDir", info.canonicalPath());
 
