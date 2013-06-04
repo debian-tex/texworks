@@ -64,17 +64,17 @@ clean:
 	if [ -f Makefile ]; then $(MAKE) clean; fi
 	rm -f ./texworks ./Makefile src/DefaultBinaryPaths.h
 	if [ -d moc ]; then rmdir moc; fi
-	if [ -d obj ]; then rmdir obj; fi
+	if [ -d objs ]; then rmdir objs; fi
 	if [ -d rcc ]; then rmdir rcc; fi
 	if [ -d ui ]; then rmdir ui; fi
 	if [ -f $(PLIDIR)/Makefile ]; then cd $(PLIDIR) && $(MAKE) clean; fi
 	if [ -d $(PLIDIR)/moc ]; then rmdir $(PLIDIR)/moc; fi
-	if [ -d $(PLIDIR)/obj ]; then rmdir $(PLIDIR)/obj; fi
+	if [ -d $(PLIDIR)/objs ]; then rmdir $(PLIDIR)/objs; fi
 	if [ -d $(PLIDIR)/rcc ]; then rmdir $(PLIDIR)/rcc; fi
 	if [ -d $(PLIDIR)/ui ]; then rmdir $(PLIDIR)/ui; fi
 	if [ -f $(PLIPYT)/Makefile ]; then cd $(PLIPYT) && $(MAKE) clean; fi
 	if [ -d $(PLIPYT)/moc ]; then rmdir $(PLIPYT)/moc; fi
-	if [ -d $(PLIPYT)/obj ]; then rmdir $(PLIPYT)/obj; fi
+	if [ -d $(PLIPYT)/objs ]; then rmdir $(PLIPYT)/objs; fi
 	if [ -d $(PLIPYT)/rcc ]; then rmdir $(PLIPYT)/rcc; fi
 	if [ -d $(PLIPYT)/ui ]; then rmdir $(PLIPYT)/ui; fi
 	patch -NRp1 < ./debian/patch-py || true
