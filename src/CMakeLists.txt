@@ -64,6 +64,23 @@ INCLUDE_DIRECTORIES(${TeXworks_INCLUDE_DIRS})
 LINK_DIRECTORIES(${TeXworks_LIB_DIRS})
 
 ADD_DEFINITIONS(-DTW_BUILD_ID=${TW_BUILD_ID})
+IF (UNIX AND NOT APPLE)
+  IF (IS_ABSOLUTE ${TeXworks_HELP_DIR})
+    ADD_DEFINITIONS(-DTW_HELPPATH="${TeXworks_HELP_DIR}")
+  ELSE ()
+    ADD_DEFINITIONS(-DTW_HELPPATH="${CMAKE_INSTALL_PREFIX}/${TeXworks_HELP_DIR}")
+  ENDIF ()
+  IF (IS_ABSOLUTE ${TeXworks_PLUGIN_DIR})
+    ADD_DEFINITIONS(-DTW_PLUGINPATH="${TeXworks_PLUGIN_DIR}")
+  ELSE ()
+    ADD_DEFINITIONS(-DTW_PLUGINPATH="${CMAKE_INSTALL_PREFIX}/${TeXworks_PLUGIN_DIR}")
+  ENDIF ()
+  IF (IS_ABSOLUTE ${TeXworks_DIC_DIR})
+    ADD_DEFINITIONS(-DTW_DICPATH="${TeXworks_DIC_DIR}")
+  ELSE ()
+    ADD_DEFINITIONS(-DTW_DICPATH="${CMAKE_INSTALL_PREFIX}/${TeXworks_DIC_DIR}")
+  ENDIF ()
+ENDIF ()
 
 # Poppler supports XPDF API calls?
 IF (POPPLER_HAS_XPDF)
@@ -75,14 +92,25 @@ ENDIF ()
 # Qt-Specific Source Code Processing
 # ----------------------------------
 
-# Run moc on header files.
-QT4_WRAP_CPP(TEXWORKS_GEN_MOC ${TEXWORKS_MOC_HDRS})
-# Run uic on user interface files.
-QT4_WRAP_UI(TEXWORKS_GEN_UI ${TEXWORKS_UIS})
-# Run rcc on reasource files.
-QT4_ADD_RESOURCES(TEXWORKS_GEN_RCS ${TEXWORKS_RCS})
-# Prep language translations.
-QT4_ADD_TRANSLATION(TEXWORKS_GEN_TRANS ${TEXWORKS_TRANS})
+IF (${QT_VERSION_MAJOR} EQUAL 5)
+  # Run moc on header files.
+  QT5_WRAP_CPP(TEXWORKS_GEN_MOC ${TEXWORKS_MOC_HDRS})
+  # Run uic on user interface files.
+  QT5_WRAP_UI(TEXWORKS_GEN_UI ${TEXWORKS_UIS})
+  # Run rcc on reasource files.
+  QT5_ADD_RESOURCES(TEXWORKS_GEN_RCS ${TEXWORKS_RCS})
+  # Prep language translations.
+  QT5_ADD_TRANSLATION(TEXWORKS_GEN_TRANS ${TEXWORKS_TRANS})
+ELSE()
+  # Run moc on header files.
+  QT4_WRAP_CPP(TEXWORKS_GEN_MOC ${TEXWORKS_MOC_HDRS})
+  # Run uic on user interface files.
+  QT4_WRAP_UI(TEXWORKS_GEN_UI ${TEXWORKS_UIS})
+  # Run rcc on reasource files.
+  QT4_ADD_RESOURCES(TEXWORKS_GEN_RCS ${TEXWORKS_RCS})
+  # Prep language translations.
+  QT4_ADD_TRANSLATION(TEXWORKS_GEN_TRANS ${TEXWORKS_TRANS})
+ENDIF()
 
 IF ( APPLE OR NOT UNIX )
   SET(EXE_NAME TeXworks)
@@ -92,6 +120,15 @@ ENDIF ( APPLE OR NOT UNIX )
 
 # Compilation
 # -----------
+
+IF (NOT ${BUILD_SHARED_LIBS})
+  IF (WITH_LUA)
+    LIST(APPEND TeXworks_LIBS TWLuaPlugin)
+  ENDIF()
+  IF (WITH_PYTHON)
+    LIST(APPEND TeXworks_LIBS TWPythonPlugin)
+  ENDIF()
+ENDIF()
 
 # Build the executible.
 ADD_EXECUTABLE( ${EXE_NAME} ${GUI_TYPE}
@@ -118,6 +155,9 @@ IF (APPLE)
   )
 ENDIF ()
 
+IF (${QT_VERSION_MAJOR} EQUAL 5 AND UNIX)
+    SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES COMPILE_FLAGS -fPIC)
+ENDIF ()
 
 # Installation
 # ------------
@@ -125,6 +165,17 @@ INSTALL( TARGETS ${EXE_NAME}
   RUNTIME DESTINATION bin COMPONENT
   BUNDLE DESTINATION . COMPONENT
 )
+
+IF ( UNIX AND NOT APPLE )
+  INSTALL(FILES ${TeXworks_SOURCE_DIR}/res/images/TeXworks.png DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_ICON_DIR})
+  INSTALL(FILES
+    ${TeXworks_SOURCE_DIR}/COPYING
+    ${TeXworks_SOURCE_DIR}/README
+    ${TeXworks_SOURCE_DIR}/NEWS
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_DOCS_DIR})
+  INSTALL(FILES ${TeXworks_SOURCE_DIR}/man/texworks.1 DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_MAN_DIR})
+  INSTALL(FILES ${TeXworks_SOURCE_DIR}/texworks.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_DESKTOP_DIR})
+ENDIF ( UNIX AND NOT APPLE )
 
 # On OS X, ensure there is always a `qt.conf` file as all hell will break loose
 # if one isn't there.  This may need to be customized for use on non-Apple
@@ -139,7 +190,7 @@ IF ( APPLE )
 
   INSTALL( CODE
     "
-    FILE(WRITE \"\${CMAKE_INSTALL_PREFIX}/${QTCONF_DIR}/qt.conf\"
+    FILE(WRITE \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${QTCONF_DIR}/qt.conf\"
       \"${QTCONF_CONTENTS}\"
     )
     "
