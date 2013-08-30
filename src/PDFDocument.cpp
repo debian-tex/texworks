@@ -231,6 +231,12 @@ void PDFWidget::setDocument(Poppler::Document *doc)
 
 void PDFWidget::windowResized()
 {
+	// the fitting functions below may trigger resize events (e.g., if scroll
+	// bars are shown/hidden as a result of resizing the page image). To avoid
+	// infinite loops of resize events, disconnect the event here and reconnect
+	// it in the end.
+	disconnect(parent()->parent(), SIGNAL(resized()), this, SLOT(windowResized()));
+
 	switch (scaleOption) {
 		case kFixedMag:
 			break;
@@ -241,7 +247,10 @@ void PDFWidget::windowResized()
 			fitWindow(true);
 			break;
 	}
+	// Ensure all resizing is finished before reconnecting the resize event.
 	update();
+	QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers);
+	connect(parent()->parent(), SIGNAL(resized()), this, SLOT(windowResized()));
 }
 
 void PDFWidget::paintEvent(QPaintEvent *event)
@@ -482,7 +491,7 @@ void PDFWidget::doLink(const Poppler::Link *link)
 			{
 				const Poppler::LinkBrowse *browse = dynamic_cast<const Poppler::LinkBrowse*>(link);
 				Q_ASSERT(browse != NULL);
-				QUrl url = QUrl::fromEncoded(browse->url().toAscii());
+				QUrl url = QUrl::fromEncoded(browse->url().toLatin1());
 				if (url.scheme() == "file") {
 					PDFDocument *doc = qobject_cast<PDFDocument*>(window());
 					if (doc) {
@@ -925,9 +934,15 @@ void PDFWidget::doPageDialog()
 		return;
 	bool ok;
 	setCursor(Qt::ArrowCursor);
+	#if QT_VERSION >= 0x050000
+	int pageNo = QInputDialog::getInt(this, tr("Go to Page"),
+									tr("Page number:"), pageIndex + 1,
+									1, document->numPages(), 1, &ok);
+	#else
 	int pageNo = QInputDialog::getInteger(this, tr("Go to Page"),
 									tr("Page number:"), pageIndex + 1,
 									1, document->numPages(), 1, &ok);
+	#endif
 	if (ok)
 		goToPage(pageNo - 1);
 }
@@ -1773,7 +1788,14 @@ void PDFDocument::doFindAgain(bool newSearch /* = false */)
 		for (pageIdx = firstPage; pageIdx != lastPage; pageIdx += deltaPage) {
 			page = document->page(pageIdx);
 
+			#if QT_VERSION >= 0x050000
+			double left, top, bottom, right;
+			lastSearchResult.selRect.getCoords(&left, &top, &right, &bottom);
+			if (page->search(searchText, left, top, right, bottom, searchDir, searchMode)) {
+				lastSearchResult.selRect.setCoords(left, top, right, bottom);
+			#else
 			if (page->search(searchText, lastSearchResult.selRect, searchDir, searchMode)) {
+			#endif
 				lastSearchResult.doc = this;
 				lastSearchResult.pageIdx = pageIdx;
 				QPainterPath p;

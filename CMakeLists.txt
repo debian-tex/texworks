@@ -93,6 +93,17 @@ STRING(REGEX MATCH "([0-9]+)" TeXworks_SVN_REV ${TeXworks_SVN_REV})
 
 SET(TW_BUILD_ID "personal" CACHE STRING "A distribution-specific identifier for TeXworks")
 
+# Build shared libs by default
+IF ( NOT DEFINED BUILD_SHARED_LIBS )
+  SET(BUILD_SHARED_LIBS ON)
+ENDIF ()
+OPTION(BUILD_SHARED_LIBS "Build shared libraries?" ${BUILD_SHARED_LIBS})
+MARK_AS_ADVANCED(BUILD_SHARED_LIBS)
+
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} CACHE PATH "Path to place libraries in")
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR} CACHE PATH "Path to place programs in")
+MARK_AS_ADVANCED(CMAKE_LIBRARY_OUTPUT_DIRECTORY CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+
 # On UNIX, CMake installs to `/usr/local` by default. However, Mac users
 # will probably find `/Applications` a more convenient default.
 IF( APPLE AND CMAKE_INSTALL_PREFIX MATCHES "/usr/local" )
@@ -106,7 +117,7 @@ ENDIF ()
 
 # Options controlling the creation of scripting language plugins.
 OPTION(WITH_LUA "Build TeXworks Lua plugin?" ON)
-OPTION(WITH_PYTHON "Build TeXworks Python plugin?" ON)
+OPTION(WITH_PYTHON "Build TeXworks Python plugin?" OFF)
 
 # On OS X we default to linking against the Python libraries provided by Apple
 # even if other Pythons are available. This helps when building
@@ -116,6 +127,23 @@ IF ( APPLE )
   OPTION(USE_SYSTEM_PYTHON "Link against Python Framework distributed with OS X?" ON)
 ENDIF ()
 
+IF (UNIX AND NOT APPLE)
+  SET(TeXworks_HELP_DIR share/doc/texworks-help CACHE PATH "Path where TeXworks looks for help files")
+  SET(TeXworks_DIC_DIR /usr/share/myspell/dicts CACHE PATH "Path where TeXworks looks for spellchecking dictionaries")
+  SET(TeXworks_DOCS_DIR share/doc/texworks CACHE PATH "Path in which documentation files are installed")
+  SET(TeXworks_ICON_DIR share/pixmaps CACHE PATH "Path in which icons are installed")
+  SET(TeXworks_MAN_DIR share/man/man1 CACHE PATH "Path in which manpages are installed")
+  SET(TeXworks_DESKTOP_DIR share/applications CACHE PATH "Path in which .desktop files are installed")
+  MARK_AS_ADVANCED(TeXworks_HELP_DIR)
+  MARK_AS_ADVANCED(TeXworks_DIC_DIR)
+  MARK_AS_ADVANCED(TeXworks_DOCS_DIR)
+  MARK_AS_ADVANCED(TeXworks_ICON_DIR)
+  MARK_AS_ADVANCED(TeXworks_MAN_DIR)
+  MARK_AS_ADVANCED(TeXworks_DESKTOP_DIR)
+  IF (EXISTS ${TeXworks_SOURCE_DIR}/manual/)
+    INSTALL(DIRECTORY ${TeXworks_SOURCE_DIR}/manual/ DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_HELP_DIR}/ OPTIONAL)
+  ENDIF()
+ENDIF()
 
 # Dependency Configuration
 # ========================
@@ -131,7 +159,6 @@ SET (QT_COMPONENTS
     QtUiTools
     QtScript
     QtScriptTools
-    QtXML
 )
 
 IF ( UNIX AND NOT APPLE )
@@ -159,7 +186,7 @@ ENDIF ()
 SET(TeXworks_INCLUDE_DIRS
   ${QT_INCLUDE_DIR}
   ${HUNSPELL_INCLUDE_DIR}
-  ${POPPLER_QT4_INCLUDE_DIR}
+  ${POPPLER_QT_INCLUDE_DIR}
   ${ZLIB_INCLUDE_DIR}
 )
 IF ( POPPLER_NEEDS_FONTCONFIG )
@@ -199,6 +226,15 @@ IF ( WITH_PYTHON )
   ENDIF ()
 ENDIF()
 
+IF ( LUA51_FOUND AND WITH_LUA AND NOT ${BUILD_SHARED_LIBS})
+  ADD_DEFINITIONS(-DQT_STATICPLUGIN -DSTATIC_LUA_SCRIPTING_PLUGIN)
+ENDIF ()
+
+IF ( PYTHONLIBS_FOUND AND WITH_PYTHON AND NOT ${BUILD_SHARED_LIBS})
+  ADD_DEFINITIONS(-DQT_STATICPLUGIN -DSTATIC_PYTHON_SCRIPTING_PLUGIN)
+ENDIF ()
+
+
 # Update Header Templates
 # -----------------------
 
@@ -227,10 +263,6 @@ ADD_SUBDIRECTORY(src)
 # Build Plugins
 # -------------
 
-# Set the plugin installation path. This is a good default for UNIX-like
-# systems, but is not appropriate for Windows.
-SET(TeXworks_PLUGIN_DIR lib)
-
 # On OS X, the plugins should live inside the application bundle.
 IF ( APPLE )
   SET(TeXworks_PLUGIN_DIR ${PROJECT_NAME}.app/Contents/PlugIns)
@@ -239,15 +271,20 @@ IF ( APPLE )
   # freak out about this.
   SET(CMAKE_MODULE_LINKER_FLAGS
     "${CMAKE_MODULE_LINKER_FLAGS_INIT} $ENV{LDFLAGS} -undefined dynamic_lookup")
+ELSE ()
+  # Set the plugin installation path. This is a good default for UNIX-like
+  # systems, but is not appropriate for Windows.
+  SET(TeXworks_PLUGIN_DIR lib/texworks CACHE PATH "Path where TeXworks looks for plugins")
+  MARK_AS_ADVANCED(TeXworks_PLUGIN_DIR)
 ENDIF ()
 
 
 # Build scripting language plugins if the required libraries are available.
-IF ( LUA51_FOUND )
+IF ( LUA51_FOUND AND WITH_LUA )
   ADD_SUBDIRECTORY(${TeXworks_SOURCE_DIR}/plugins-src/TWLuaPlugin)
 ENDIF ()
 
-IF ( PYTHONLIBS_FOUND )
+IF ( PYTHONLIBS_FOUND AND WITH_PYTHON )
   ADD_SUBDIRECTORY(${TeXworks_SOURCE_DIR}/plugins-src/TWPythonPlugin)
 ENDIF ()
 
@@ -346,6 +383,7 @@ MESSAGE("TeXworks has been configured:\n")
 CONFIG_INFO("Version" ${TeXworks_VERSION})
 CONFIG_INFO("SVN Revision" ${TeXworks_SVN_REV})
 CONFIG_INFO("Build ID" ${TW_BUILD_ID})
+CONFIG_INFO("Qt version" ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH})
 CONFIG_INFO("Compiler optimization" ${CMAKE_BUILD_TYPE})
 MESSAGE("")
 

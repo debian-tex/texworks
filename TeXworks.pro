@@ -68,7 +68,7 @@ unix:!macx {
 isEmpty(TW_BUILD_ID):TW_BUILD_ID = personal
 QMAKE_CXXFLAGS += -DTW_BUILD_ID=$$TW_BUILD_ID
 
-QT			+=	xml script scripttools
+QT			+=	script scripttools
 CONFIG		+=	rtti uitools
 
 unix {
@@ -146,13 +146,13 @@ win32 { # paths here are specific to my setup
 	RC_FILE = res/TeXworks.rc
 
 	# for the Windows build, we use static plugins:
-	QMAKE_CXXFLAGS += -DSTATIC_SCRIPTING_PLUGINS
-
+	QMAKE_CXXFLAGS += -DSTATIC_LUA_SCRIPTING_PLUGIN
 	LIBS += -Lplugins-src/TWLuaPlugin/release -lTWLuaPlugin
 	LIBS += -llua
 
-	LIBS += -Lplugins-src/TWPythonPlugin/release -lTWPythonPlugin
-	LIBS += -Lc:/Python26/libs -lpython26
+#	QMAKE_CXXFLAGS += -DSTATIC_PYTHON_SCRIPTING_PLUGIN
+#	LIBS += -Lplugins-src/TWPythonPlugin/release -lTWPythonPlugin
+#	LIBS += -Lc:/Python26/libs -lpython26
 }
 
 
