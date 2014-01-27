@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011-2012  Charlie Sharpsteen, Stefan Löffler
+ * Copyright (C) 2011-2013  Charlie Sharpsteen, Stefan Löffler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -392,11 +392,16 @@ protected:
 
 typedef QList<PDFToCItem> PDFToC;
 
+enum SearchFlag { Search_WrapAround = 0x01, Search_CaseInsensitive = 0x02, Search_Backwards = 0x04};
+Q_DECLARE_FLAGS(SearchFlags, SearchFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(SearchFlags)
+
 struct SearchRequest
 {
   QWeakPointer<Document> doc;
   int pageNum;
   QString searchString;
+  SearchFlags flags;
 };
 
 struct SearchResult
@@ -455,9 +460,9 @@ public:
 
 
   // Uses doc-read-lock
-  QFlags<Permissions> permissions() const { QReadLocker docLocker(_docLock.data()); return _permissions; }
+  Permissions permissions() const { QReadLocker docLocker(_docLock.data()); return _permissions; }
   // Uses doc-read-lock
-  QFlags<Permissions>& permissions() { QReadLocker docLocker(_docLock.data()); return _permissions; }
+  Permissions& permissions() { QReadLocker docLocker(_docLock.data()); return _permissions; }
   
   // Uses doc-read-lock
   virtual bool isValid() const = 0;
@@ -497,7 +502,7 @@ public:
   //     return the search results one at a time rather than all at once.
   //
   //   - See TODO list in `Page::search`
-  virtual QList<SearchResult> search(QString searchText, int startPage=0);
+  virtual QList<SearchResult> search(QString searchText, SearchFlags flags, int startPage = 0);
 
 protected:
   virtual void clearPages();
@@ -507,7 +512,7 @@ protected:
   PDFPageProcessingThread _processingThread;
   PDFPageCache _pageCache;
   QVector< QSharedPointer<Page> > _pages;
-  QFlags<Permissions> _permissions;
+  Permissions _permissions;
 
   QString _fileName;
 
@@ -607,7 +612,7 @@ public:
   //
   // This is very tricky to do in C++. God I miss Python and its `itertools`
   // library.
-  virtual QList<SearchResult> search(QString searchText) = 0;
+  virtual QList<SearchResult> search(QString searchText, SearchFlags flags) = 0;
   static QList<SearchResult> executeSearch(SearchRequest request);
 };
 
@@ -634,8 +639,8 @@ Q_DECLARE_INTERFACE(QtPDF::BackendInterface, "org.tug.QtPDF/1.0")
 // NOTE: The backend implementations must be included _outside_ the namespace,
 // as that could otherwise interfere with other header files (e.g., those of
 // poppler-qt4)
-#ifdef USE_POPPLERQT4
-#include <backends/PopplerQt4Backend.h> // Invokes GPL v2+ License
+#ifdef USE_POPPLERQT
+#include <backends/PopplerQtBackend.h> // Invokes GPL v2+ License
 #endif
 #ifdef USE_MUPDF
 #include <backends/MuPDFBackend.h>   // Invokes GPL v3 License

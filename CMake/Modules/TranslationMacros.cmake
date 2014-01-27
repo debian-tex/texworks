@@ -1,6 +1,7 @@
 # Adapted from CMake 2.8 QT4_CREATE_TRANSLATION
 # TODO: Find a better name for this
 
+  
 # Qt-version-agnostic wrappers
 if (QT_VERSION_MAJOR EQUAL 5)
   macro(QT_ADD_RESOURCES)

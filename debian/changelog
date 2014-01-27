@@ -1,3 +1,9 @@
+texworks (0.5~svn1351-1) unstable; urgency=medium
+
+  * New Upstream Release (rev 1351).
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Mon, 27 Jan 2014 14:06:54 +0900
+
 texworks (0.5~svn1302-1) unstable; urgency=low
 
   * New Upstream Release (rev 1302).

@@ -14,7 +14,11 @@
 #ifndef PDFDocumentView_H
 #define PDFDocumentView_H
 
-#include <QtGui/QtGui>
+#if QT_VERSION_MAJOR < 5
+  #include <QtGui/QtGui>
+#else
+  #include <QtWidgets>
+#endif
 
 #include <PDFBackend.h>
 #include <PDFDocumentTools.h>
@@ -72,6 +76,16 @@ public:
   DocumentTool::AbstractTool * armedTool() const { return _armedTool; }
   void triggerContextClick(const int page, const QPointF pos) { emit contextClick(page, pos); }
 
+  QGraphicsPathItem * addHighlightPath(const unsigned int page, const QPainterPath & path, const QBrush & brush, const QPen & pen = Qt::NoPen);
+  QGraphicsPathItem * addHighlightPath(const unsigned int page, const QRectF & rect, const QBrush & brush, const QPen & pen = Qt::NoPen) {
+    QPainterPath p;
+    p.addRect(rect);
+    return addHighlightPath(page, p, brush, pen);
+  }
+  QGraphicsPathItem * addHighlightPath(const unsigned int page, const QPainterPath & path, const QColor color, const QPen & pen = Qt::NoPen) {
+    return addHighlightPath(page, path, QBrush(color), pen);
+  }
+
 public slots:
   void goPrev();
   void goNext();
@@ -101,15 +115,16 @@ public slots:
   void setMagnifierSize(const int size);
   void setUseGrayScale(const bool grayScale = true) { _useGrayScale = grayScale; }
 
-  void zoomBy(qreal zoomFactor);
+  void zoomBy(const qreal zoomFactor);
   void zoomIn();
   void zoomOut();
   void zoomToRect(QRectF a_rect);
   void zoomFitWindow();
   void zoomFitWidth();
   void zoom100();
+  void setZoomLevel(const qreal zoomLevel);
 
-  void search(QString searchText);
+  void search(QString searchText, Backend::SearchFlags flags = Backend::Search_CaseInsensitive);
   void nextSearchResult();
   void previousSearchResult();
   void clearSearchResults();
@@ -161,6 +176,7 @@ protected slots:
   void searchResultReady(int index);
   void searchProgressValueChanged(int progressValue);
   void switchInterfaceLocale(const QLocale & newLocale);
+  void reinitializeFromScene();
 
 private:
   PageMode _pageMode;
@@ -194,8 +210,9 @@ public:
   // the zoom factor multiplies the parent view's _zoomLevel
   void setZoomFactor(const qreal zoomFactor);
   void setPosition(const QPoint pos);
-  void setShape(const DocumentTool::MagnifyingGlass::MagnifierShape shape);
-  void setSize(const int size);
+  void setShape(const DocumentTool::MagnifyingGlass::MagnifierShape shape) { setSizeAndShape(_size, shape); }
+  void setSize(const int size) { setSizeAndShape(size, _shape); }
+  void setSizeAndShape(const int size, const DocumentTool::MagnifyingGlass::MagnifierShape shape);
   // ensures all settings are in sync with the parent view
   // make sure you call it before calling show()!
   // Note: we cannot override show() because prepareToShow() usually needs to be
@@ -218,7 +235,7 @@ class PDFDocumentInfoWidget : public QWidget
   Q_OBJECT
   friend class PDFDocumentView;
 public:
-  PDFDocumentInfoWidget(QWidget * parent = NULL, const QString & title = QString()) : QWidget(parent) { setWindowTitle(title); }
+  PDFDocumentInfoWidget(QWidget * parent = NULL, const QString & title = QString(), const QString & objectName = QString()) : QWidget(parent) { setObjectName(objectName); setWindowTitle(title); }
   virtual ~PDFDocumentInfoWidget() { }
   // If the widget has a fixed size, it should not be resized (it can, e.g., be
   // put into a QScrollArea instead).
@@ -297,6 +314,8 @@ protected slots:
   void clear();
   virtual void retranslateUi();
   void reload();
+protected:
+  virtual void showEvent(QShowEvent * event) { initFromDocument(_doc); }
 private:
   QTableWidget * _table;
 };
@@ -406,11 +425,12 @@ class PDFDocumentScene : public QGraphicsScene
   PDFPageLayout _pageLayout;
   QFileSystemWatcher _fileWatcher;
   QTimer _reloadTimer;
+  double _dpiX, _dpiY;
 
   void handleActionEvent(const PDFActionEvent * action_event);
 
 public:
-  PDFDocumentScene(QSharedPointer<Backend::Document> a_doc, QObject *parent = 0);
+  PDFDocumentScene(QSharedPointer<Backend::Document> a_doc, QObject *parent = 0, const double dpiX = -1, const double dpiY = -1);
 
   QWeakPointer<Backend::Document> document();
   QList<QGraphicsItem*> pages();
@@ -433,6 +453,8 @@ public:
 
   const QWeakPointer<Backend::Document> document() const { return _doc.toWeakRef(); }
 
+  void setResolution(const double dpiX, const double dpiY);
+
 signals:
   void pageChangeRequested(int pageNum);
   void pageLayoutChanged();
@@ -442,11 +464,12 @@ signals:
 public slots:
   void doUnlockDialog();
   void retranslateUi();
+  void reloadDocument();
 
 protected slots:
   void pageLayoutChanged(const QRectF& sceneRect);
   void reinitializeScene();
-  void reloadDocument();
+  void finishUnlock();
 
 protected:
   bool event(QEvent* event);
@@ -493,8 +516,7 @@ class PDFPageGraphicsItem : public QGraphicsObject
   static void imageToGrayScale(QImage & img);
 
 public:
-
-  PDFPageGraphicsItem(QWeakPointer<Backend::Page> a_page, QGraphicsItem *parent = 0);
+  PDFPageGraphicsItem(QWeakPointer<Backend::Page> a_page, const double dpiX, const double dpiY, QGraphicsItem *parent = 0);
 
   // This seems fragile as it assumes no other code declaring a custom graphics
   // item will choose the same ID for it's object types. Unfortunately, there
