@@ -69,7 +69,7 @@ ZoomIn::ZoomIn(PDFDocumentView * parent)
 : AbstractTool(parent),
   _started(false)
 {
-  _cursor = QCursor(QPixmap(QString::fromUtf8(":/icons/zoomincursor.png")));
+  _cursor = QCursor(QPixmap(QString::fromUtf8(":/QtPDF/icons/zoomincursor.png")));
 }
 
 void ZoomIn::mousePressEvent(QMouseEvent * event)
@@ -104,7 +104,7 @@ ZoomOut::ZoomOut(PDFDocumentView * parent)
 : AbstractTool(parent),
   _started(false)
 {
-  _cursor = QCursor(QPixmap(QString::fromUtf8(":/icons/zoomoutcursor.png")));
+  _cursor = QCursor(QPixmap(QString::fromUtf8(":/QtPDF/icons/zoomoutcursor.png")));
 }
 
 void ZoomOut::mousePressEvent(QMouseEvent * event)
@@ -138,7 +138,7 @@ MagnifyingGlass::MagnifyingGlass(PDFDocumentView * parent) :
   AbstractTool(parent)
 {
   _magnifier = new PDFDocumentMagnifierView(parent);
-  _cursor = QCursor(QPixmap(QString::fromUtf8(":/icons/magnifiercursor.png")));
+  _cursor = QCursor(QPixmap(QString::fromUtf8(":/QtPDF/icons/magnifiercursor.png")));
 }
 
 void MagnifyingGlass::setMagnifierShape(const MagnifierShape shape)
@@ -360,10 +360,16 @@ void ContextClick::mouseReleaseEvent(QMouseEvent * event)
   _started = false;
   if (event->buttons() == Qt::NoButton && event->button() == Qt::LeftButton) {
     QPointF pos(_parent->mapToScene(event->pos()));
-    QGraphicsItem * item = _parent->scene()->itemAt(pos);
-    if (!item || item->type() != PDFPageGraphicsItem::Type)
+
+    PDFPageGraphicsItem * pageItem = NULL;
+    foreach(QGraphicsItem * item, _parent->scene()->items(pos, Qt::IntersectsItemBoundingRect, Qt::AscendingOrder)) {
+      if (item && item->type() == PDFPageGraphicsItem::Type) {
+        pageItem = static_cast<PDFPageGraphicsItem*>(item);
+        break;
+      }
+    }
+    if (!pageItem)
       return;
-    PDFPageGraphicsItem * pageItem = static_cast<PDFPageGraphicsItem*>(item);
     _parent->triggerContextClick(pageItem->pageNum(), pageItem->mapToPage(pageItem->mapFromScene(pos)));
   }
 }
@@ -718,8 +724,9 @@ void Select::mousePressEvent(QMouseEvent * event)
   
   // Create the highlight path to visualize selections in the scene
   // Note: it will be parented to the page it belongs to later on
+  // FIXME: Maybe use PDFDocumentView::addHighlightPath here instead?
   if (!_highlightPath) {
-    _highlightPath = new QGraphicsPathItem(NULL, _parent->scene());
+    _highlightPath = new QGraphicsPathItem(NULL);
     _highlightPath->setBrush(QBrush(_highlightColor));
     _highlightPath->setPen(QPen(Qt::transparent));
   }

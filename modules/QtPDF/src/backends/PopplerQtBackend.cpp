@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011-2012  Charlie Sharpsteen, Stefan Löffler
+ * Copyright (C) 2011-2013  Charlie Sharpsteen, Stefan Löffler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -12,14 +12,14 @@
  * more details.
  */
 
-// NOTE: `PopplerQt4Backend.h` is included via `PDFBackend.h`
+// NOTE: `PopplerQtBackend.h` is included via `PDFBackend.h`
 #include <PDFBackend.h>
 
 namespace QtPDF {
 
 namespace Backend {
 
-namespace PopplerQt4 {
+namespace PopplerQt {
 
 // TODO: Find a better place to put this
 PDFDestination toPDFDestination(const ::Poppler::Document * doc, const ::Poppler::LinkDestination & dest)
@@ -96,8 +96,8 @@ void convertAnnotation(Annotation::AbstractAnnotation * dest, const ::Poppler::A
   // TODO: Does poppler provide the color anywhere?
   // dest->setColor();
 
-  QFlags<Annotation::AbstractAnnotation::AnnotationFlags>& flags = dest->flags();
-  flags = QFlags<Annotation::AbstractAnnotation::AnnotationFlags>();
+  Annotation::AbstractAnnotation::AnnotationFlags& flags = dest->flags();
+  flags = Annotation::AbstractAnnotation::AnnotationFlags();
   if (src->flags() & ::Poppler::Annotation::Hidden)
     flags |= Annotation::AbstractAnnotation::Annotation_Hidden;
   if (src->flags() & ::Poppler::Annotation::FixedSize)
@@ -130,7 +130,7 @@ Document::Document(QString fileName):
   _fontsLoaded(false)
 {
 #ifdef DEBUG
-//  qDebug() << "PopplerQt4::Document::Document(" << fileName << ")";
+//  qDebug() << "PopplerQt::Document::Document(" << fileName << ")";
 #endif
   parseDocument();
 }
@@ -138,7 +138,7 @@ Document::Document(QString fileName):
 Document::~Document()
 {
 #ifdef DEBUG
-//  qDebug() << "PopplerQt4::Document::~Document()";
+//  qDebug() << "PopplerQt::Document::~Document()";
 #endif
   clearPages();
 }
@@ -501,7 +501,7 @@ QImage Page::renderToImage(double xres, double yres, QRect render_box, bool cach
 
   {
     // Rendering pages is not thread safe.
-    QMutexLocker popplerDocLock(static_cast<Backend::PopplerQt4::Document *>(_parent)->_poppler_docLock);
+    QMutexLocker popplerDocLock(static_cast<Backend::PopplerQt::Document *>(_parent)->_poppler_docLock);
     if( render_box.isNull() ) {
       // A null QRect has a width and height of 0 --- we will tell Poppler to render the whole
       // page.
@@ -545,7 +545,7 @@ QList< QSharedPointer<Annotation::Link> > Page::loadLinks()
   QList< ::Poppler::Annotation *> popplerAnnots;
   {
     // Loading links is not thread safe.
-    QMutexLocker popplerDocLock(static_cast<Backend::PopplerQt4::Document *>(_parent)->_poppler_docLock);
+    QMutexLocker popplerDocLock(static_cast<Backend::PopplerQt::Document *>(_parent)->_poppler_docLock);
     popplerLinks = _poppler_page->links();
     popplerAnnots = _poppler_page->annotations();
   }
@@ -612,11 +612,15 @@ QList< QSharedPointer<Annotation::Link> > Page::loadLinks()
       case ::Poppler::Link::Browse:
         link->setActionOnActivation(new PDFURIAction(static_cast< ::Poppler::LinkBrowse*>(popplerLink)->url()));
         break;
+      /*
       case ::Poppler::Link::Action:
       case ::Poppler::Link::None:
       case ::Poppler::Link::Sound:
       case ::Poppler::Link::Movie:
       case ::Poppler::Link::JavaScript:
+      case ::Poppler::Link::Rendition: // Since poppler 0.20
+      */
+      default:
         // We don't handle these types yet
         link.clear();
         continue;
@@ -714,11 +718,13 @@ QList< QSharedPointer<Annotation::AbstractAnnotation> > Page::loadAnnotations()
   return _annotations;
 }
 
-QList<SearchResult> Page::search(QString searchText)
+QList<SearchResult> Page::search(QString searchText, SearchFlags flags)
 {
   QList<SearchResult> results;
   SearchResult result;
   double left, right, top, bottom;
+  ::Poppler::Page::SearchDirection searchDir = (flags & Search_Backwards ? ::Poppler::Page::PreviousResult : ::Poppler::Page::NextResult);
+  ::Poppler::Page::SearchMode searchMode = (flags & Search_CaseInsensitive ? ::Poppler::Page::CaseInsensitive : ::Poppler::Page::CaseSensitive);
 
   QReadLocker docLocker(_docLock.data());
   QReadLocker pageLocker(_pageLock);
@@ -728,19 +734,23 @@ QList<SearchResult> Page::search(QString searchText)
   result.pageNum = _n;
 
   QMutexLocker popplerDocLock(static_cast<Document *>(_parent)->_poppler_docLock);
-    // The Poppler search function that takes a QRectF has been marked as
-    // depreciated---something to do with float <-> double conversion causing
-    // infinite loops on some architectures. So, we explicitly use doubles and
-    // avoid the depreciated function.
-    if ( _poppler_page->search(searchText, left, top, right, bottom, ::Poppler::Page::FromTop, ::Poppler::Page::CaseInsensitive) ) {
-      result.bbox = QRectF(qreal(left), qreal(top), qAbs(qreal(right) - qreal(left)), qAbs(qreal(bottom) - qreal(top)));
-      results << result;
-    }
 
-    while ( _poppler_page->search(searchText, left, top, right, bottom, ::Poppler::Page::NextResult, ::Poppler::Page::CaseInsensitive) ) {
-      result.bbox = QRectF(qreal(left), qreal(top), qAbs(qreal(right) - qreal(left)), qAbs(qreal(bottom) - qreal(top)));
-      results << result;
-    }
+  if (flags & Search_Backwards) {
+    left = right = pageSizeF().width();
+    top = bottom = pageSizeF().height();
+  }
+  else {
+    left = top = right = bottom = 0;
+  }
+
+  // The Poppler search function that takes a QRectF has been marked as
+  // depreciated---something to do with float <-> double conversion causing
+  // infinite loops on some architectures. So, we explicitly use doubles and
+  // avoid the depreciated function.
+  while ( _poppler_page->search(searchText, left, top, right, bottom, searchDir, searchMode) ) {
+    result.bbox = QRectF(qreal(left), qreal(top), qAbs(qreal(right) - qreal(left)), qAbs(qreal(bottom) - qreal(top)));
+    results << result;
+  }
 
   return results;
 }
@@ -876,7 +886,7 @@ QString Page::selectedText(const QList<QPolygonF> & selection)
   return retVal;
 }
 
-} // namespace PopplerQt4
+} // namespace PopplerQt
 
 } // namespace Backend
 
