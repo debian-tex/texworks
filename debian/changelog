@@ -1,3 +1,18 @@
+texworks (0.5~svn1363-1) unstable; urgency=medium
+
+  * New Upstream Release (rev 1363).
+  * Adopt new build system with CMake.
+   - Rewrite debian/rules for it.
+   - Enabling PythonPlugin with modification of CMakeLists.txt .
+   - To build texworks-help-en, modify CMakeLists.txt and src/TWUtils.cpp
+     but should be refined.  See debian/patch-cm.
+   - Set hardened build flags.
+  * Cleaning lintian warnings.
+   - Stop installing unnecessary COPYING.
+   - Bump Standards-Version to 3.9.5 .
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Wed, 14 May 2014 16:24:12 +0900
+
 texworks (0.5~svn1351-1) unstable; urgency=medium
 
   * New Upstream Release (rev 1351).

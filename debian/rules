@@ -9,78 +9,39 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-export PYTHON = $(shell pyversions -d)
-
-USDIR=$(CURDIR)/debian/texworks/usr/share
-PLIDIR=plugins-src/TWLuaPlugin
-PLIPYT=plugins-src/TWPythonPlugin
+# For hardening in case CMake
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+CFLAGS+=$(CPPFLAGS)
+CXXFLAGS+=$(CPPFLAGS)
 
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 	patch -p1 < ./debian/patch-py
-#	qmake-qt4 
+	patch -p0 < ./debian/patch-cm
+	mkdir build && cd build && cmake .. -DTW_BUILD_ID='Debian' -DCMAKE_INSTALL_PREFIX='$(CURDIR)/debian/tmp/usr' && cd ..
 
 	touch configure-stamp
 
 build: build-arch build-indep
 build-arch: build-stamp
-build-indep: build-stamp
+build-indep: 
 
 build-stamp: configure-stamp  
 	dh_testdir
-
-	# Add here commands to compile the package.
-	# Lua plugin
-	cd $(PLIDIR) && qmake-qt4 -after \
-	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\"' \
-	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\"' \
-	'target.path = /usr/lib/texworks' \
-	&& $(MAKE)
-	# Python plugin
-	cd $(PLIPYT) && qmake-qt4 -after \
-	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\"' \
-	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\"' \
-	'target.path = /usr/lib/texworks' \
-	&& $(MAKE)
-	qmake-qt4 \
-	'INSTALL_PREFIX = /usr' \
-	-after \
-	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\" -DTW_DICPATH=\\\"/usr/share/myspell/dicts\\\"' \
-	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\" -DTW_DICPATH=\\\"/usr/share/hunspell\\\"' \
-	TeXworks.pro \
-	&& $(MAKE)
-	#docbook-to-man debian/texworks.sgml > texworks.1
-
+	cd build && $(MAKE)
 	touch $@
+
 
 clean: 
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp configure-stamp 
+	rm -rf build build-stamp configure-stamp
 
-	# Add here commands to clean up after the build process.
-	if [ -f Makefile ]; then $(MAKE) clean; fi
-	rm -f ./texworks ./Makefile src/DefaultBinaryPaths.h
-	if [ -d moc ]; then rmdir moc; fi
-	if [ -d objs ]; then rmdir objs; fi
-	if [ -d rcc ]; then rmdir rcc; fi
-	if [ -d ui ]; then rmdir ui; fi
-	if [ -f $(PLIDIR)/Makefile ]; then cd $(PLIDIR) && $(MAKE) clean; fi
-	if [ -d $(PLIDIR)/moc ]; then rmdir $(PLIDIR)/moc; fi
-	if [ -d $(PLIDIR)/objs ]; then rmdir $(PLIDIR)/objs; fi
-	if [ -d $(PLIDIR)/rcc ]; then rmdir $(PLIDIR)/rcc; fi
-	if [ -d $(PLIDIR)/ui ]; then rmdir $(PLIDIR)/ui; fi
-	if [ -f $(PLIPYT)/Makefile ]; then cd $(PLIPYT) && $(MAKE) clean; fi
-	if [ -d $(PLIPYT)/moc ]; then rmdir $(PLIPYT)/moc; fi
-	if [ -d $(PLIPYT)/objs ]; then rmdir $(PLIPYT)/objs; fi
-	if [ -d $(PLIPYT)/rcc ]; then rmdir $(PLIPYT)/rcc; fi
-	if [ -d $(PLIPYT)/ui ]; then rmdir $(PLIPYT)/ui; fi
 	patch -NRp1 < ./debian/patch-py || true
-
-	rm -f $(PLIDIR)/libTWLuaPlugin.so $(PLIDIR)/Makefile
-	rm -f $(PLIPYT)/libTWPythonPlugin.so $(PLIPYT)/Makefile
+	patch -NRp0 < ./debian/patch-cm || true
 
 	dh_clean 
 
@@ -88,55 +49,51 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_prep  
-	dh_installdirs -A
+	dh_installdirs
 
-	# Add here commands to install the package into debian/texworks.
-	qmake-qt4 \
-	'INSTALL_PREFIX = /usr' \
-	-after \
-	'QMAKE_CXXFLAGS -= -DTW_BUILD_ID=personal -DTW_HELPPATH=\\\"/usr/local/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/local/lib/texworks\\\" -DTW_DICPATH=\\\"/usr/share/myspell/dicts\\\"' \
-	'QMAKE_CXXFLAGS += -DTW_BUILD_ID=Debian -DTW_HELPPATH=\\\"/usr/share/texworks-help\\\" -DTW_PLUGINPATH=\\\"/usr/lib/texworks\\\" -DTW_DICPATH=\\\"/usr/share/hunspell\\\"' \
-	TeXworks.pro \
-	&& $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/texworks install
-	# unnecessary file(lintial warning)
-	rm -f $(CURDIR)/debian/texworks/usr/share/doc/texworks/COPYING*
-	install -m 755 -p "$(PLIDIR)/libTWLuaPlugin.so" \
-	$(CURDIR)/debian/texworks-scripting-lua/usr/lib/texworks
-	install -m 755 -p "$(PLIPYT)/libTWPythonPlugin.so" \
-	$(CURDIR)/debian/texworks-scripting-python/usr/lib/texworks
-	# Install the manual
-	rm -rf $(CURDIR)/debian/texworks/usr/share/texworks-help/en
-	cp -r manual $(CURDIR)/debian/texworks-help-en/usr/share/texworks-help/TeXworks-manual
 
 # Build architecture-independent files here.
 binary-indep: install
-# We have nothing to do by default.
+	dh_testdir
+	dh_testroot
+	dh_prep
+
+	dh_installchangelogs
+	dh_installdirs
+	dh_installdocs
+
+	# Install the manual
+#	mkdir --parents $(CURDIR)/debian/tmp/usr/share/texworks-help/
+#	cp -r manual $(CURDIR)/debian/tmp/usr/share/texworks-help/TeXworks-manual
+
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
 
 # Build architecture-dependent files here.
 binary-arch: install
 	dh_testdir
 	dh_testroot
+
+	cd build && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
+#	rm -r $(CURDIR)/debian/tmp/usr/share/doc/texworks-help
+	rm $(CURDIR)/debian/tmp/usr/share/doc/texworks/COPYING
+
 	dh_installchangelogs 
-	dh_installdocs
+	dh_installdocs -XCOPYING
 	dh_installexamples
-#	dh_install
+	dh_install
+	rm -r $(CURDIR)/debian/texworks/usr/share/texworks-help
 	dh_installmenu
-#	dh_installdebconf
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_python
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
 	dh_installman 
 	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms
-#	dh_perl
-#	dh_makeshlibs
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol

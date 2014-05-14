@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2013  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2014  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -2643,6 +2643,7 @@ void TeXDocument::typeset()
 		}
 		// ensure the window is visible - otherwise we can't see the output
 		// panel (and the typeset process appears to hang in case of an error)
+		consoleTabs->setCurrentIndex(0);
 		raise();
 		
 		inputLine->setFocus(Qt::OtherFocusReason);

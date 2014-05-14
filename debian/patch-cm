@@ -1,0 +1,31 @@
+--- CMakeLists.txt~	2014-05-15 10:53:07.125865154 +0900
++++ CMakeLists.txt	2014-05-15 11:02:06.981435376 +0900
+@@ -110,7 +110,7 @@
+ 
+ # Options controlling the creation of scripting language plugins.
+ OPTION(WITH_LUA "Build TeXworks Lua plugin?" ON)
+-OPTION(WITH_PYTHON "Build TeXworks Python plugin?" OFF)
++OPTION(WITH_PYTHON "Build TeXworks Python plugin?" ON)
+ 
+ # On OS X we default to linking against the Python libraries provided by Apple
+ # even if other Pythons are available. This helps when building
+@@ -121,7 +121,7 @@
+ ENDIF ()
+ 
+ IF (UNIX AND NOT APPLE)
+-  SET(TeXworks_HELP_DIR share/doc/texworks-help CACHE PATH "Path where TeXworks looks for help files")
++  SET(TeXworks_HELP_DIR share/texworks-help CACHE PATH "Path where TeXworks looks for help files")
+   SET(TeXworks_DIC_DIR /usr/share/myspell/dicts CACHE PATH "Path where TeXworks looks for spellchecking dictionaries")
+   SET(TeXworks_DOCS_DIR share/doc/texworks CACHE PATH "Path in which documentation files are installed")
+   SET(TeXworks_ICON_DIR share/pixmaps CACHE PATH "Path in which icons are installed")
+--- src/TWUtils.cpp~	2014-05-14 16:18:49.217408113 +0900
++++ src/TWUtils.cpp	2014-05-15 11:01:26.641465563 +0900
+@@ -51,6 +51,8 @@
+ #endif
+ #ifndef TW_HELPPATH
+ #define TW_HELPPATH "/usr/local/share/texworks-help"
++#else
++#define TW_HELPPATH "/usr/share/texworks-help"
+ #endif
+ #endif
+ 

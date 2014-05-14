@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2012  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2014  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -33,16 +33,18 @@ QList<TeXHighlighter::HighlightingSpec> *TeXHighlighter::syntaxRules = NULL;
 QList<TeXHighlighter::TagPattern> *TeXHighlighter::tagPatterns = NULL;
 
 TeXHighlighter::TeXHighlighter(QTextDocument *parent, TeXDocument *texDocument)
-	: QSyntaxHighlighter(parent)
+	: QSyntaxHighlighter((QObject*)NULL)
 	, texDoc(texDocument)
 	, highlightIndex(-1)
 	, isTagging(true)
 	, pHunspell(NULL)
 	, spellingCodec(NULL)
+	, textDoc(parent)
 {
 	loadPatterns();
 	spellFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
 	spellFormat.setUnderlineColor(Qt::red);
+	QTimer::singleShot(1000, this, SLOT(delayedInstallParent()));
 }
 
 void TeXHighlighter::spellCheckRange(const QString &text, int index, int limit, const QTextCharFormat &spellFormat)
