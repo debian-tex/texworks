@@ -15,14 +15,16 @@ include /usr/share/dpkg/buildflags.mk
 CFLAGS+=$(CPPFLAGS)
 CXXFLAGS+=$(CPPFLAGS)
 
+
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
-	patch -p1 < ./debian/patch-py
-	patch -p0 < ./debian/patch-cm
-	mkdir build && cd build && cmake .. -DTW_BUILD_ID='Debian' -DCMAKE_INSTALL_PREFIX='$(CURDIR)/debian/tmp/usr' && cd ..
-
+#	patch -p0 < ./debian/patch-cm
+	mkdir build && cd build && cmake .. -DTW_BUILD_ID='Debian' -DCMAKE_INSTALL_PREFIX='$(CURDIR)/debian/tmp/usr' -DTeXworks_PLUGIN_DIR='/usr/lib/texworks' -DTeXworks_HELP_DIR='/usr/share/texworks-help' && cd ..
+	cd build && $(MAKE) texworks && mv texworks ../texworks-good && cd ..
+	rm -rf build && mkdir build && \
+	cd build && cmake .. -DTW_BUILD_ID='Debian' -DCMAKE_INSTALL_PREFIX='$(CURDIR)/debian/tmp/usr' -DWITH_PYTHON=ON && cd ..
 	touch configure-stamp
 
 build: build-arch build-indep
@@ -39,9 +41,8 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -rf build build-stamp configure-stamp
-
-	patch -NRp1 < ./debian/patch-py || true
-	patch -NRp0 < ./debian/patch-cm || true
+	rm -f ./texworks-good
+#	patch -NRp0 < ./debian/patch-cm || true
 
 	dh_clean 
 
@@ -78,10 +79,11 @@ binary-indep: install
 binary-arch: install
 	dh_testdir
 	dh_testroot
-
-	cd build && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
-#	rm -r $(CURDIR)/debian/tmp/usr/share/doc/texworks-help
+#	INSTALL_ROOT=$(CURDIR)/debian/tmp 
+	cd build && $(MAKE) install
+	mv $(CURDIR)/debian/tmp/usr/share/doc/texworks-help $(CURDIR)/debian/tmp/usr/share/texworks-help
 	rm $(CURDIR)/debian/tmp/usr/share/doc/texworks/COPYING
+	mv ./texworks-good $(CURDIR)/debian/tmp/usr/bin/texworks
 
 	dh_installchangelogs 
 	dh_installdocs -XCOPYING

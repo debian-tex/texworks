@@ -1,3 +1,14 @@
+texworks (0.5~svn1363-2) unstable; urgency=medium
+
+  * In previous packaging, I made mistake but yet I don't get a decent fix,
+    the followings are only workaroud.
+  * Fixed build process to set TW_PLUGINPATH correctly with an option
+    -DTeXworks_PLUGIN_DIR='/usr/lib/texworks'.
+  * Removed unnecessary patches and set the option -DWITH_PYTHON=ON and
+    -DTeXworks_HELP_DIR='/usr/share/texworks-help'.
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Fri, 23 May 2014 09:46:37 +0900
+
 texworks (0.5~svn1363-1) unstable; urgency=medium
 
   * New Upstream Release (rev 1363).
