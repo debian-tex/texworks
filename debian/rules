@@ -16,45 +16,39 @@ CFLAGS+=$(CPPFLAGS)
 CXXFLAGS+=$(CPPFLAGS)
 
 
+.PHONY: build-arch build-indep build clean binary-indep binary-arch binary install configure
+
+
+binary: binary-indep binary-arch
+build: build-indep build-arch
+
+# Configure the build
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	# Add here commands to configure the package.
-#	patch -p0 < ./debian/patch-cm
-	mkdir build && cd build && cmake .. -DTW_BUILD_ID='Debian' -DCMAKE_INSTALL_PREFIX='$(CURDIR)/debian/tmp/usr' -DTeXworks_PLUGIN_DIR='/usr/lib/texworks' -DTeXworks_HELP_DIR='/usr/share/texworks-help' && cd ..
-	cd build && $(MAKE) texworks && mv texworks ../texworks-good && cd ..
-	rm -rf build && mkdir build && \
-	cd build && cmake .. -DTW_BUILD_ID='Debian' -DCMAKE_INSTALL_PREFIX='$(CURDIR)/debian/tmp/usr' -DWITH_PYTHON=ON && cd ..
-	touch configure-stamp
-
-build: build-arch build-indep
-build-arch: build-stamp
-build-indep: 
-
-build-stamp: configure-stamp  
-	dh_testdir
-	cd build && $(MAKE)
+	# Configure
+	mkdir build && cd build && cmake .. -DTW_BUILD_ID='Debian' -DCMAKE_INSTALL_PREFIX='/usr' -DWITH_PYTHON=ON -DTeXworks_HELP_DIR='/usr/share/texworks-help' && cd ..
 	touch $@
 
+# Build architecture-independent files
+build-indep :
+
+build-arch: build-stamp
+
+# Build architecture-dependent files
+build-stamp: configure-stamp  
+	dh_testdir
+	cd build && $(MAKE) VERBOSE=1
+	touch $@
 
 clean: 
 	dh_testdir
 	dh_testroot
 	rm -rf build build-stamp configure-stamp
-	rm -f ./texworks-good
-#	patch -NRp0 < ./debian/patch-cm || true
-
 	dh_clean 
 
-install: build
-	dh_testdir
-	dh_testroot
-	dh_prep  
-	dh_installdirs
-
-
-# Build architecture-independent files here.
-binary-indep: install
+# Build architecture-independent packages
+binary-indep:
 	dh_testdir
 	dh_testroot
 	dh_prep
@@ -63,9 +57,10 @@ binary-indep: install
 	dh_installdirs
 	dh_installdocs
 
+	# DON'T PACKAGE THE MANUAL IN EXPERIMENTAL BUILDS
 	# Install the manual
-#	mkdir --parents $(CURDIR)/debian/tmp/usr/share/texworks-help/
-#	cp -r manual $(CURDIR)/debian/tmp/usr/share/texworks-help/TeXworks-manual
+#	mkdir --parents $(CURDIR)/debian/tmp/usr/share/doc/texworks-help/
+#	cp -r manual $(CURDIR)/debian/tmp/usr/share/doc/texworks-help/TeXworks-manual
 
 	dh_compress
 	dh_fixperms
@@ -75,34 +70,32 @@ binary-indep: install
 	dh_builddeb
 
 
-# Build architecture-dependent files here.
+
+# Build architecture-independent packages
 binary-arch: install
 	dh_testdir
 	dh_testroot
-#	INSTALL_ROOT=$(CURDIR)/debian/tmp 
-	cd build && $(MAKE) install
-	mv $(CURDIR)/debian/tmp/usr/share/doc/texworks-help $(CURDIR)/debian/tmp/usr/share/texworks-help
+
+	cd build && $(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	mv $(CURDIR)/debian/tmp/usr/usr/share/texworks-help $(CURDIR)/debian/tmp/usr/share/texworks-help
+	rm -rf $(CURDIR)/debian/tmp/usr/usr
 	rm $(CURDIR)/debian/tmp/usr/share/doc/texworks/COPYING
-	mv ./texworks-good $(CURDIR)/debian/tmp/usr/bin/texworks
 
 	dh_installchangelogs 
-	dh_installdocs -XCOPYING
-	dh_installexamples
+	dh_installdocs
 	dh_install
 	rm -r $(CURDIR)/debian/texworks/usr/share/texworks-help
-	dh_installmenu
-	dh_installman 
+	dh_installman
+	dh_icons
 	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms
+	dh_makeshlibs
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
 
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
-#%:
-#	dh  $@
+
