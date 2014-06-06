@@ -15,6 +15,10 @@ include /usr/share/dpkg/buildflags.mk
 CFLAGS+=$(CPPFLAGS)
 CXXFLAGS+=$(CPPFLAGS)
 
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+NJOBS := -j $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+endif
+
 
 .PHONY: build-arch build-indep build clean binary-indep binary-arch binary install configure
 
@@ -38,7 +42,7 @@ build-arch: build-stamp
 # Build architecture-dependent files
 build-stamp: configure-stamp  
 	dh_testdir
-	cd build && $(MAKE) VERBOSE=1
+	cd build && $(MAKE) $(NJOBS) VERBOSE=1
 	touch $@
 
 clean: 

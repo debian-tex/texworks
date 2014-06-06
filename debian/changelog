@@ -1,3 +1,10 @@
+texworks (0.5~svn1363-4) unstable; urgency=medium
+
+  * Enabled parallel building.  Thanks to Pino Toscano <pino AT debian.org>.
+    (Closes: #749971)
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Fri, 06 Jun 2014 09:32:35 +0900
+
 texworks (0.5~svn1363-3) unstable; urgency=medium
 
   * Now hopefully we did a decent fix.
