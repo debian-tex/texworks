@@ -1,3 +1,10 @@
+texworks (0.5~svn1363-5) unstable; urgency=medium
+
+  * Modify to use the shared library for synctex.  Thanks to Sebastian Ramacher
+    <sramacher AT debian.org>  (Closes: #753818)
+
+ -- Atsuhito KOHDA <kohda@debian.org>  Tue, 08 Jul 2014 15:07:38 +0900
+
 texworks (0.5~svn1363-4) unstable; urgency=medium
 
   * Enabled parallel building.  Thanks to Pino Toscano <pino AT debian.org>.

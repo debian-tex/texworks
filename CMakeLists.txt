@@ -221,6 +221,7 @@ INCLUDE( TranslationMacros )
 FIND_PACKAGE(ZLIB REQUIRED)
 FIND_PACKAGE(Hunspell REQUIRED)
 FIND_PACKAGE(Poppler REQUIRED)
+FIND_PACKAGE(Synctex)
 
 # The only thing Poppler should need is the location of the include directories
 # in order to access header files. The library loader should be able to find
@@ -241,6 +242,10 @@ IF ( POPPLER_NEEDS_FONTCONFIG )
   LIST(APPEND TeXworks_INCLUDE_DIRS ${FONTCONFIG_INCLUDE_DIR})
 ENDIF ()
 
+IF ( SYNCTEX_FOUND )
+  LIST(APPEND TeXworks_INCLUDE_DIRS ${SYNCTEX_INCLUDE_DIR})
+ENDIF ()
+
 SET(TeXworks_LIB_DIRS ${QT_LIBRARY_DIR})
 
 set(TEXWORKS_ADDITIONAL_LIBS "" CACHE STRING "Additional libraries not found by CMake")
@@ -254,6 +259,11 @@ SET(TeXworks_LIBS
   ${ZLIB_LIBRARIES}
   ${TEXWORKS_ADDITIONAL_LIBS}
 )
+
+IF ( SYNCTEX_FOUND )
+  LIST(APPEND TeXworks_LIBS ${SYNCTEX_LIBRARIES})
+ENDIF ()
+
 
 # Configure Optional Dependencies
 # -------------------------------
