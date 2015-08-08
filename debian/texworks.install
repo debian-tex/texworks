@@ -1,2 +1,4 @@
-debian/tmp/usr/bin*
-debian/tmp/usr/share*
+usr/bin/texworks
+usr/share/applications/texworks.desktop
+usr/share/man/
+usr/share/pixmaps/TeXworks.png

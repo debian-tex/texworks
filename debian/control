@@ -2,7 +2,16 @@ Source: texworks
 Section: editors
 Priority: extra
 Maintainer: Debian QA Group <packages@qa.debian.org>
-Build-Depends: debhelper (>= 7), pkg-config, cmake (>= 2.8.6), libhunspell-dev, libqt4-dev, libpoppler-qt4-dev, liblua5.2-dev, python-dev, zlib1g-dev, libsynctex-dev
+Build-Depends: debhelper (>= 9),
+ pkg-config,
+ cmake (>= 2.8.6),
+ libhunspell-dev,
+ libqt4-dev,
+ libpoppler-qt4-dev,
+ liblua5.2-dev,
+ python-dev,
+ zlib1g-dev,
+ libsynctex-dev,
 Standards-Version: 3.9.5
 Homepage: http://www.tug.org/texworks/
 
