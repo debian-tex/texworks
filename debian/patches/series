@@ -2,3 +2,4 @@ synctex.patch
 #patch-cm
 #patch-luatex
 #patch-py
+QtXml.patch

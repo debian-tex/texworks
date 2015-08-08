@@ -3,6 +3,7 @@ texworks (0.5~svn1363-6) UNRELEASED; urgency=medium
   * QA upload.
   * Set Maintainer to Debian QA Group.  (See: #773940)
   * Use source format 3.0 (quilt).
+  * Link against QtXml to fix FTBFS with Qt 4.8.7.  (Closes: #789842)
 
  -- Andreas Beckmann <anbe@debian.org>  Sat, 08 Aug 2015 16:07:01 +0200
 
