@@ -1,3 +1,10 @@
+texworks (0.5~svn1363-6) UNRELEASED; urgency=medium
+
+  * QA upload.
+  * Set Maintainer to Debian QA Group.  (See: #773940)
+
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 08 Aug 2015 16:07:01 +0200
+
 texworks (0.5~svn1363-5) unstable; urgency=medium
 
   * Modify to use the shared library for synctex.  Thanks to Sebastian Ramacher
