@@ -1,4 +1,4 @@
-texworks (0.5~svn1363-6) UNRELEASED; urgency=medium
+texworks (0.5~svn1363-6) unstable; urgency=medium
 
   * QA upload.
   * Set Maintainer to Debian QA Group.  (See: #773940)
@@ -9,7 +9,7 @@ texworks (0.5~svn1363-6) UNRELEASED; urgency=medium
   * Bump Standards-Version to 3.9.6, no changes needed.
   * Import packaging history into GIT, add Vcs-* URLs.
 
- -- Andreas Beckmann <anbe@debian.org>  Sat, 08 Aug 2015 16:07:01 +0200
+ -- Andreas Beckmann <anbe@debian.org>  Sat, 08 Aug 2015 17:40:06 +0200
 
 texworks (0.5~svn1363-5) unstable; urgency=medium
 
