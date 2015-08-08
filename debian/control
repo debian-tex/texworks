@@ -35,15 +35,21 @@ Package: texworks-scripting-lua
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, texworks
 Description: Plugin to bring Lua scripting to TeXworks
+ An environment for authoring TeX (LaTeX, ConTeXt, etc) documents, with
+ a Unicode-based, TeX-aware editor, integrated PDF viewer, and a clean,
+ simple interface accessible to casual and non-technical users.
  .
- For further information, see http://tug.org/texworks/
+ This package contains a lua scripting plugin for TeXworks.
 
 Package: texworks-scripting-python
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, texworks
 Description: Plugin to bring Python scripting to TeXworks
+ An environment for authoring TeX (LaTeX, ConTeXt, etc) documents, with
+ a Unicode-based, TeX-aware editor, integrated PDF viewer, and a clean,
+ simple interface accessible to casual and non-technical users.
  .
- For further information, see http://tug.org/texworks/
+ This package contains a Python scripting plugin for TeXworks.
 
 Package: texworks-help-en
 Architecture: all
