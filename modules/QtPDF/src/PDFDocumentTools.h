@@ -158,7 +158,7 @@ protected:
 class ContextClick : public AbstractTool
 {
 public:
-  ContextClick(PDFDocumentView * parent) : AbstractTool(parent) { }
+  ContextClick(PDFDocumentView * parent) : AbstractTool(parent), _started(false) { }
   virtual Type type() const { return Tool_ContextClick; }
 protected:
   virtual void mousePressEvent(QMouseEvent * event);
@@ -277,7 +277,7 @@ protected:
   enum MouseMode { MouseMode_None, MouseMode_MarqueeSelect, MouseMode_TextSelect, MouseMode_ImageSelect };
 
   bool _cursorOverBox;
-  QPoint _startPos;
+  QPointF _startPos;
   QGraphicsPathItem * _highlightPath;
   MouseMode _mouseMode;
   QRubberBand * _rubberBand;

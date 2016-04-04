@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2009-2013  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2009-2015  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ HardWrapDialog::init()
 	bool rewrapParagraphs = settings.value("hardWrapRewrap", false).toBool();
 	checkbox_rewrap->setChecked(rewrapParagraphs);
 
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 	setWindowFlags(Qt::Sheet);
 #endif
 }

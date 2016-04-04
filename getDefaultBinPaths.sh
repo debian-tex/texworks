@@ -35,9 +35,9 @@ appendPath()
 	esac
 }
 
-# (0) for Mac OS X, start with /usr/texbin
+# (0) for Mac OS X, start with /Library/TeX/texbin (OSX 10.11 El Capitan) & /usr/texbin
 case $PLATFORM in
-	*darwin*)	appendPath "/usr/texbin";;
+	*darwin*)	appendPath "/Library/TeX/texbin"; appendPath "/usr/texbin";;
 esac
 
 # (1) try to find tex and ghostscript
@@ -74,13 +74,14 @@ case $PLATFORM in
 	*)			OS=`echo $PLATFORM | sed 's/.*-//'`
 esac
 
+appendPath "/usr/local/texlive/2017/bin/$ARCH-$OS"
+appendPath "/usr/local/texlive/2016/bin/$ARCH-$OS"
+appendPath "/usr/local/texlive/2015/bin/$ARCH-$OS"
+appendPath "/usr/local/texlive/2014/bin/$ARCH-$OS"
 appendPath "/usr/local/texlive/2013/bin/$ARCH-$OS"
 appendPath "/usr/local/texlive/2012/bin/$ARCH-$OS"
 appendPath "/usr/local/texlive/2011/bin/$ARCH-$OS"
 appendPath "/usr/local/texlive/2010/bin/$ARCH-$OS"
-appendPath "/usr/local/texlive/2009/bin/$ARCH-$OS"
-appendPath "/usr/local/texlive/2008/bin/$ARCH-$OS"
-appendPath "/usr/local/texlive/2007/bin/$ARCH-$OS"
 
 for TEXLIVEROOT in /usr/local/texlive/* /opt/texlive/*; do
 	# Check if this is really a folder (e.g., /opt/... might not exist)

@@ -124,6 +124,10 @@
         <source>Re-wrap paragraphs</source>
         <translation>Herformatteer paragraven</translation>
     </message>
+    <message>
+        <source>Unwrap</source>
+        <translation>Regelovergangen verwijderen</translation>
+    </message>
 </context>
 <context>
     <name>PDFDocument</name>
@@ -332,10 +336,6 @@
         <translation>Ctrl+Backspace</translation>
     </message>
     <message>
-        <source>Ctrl+T</source>
-        <translation type="obsolete">Ctrl+T</translation>
-    </message>
-    <message>
         <source>Preferences...</source>
         <translation>Voorkeuren...</translation>
     </message>
@@ -408,24 +408,14 @@
         <translation>Plaats rechts</translation>
     </message>
     <message>
-        <source>Home</source>
+        <source>Ctrl+PgUp</source>
         <comment>shortcut key name, do not translate</comment>
-        <translation>Home</translation>
+        <translation>Ctrl+PgUp</translation>
     </message>
     <message>
-        <source>PgUp</source>
+        <source>Ctrl+PgDown</source>
         <comment>shortcut key name, do not translate</comment>
-        <translation>PgUp</translation>
-    </message>
-    <message>
-        <source>PgDown</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation>PgDown</translation>
-    </message>
-    <message>
-        <source>End</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation></translation>
+        <translation>Ctrl+PgDown</translation>
     </message>
     <message>
         <source>Quit TeXworks</source>
@@ -436,16 +426,8 @@
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <source>PDF file &quot;%1&quot; is locked; this is not currently supported.</source>
-        <translation>Pdf bestand &quot;%1&quot; is geblokeerd; dit is niet ondersteund.</translation>
-    </message>
-    <message>
         <source>Search</source>
         <translation>Zoek</translation>
-    </message>
-    <message>
-        <source>Find</source>
-        <translation type="obsolete">Zoeken</translation>
     </message>
     <message>
         <source>Ctrl+F</source>
@@ -531,6 +513,42 @@
         <source>Clear Recent Files</source>
         <translation>Schoon recente bestanden op</translation>
     </message>
+    <message>
+        <source>Error initializing SyncTeX</source>
+        <translation>Initialiseren van SyncTeX mislukt</translation>
+    </message>
+    <message>
+        <source>Go to previous view</source>
+        <translation>Terug</translation>
+    </message>
+    <message>
+        <source>Alt+Left</source>
+        <translation>Alt+Left</translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation>Eén pagina</translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation>Eén pagina, doorlopend</translation>
+    </message>
+    <message>
+        <source>Two Pages Continuous</source>
+        <translation>Twee pagina&apos;s, doorlopend</translation>
+    </message>
+    <message>
+        <source>Jump to Source</source>
+        <translation>Spring naar tekst</translation>
+    </message>
+    <message>
+        <source>Go to Page</source>
+        <translation>Ga naar pagina</translation>
+    </message>
+    <message>
+        <source>Page number:</source>
+        <translation>Pagina:</translation>
+    </message>
 </context>
 <context>
     <name>PDFFindDialog</name>
@@ -572,98 +590,6 @@
     </message>
 </context>
 <context>
-    <name>PDFFontsDock</name>
-    <message>
-        <source>Fonts</source>
-        <translation>Fonts</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>Naam</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <source>Subset</source>
-        <translation>Subset</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>Bestand</translation>
-    </message>
-    <message>
-        <source>[none]</source>
-        <translation>[geen]</translation>
-    </message>
-    <message>
-        <source>yes</source>
-        <translation>ja</translation>
-    </message>
-    <message>
-        <source>no</source>
-        <translation>nee</translation>
-    </message>
-    <message>
-        <source>[embedded]</source>
-        <translation>[ingesloten]</translation>
-    </message>
-</context>
-<context>
-    <name>PDFInfoDock</name>
-    <message>
-        <source>PDF Info</source>
-        <translation>PDF info</translation>
-    </message>
-</context>
-<context>
-    <name>PDFOutlineDock</name>
-    <message>
-        <source>Contents</source>
-        <translation>Inhoud</translation>
-    </message>
-    <message>
-        <source>No TOC</source>
-        <translation>Geen Inhoudsopgave</translation>
-    </message>
-</context>
-<context>
-    <name>PDFWidget</name>
-    <message>
-        <source>Zoom In</source>
-        <translation>Zoom in</translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation>Zoom uit</translation>
-    </message>
-    <message>
-        <source>Actual Size</source>
-        <translation>Ware grootte</translation>
-    </message>
-    <message>
-        <source>Fit to Width</source>
-        <translation>Venster breedte</translation>
-    </message>
-    <message>
-        <source>Fit to Window</source>
-        <translation>Pas in venster</translation>
-    </message>
-    <message>
-        <source>Go to Page</source>
-        <translation>Ga naar pagina</translation>
-    </message>
-    <message>
-        <source>Page number:</source>
-        <translation>Pagina:</translation>
-    </message>
-    <message>
-        <source>Jump to Source</source>
-        <translation>Spring naar tekst</translation>
-    </message>
-</context>
-<context>
     <name>PrefsDialog</name>
     <message>
         <source>Choose Directory</source>
@@ -672,10 +598,6 @@
     <message>
         <source>New Tool</source>
         <translation>Nieuw commando</translation>
-    </message>
-    <message>
-        <source>English (built-in)</source>
-        <translation type="obsolete">Engelstalig (ingebouwd)</translation>
     </message>
     <message>
         <source>None</source>
@@ -688,10 +610,6 @@
     <message>
         <source>General</source>
         <translation>Algemeen</translation>
-    </message>
-    <message>
-        <source>Toolbar buttons</source>
-        <translation type="obsolete">Werkbalk iconen</translation>
     </message>
     <message>
         <source>Small icons</source>
@@ -724,10 +642,6 @@
     <message>
         <source>File Open dialog</source>
         <translation>Open bestand popup</translation>
-    </message>
-    <message>
-        <source>Interface locale:</source>
-        <translation type="obsolete">Gebruikers interface taal:</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -842,10 +756,6 @@
         <translation>Standaard:</translation>
     </message>
     <message>
-        <source>Auto-hide output panel unless errors occur</source>
-        <translation type="obsolete">Verberg uitvoer venster automatisch na succesvol commando</translation>
-    </message>
-    <message>
         <source>System default [%1]</source>
         <translation>Systeem standaard [%1]</translation>
     </message>
@@ -902,10 +812,6 @@
         <translation>QtScript debugger aanzetten</translation>
     </message>
     <message>
-        <source>Hide output panel:</source>
-        <translation type="obsolete">Uitvoerscherm onderdrukken:</translation>
-    </message>
-    <message>
         <source>Never</source>
         <extracomment>&quot;Hide console output&quot; mode</extracomment>
         <translation>Nooit</translation>
@@ -923,15 +829,6 @@
     <message>
         <source>&lt;em&gt;Note:&lt;/em&gt; These are default settings. Changes to them will not affect windows that are already open. Use the respective items in the &amp;quot;Format&amp;quot; menu to achieve that.</source>
         <translation>&lt;em&gt;Let op:&lt;/note&gt; Dit zijn standaardinstellingen. Aanpassingen hier hebben geen effect op schermen die al open zijn. Gebruik de betreffende items in het  &amp;quot;Opmaak&amp;quot; menu daarvoor.</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;strong&gt;Never:&lt;/strong&gt; Never hide the output panel after typesetting.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Automatically:&lt;/strong&gt; Hide the output panel after successful typesetting, but only if it was hidden before.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;On Success:&lt;/strong&gt; Hide the output panel after successful typesetting, regardless of its previous state.&lt;/p&gt;
-</source>
-        <translation type="obsolete">&lt;p&gt;&lt;strong&gt;Nooit:&lt;/strong&gt; .Onderdruk het uitvoerscherm nooit,&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Automatisch:&lt;/strong&gt; Onderdruk het uitvoerscherm na een geslaagde typeset run, maar alleen als het al onderdrukt was.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Na succes:&lt;/strong&gt; Onderdruk het uitvoerscherm na een geslaagde typeset run, ongeacht eerdere status.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Enable autocompletion</source>
@@ -966,6 +863,22 @@
         <source>Open corresponding PDF preview with TeX files</source>
         <translation>Open bijpassende PDF preview tegelijk met TeX bestanden</translation>
     </message>
+    <message>
+        <source>Page mode:</source>
+        <translation>Pagina-indeling:</translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation>Eén pagina</translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation>Eén pagina, doorlopend</translation>
+    </message>
+    <message>
+        <source>Two Page Continuous</source>
+        <translation>Twee pagina&apos;s, doorlopend</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -994,10 +907,6 @@
         <translation>Gedocumenteerde macros (*.dtx)</translation>
     </message>
     <message>
-        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.log)</source>
-        <translation type="obsolete">Hulpbestanden  (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.log)</translation>
-    </message>
-    <message>
         <source>Text files (*.txt)</source>
         <translation>Tekst bestanden (*.txt)</translation>
     </message>
@@ -1008,14 +917,6 @@
     <message>
         <source>All files</source>
         <translation>Alle bestanden</translation>
-    </message>
-    <message>
-        <source>Log files (*.log)</source>
-        <translation type="obsolete">Log bestanden (*.log)</translation>
-    </message>
-    <message>
-        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation type="obsolete">Hulpbestanden (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
     </message>
     <message>
         <source>Log files (*.log *.blg)</source>
@@ -1257,10 +1158,6 @@
         <translation>Over %1</translation>
     </message>
     <message>
-        <source>&lt;p&gt;%1 is a simple environment for editing, typesetting, and previewing TeX documents.&lt;/p&gt;&lt;small&gt;&lt;p&gt;&amp;#xA9; 2007-2008 Jonathan Kew&lt;br&gt;Version %2 (r.%3)&lt;p&gt;Distributed under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU General Public License&lt;/a&gt;, version 2.&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/qt&quot;&gt;Qt4&lt;/a&gt; application framework by Trolltech ASA.&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF rendering library by Kristian H&amp;#xF8;gsberg, Albert Astals Cid and others.&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.&lt;br&gt;Concept and resources from &lt;a href=&quot;http://www.uoregon.edu/~koch/texshop/&quot;&gt;TeXShop&lt;/a&gt; by Richard Koch.&lt;br&gt;&lt;a href=&quot;http://itexmac.sourceforge.net/SyncTeX.html&quot;&gt;SyncTeX&lt;/a&gt; technology by J&amp;#xE9;r&amp;#xF4;me Laurens.&lt;br&gt;Some icons used are from the &lt;a href=&quot;http://tango.freedesktop.org/&quot;&gt;Tango Desktop Project&lt;/a&gt;.&lt;/small&gt;</source>
-        <translation type="obsolete">&lt;p&gt;%1 is een eenvoudige omgeving voor het bewerken, zetten en tonen van TeX documenten.&lt;/p&gt;&lt;small&gt;&lt;p&gt;&amp;#xA9; 2007-2008 Jonathan Kew&lt;br&gt;Version %2 (r.%3)&lt;p&gt;Verspreiding onder de &lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU General Public License&lt;/a&gt;, versie 2.&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/qt&quot;&gt;Qt4&lt;/a&gt; applicatie framework door Trolltech ASA.&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF library door Kristian H&amp;#xF8;gsberg en anderen.&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; spellingschecker door L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.&lt;br&gt;Concept en voorbeelden van &lt;a href=&quot;http://www.uoregon.edu/~koch/texshop/&quot;&gt;TeXShop&lt;/a&gt; door Richard Koch.&lt;br&gt;SyncTeX techniek door J&amp;#xE9;r&amp;#xF4;me Laurens.&lt;br&gt;Sommige iconen zijn van het &lt;a href=&quot;http://tango.freedesktop.org/&quot;&gt;Tango Desktop Project&lt;/a&gt;.&lt;/small&gt;</translation>
-    </message>
-    <message>
         <source>Unable to access &quot;%1&quot;; perhaps your browser or mail application is not properly configured?</source>
         <translation>Kan &quot;%1&quot; niet bereiken; misschien is uw browser of mail programma niet correct geconfigureerd?</translation>
     </message>
@@ -1289,24 +1186,8 @@
         <translation>&lt;p&gt;%1 is een eenvoudige omgeving voor het bewerken, zetten en tonen van TeX documenten.&lt;/p&gt;</translation>
     </message>
     <message>
-        <source>&lt;br&gt;Version %1 (r.%2)</source>
-        <translation type="obsolete">&lt;br&gt;Versie %1 (r.%2)</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Distributed under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU General Public License&lt;/a&gt;, version 2.</source>
-        <translation type="obsolete">&lt;p&gt;Verspreiding onder de &lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU General Public License&lt;/a&gt;, versie 2.</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/&quot;&gt;Qt4&lt;/a&gt; application framework by Qt Software, a division of Nokia Corporation.</source>
-        <translation type="obsolete">&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/qt&quot;&gt;Qt4&lt;/a&gt; applicatie framework door Qt Software, een onderdeel van Nokia Corporation.</translation>
-    </message>
-    <message>
         <source>&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF rendering library by Kristian H&amp;#xF8;gsberg, Albert Astals Cid and others.</source>
         <translation>&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF library door Kristian H&amp;#xF8;gsberg, Albert Astals Cid en anderen.</translation>
-    </message>
-    <message>
-        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
-        <translation>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; spellingschecker door L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</translation>
     </message>
     <message>
         <source>&lt;br&gt;Concept and resources from &lt;a href=&quot;http://www.uoregon.edu/~koch/texshop/&quot;&gt;TeXShop&lt;/a&gt; by Richard Koch.</source>
@@ -1333,14 +1214,6 @@
         <translation>&lt;a href=&quot;mailto:taco@luatex.org&quot;&gt;Taco Hoekwater&lt;/a&gt;</translation>
     </message>
     <message>
-        <source>&lt;br&gt;Version %1 r.%2 (%3)</source>
-        <translation>&lt;br&gt;Versie %1 r.%2 (%3)</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by Qt Software, a division of Nokia Corporation.</source>
-        <translation>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Qt application framework&lt;/a&gt; v%1 door Qt Software, een onderdeel van Nokia Corporation.</translation>
-    </message>
-    <message>
         <source>Save File</source>
         <translation>Bestand opslaan</translation>
     </message>
@@ -1364,6 +1237,26 @@
     <message>
         <source>Clear Recent Files</source>
         <translation>Schoon recente bestanden op</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2) [r.%3, %4]</source>
+        <translation>&lt;br&gt;Versie %1 (%2) [r.%3, %4]</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2)</source>
+        <translation>&lt;br&gt;Versie %1 (%2)</translation>
+    </message>
+    <message>
+        <source>Quit TeXworks</source>
+        <translation>TeXworks afsluiten</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;&lt;a href=&quot;http://www.qt.io/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by The Qt Company.</source>
+        <translation>&lt;p&gt;&lt;a href=&quot;http://www.qt.io/&quot;&gt;Qt application framework&lt;/a&gt; v%1 door The Qt Company.</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
+        <translation>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; spellingscontrole door L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</translation>
     </message>
 </context>
 <context>
@@ -1427,6 +1320,15 @@
         <source>About Scripts</source>
         <translation>Over Scripts</translation>
     </message>
+    <message>
+        <source>Script error</source>
+        <translation>Script fout</translation>
+    </message>
+    <message>
+        <source>(disabled in the preferences)</source>
+        <extracomment>This string is appended to a script language name to indicate it is currently disabled</extracomment>
+        <translation>(uitgezet in voorkeuren)</translation>
+    </message>
 </context>
 <context>
     <name>TWSystemCmd</name>
@@ -1477,10 +1379,6 @@
         <translation>Open Bestand</translation>
     </message>
     <message>
-        <source>Cannot close window while tool is running</source>
-        <translation type="obsolete">Venster kan niet gesloten terwijl programma aktief is</translation>
-    </message>
-    <message>
         <source>Save File</source>
         <translation>Bestand opslaan</translation>
     </message>
@@ -1499,12 +1397,6 @@ Wilt u de wijzigingen opslaan?</translation>
         <translation>Ongedaan maken</translation>
     </message>
     <message>
-        <source>Cannot read file &quot;%1&quot;:
-%2.</source>
-        <translation type="obsolete">Kan bestand &quot;%1&quot; niet lezen:
-%2.</translation>
-    </message>
-    <message>
         <source>Unrecognized encoding</source>
         <translation>Onbekende codering</translation>
     </message>
@@ -1515,10 +1407,6 @@ It will be interpreted as %3 instead, which may result in incorrect text.</sourc
         <translation>De tekst codering %1 in %2 wordt niet ondersteund.
 
 Het zal behandeld worden als %3, wat kan resulteren in incorrecte tekst.</translation>
-    </message>
-    <message>
-        <source>File &quot;%1&quot; loaded (%2)</source>
-        <translation type="obsolete">Bestand &quot;%1&quot; geladen (%2)</translation>
     </message>
     <message>
         <source>File changed on disk</source>
@@ -1545,14 +1433,6 @@ Wilt u doorgaan met opslaan en het bestand op schijf overschrijven?</translation
         <translation>Document &quot;%1&quot; werd niet opgeslagen</translation>
     </message>
     <message>
-        <source>The text encoding %1 requested for %2 is not supported.
-
-It will be saved as %3 instead, which may result in incorrect text.</source>
-        <translation type="obsolete">De tekst codering %1 voor %2 wordt niet ondersteund.
-
-Het bestand zal worden opgeslagen als %3, wat kan resulteren in incorrecte tekst.</translation>
-    </message>
-    <message>
         <source>Text cannot be converted</source>
         <translation>De tekst kan niet omgezet worden</translation>
     </message>
@@ -1563,19 +1443,6 @@ If you proceed, they will be replaced with default codes. Alternatively, you may
         <translation>Dit document bevat tekens die niet kunen worden weergegeven in codering %1.
 
 Indien u doorgaat, zullen zij worden vervangen door standaard codes. Een alternatief dat dataverlies kan voorkomen is om een andere codering (zoals UTF-8) te gebruiken.</translation>
-    </message>
-    <message>
-        <source>Cannot write file &quot;%1&quot;:
-%2.</source>
-        <translation type="obsolete">Kan bestand &quot;%1&quot; niet schrijven:%2.</translation>
-    </message>
-    <message>
-        <source>File &quot;%1&quot; saved (%2)</source>
-        <translation type="obsolete">Bestand &quot;%1&quot; opgeslagen (%2)</translation>
-    </message>
-    <message>
-        <source>default encoding</source>
-        <translation type="obsolete">standaard codering</translation>
     </message>
     <message>
         <source>untitled-%1.tex</source>
@@ -1646,32 +1513,12 @@ Indien u doorgaat, zullen zij worden vervangen door standaard codes. Een alterna
         <translation>Hoofd document %1 kan niet gelezen worden</translation>
     </message>
     <message>
-        <source>Root document %1 not found</source>
-        <translation type="obsolete">Hoofd document %1 niet gevonden</translation>
-    </message>
-    <message>
         <source>%1 is not properly configured</source>
         <translation>%1 is niet correct geconfigureerd</translation>
     </message>
     <message>
         <source>Unable to execute %1</source>
         <translation>Kan %1 niet uitvoeren</translation>
-    </message>
-    <message>
-        <source>The program &quot;%1&quot; was not found.
-
-Check configuration of the %2 tool and path settings in the Preferences dialog.</source>
-        <translation type="obsolete">Het programma &quot;%1&quot; is niet gevonden.
-
-Controleer de configuratie van commando %2 en de pad instellingen in de Voorkeuren.</translation>
-    </message>
-    <message>
-        <source>Hide Output Panel</source>
-        <translation type="obsolete">Verberg uitvoer</translation>
-    </message>
-    <message>
-        <source>Show Output Panel</source>
-        <translation type="obsolete">Toon uitvoer</translation>
     </message>
     <message>
         <source>Set engine to &quot;%1&quot;</source>
@@ -1836,10 +1683,6 @@ Controleer de configuratie van commando %2 en de pad instellingen in de Voorkeur
     <message>
         <source>Clear</source>
         <translation>Verwijderen</translation>
-    </message>
-    <message>
-        <source>Ctrl+T</source>
-        <translation type="obsolete">Ctrl+T</translation>
     </message>
     <message>
         <source>Find...</source>
@@ -2170,10 +2013,6 @@ Gebruik &quot;Bestand &gt; Terug naar opgeslagen versie&quot; handmatig als het 
         <translation>Doorzochte folders:</translation>
     </message>
     <message>
-        <source>Check configuration of the %1 tool and path settings in the Preferences dialog.</source>
-        <translation type="obsolete">Controleer de configuratie van de %1 tool-en-pad instellingen in de Instellingen dialoog.</translation>
-    </message>
-    <message>
         <source>Abort typesetting</source>
         <translation>Typesetten afbreken</translation>
     </message>
@@ -2270,6 +2109,10 @@ Het spijt ons van het ongemak.</translation>
     <message>
         <source>Show Console Output</source>
         <translation>Toon console uitvoer</translation>
+    </message>
+    <message>
+        <source>Write UTF-8 byte order mark</source>
+        <translation>UTF 8 byte order mark wegschrijven</translation>
     </message>
 </context>
 <context>

@@ -124,6 +124,10 @@
         <source>Re-wrap paragraphs</source>
         <translation>Paragrafları tekrar sarmala</translation>
     </message>
+    <message>
+        <source>Unwrap</source>
+        <translation>Sarmalama</translation>
+    </message>
 </context>
 <context>
     <name>PDFDocument</name>
@@ -200,36 +204,26 @@
         <translation>İlk Sayfa</translation>
     </message>
     <message>
-        <source>Home</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation>Home</translation>
-    </message>
-    <message>
         <source>Previous Page</source>
         <translation>Önceki Sayfa</translation>
     </message>
     <message>
-        <source>PgUp</source>
+        <source>Ctrl+PgUp</source>
         <comment>shortcut key name, do not translate</comment>
-        <translation>PgUp</translation>
+        <translation>Ctrl+PgUp</translation>
     </message>
     <message>
         <source>Next Page</source>
         <translation>Sonraki Sayfa</translation>
     </message>
     <message>
-        <source>PgDown</source>
+        <source>Ctrl+PgDown</source>
         <comment>shortcut key name, do not translate</comment>
-        <translation>PgDown</translation>
+        <translation>Ctrl+PgDown</translation>
     </message>
     <message>
         <source>Last Page</source>
         <translation>Son Sayfa</translation>
-    </message>
-    <message>
-        <source>End</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation>End</translation>
     </message>
     <message>
         <source>Go to Page...</source>
@@ -352,10 +346,6 @@
         <translation>Ctrl+Backspace</translation>
     </message>
     <message>
-        <source>Ctrl+T</source>
-        <translation type="obsolete">Ctrl+T</translation>
-    </message>
-    <message>
         <source>Preferences...</source>
         <translation>Tercihler...</translation>
     </message>
@@ -436,16 +426,8 @@
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <source>PDF file &quot;%1&quot; is locked; this is not currently supported.</source>
-        <translation>&quot;%1&quot; PDF dosyası kilitli; bu henüz desteklenmiyor.</translation>
-    </message>
-    <message>
         <source>Search</source>
         <translation>Ara</translation>
-    </message>
-    <message>
-        <source>Find</source>
-        <translation type="obsolete">Bul</translation>
     </message>
     <message>
         <source>Ctrl+F</source>
@@ -454,10 +436,6 @@
     <message>
         <source>Find Again</source>
         <translation>Tekrar Bul</translation>
-    </message>
-    <message>
-        <source>Ctrl+Shift+G</source>
-        <translation type="obsolete">Ctrl+Shift+G</translation>
     </message>
     <message>
         <source>Find...</source>
@@ -535,6 +513,42 @@
         <source>Clear Recent Files</source>
         <translation>Son kullanılanları temizle</translation>
     </message>
+    <message>
+        <source>Error initializing SyncTeX</source>
+        <translation>SyncTeX başlatılırken hata</translation>
+    </message>
+    <message>
+        <source>Go to previous view</source>
+        <translation>Önceki görünüme git</translation>
+    </message>
+    <message>
+        <source>Alt+Left</source>
+        <translation>Alt+Sol</translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation>Tek Sayfa</translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation>Kesintisiz Tek Sayfa</translation>
+    </message>
+    <message>
+        <source>Two Pages Continuous</source>
+        <translation>Kesintisiz İkişer Sayfa</translation>
+    </message>
+    <message>
+        <source>Jump to Source</source>
+        <translation>Kaynağa Atla</translation>
+    </message>
+    <message>
+        <source>Go to Page</source>
+        <translation>Sayfaya Git</translation>
+    </message>
+    <message>
+        <source>Page number:</source>
+        <translation>Sayfa no:</translation>
+    </message>
 </context>
 <context>
     <name>PDFFindDialog</name>
@@ -576,98 +590,6 @@
     </message>
 </context>
 <context>
-    <name>PDFFontsDock</name>
-    <message>
-        <source>Fonts</source>
-        <translation>Fontlar</translation>
-    </message>
-    <message>
-        <source>Name</source>
-        <translation>İsim</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Tip</translation>
-    </message>
-    <message>
-        <source>Subset</source>
-        <translation>Altküme</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>Dosya</translation>
-    </message>
-    <message>
-        <source>[none]</source>
-        <translation>[yok]</translation>
-    </message>
-    <message>
-        <source>yes</source>
-        <translation>evet</translation>
-    </message>
-    <message>
-        <source>no</source>
-        <translation>hayır</translation>
-    </message>
-    <message>
-        <source>[embedded]</source>
-        <translation>[gömülü]</translation>
-    </message>
-</context>
-<context>
-    <name>PDFInfoDock</name>
-    <message>
-        <source>PDF Info</source>
-        <translation>PDF Bilgisi</translation>
-    </message>
-</context>
-<context>
-    <name>PDFOutlineDock</name>
-    <message>
-        <source>Contents</source>
-        <translation>İçindekiler</translation>
-    </message>
-    <message>
-        <source>No TOC</source>
-        <translation>İçindekiler Yok</translation>
-    </message>
-</context>
-<context>
-    <name>PDFWidget</name>
-    <message>
-        <source>Zoom In</source>
-        <translation>Yakınlaştır</translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation>Uzaklaştır</translation>
-    </message>
-    <message>
-        <source>Actual Size</source>
-        <translation>Gerçek Boyut</translation>
-    </message>
-    <message>
-        <source>Fit to Width</source>
-        <translation>Genişliğe Sığdır</translation>
-    </message>
-    <message>
-        <source>Fit to Window</source>
-        <translation>Pencereye Sığdır</translation>
-    </message>
-    <message>
-        <source>Jump to Source</source>
-        <translation>Kaynağa Atla</translation>
-    </message>
-    <message>
-        <source>Go to Page</source>
-        <translation>Sayfaya Git</translation>
-    </message>
-    <message>
-        <source>Page number:</source>
-        <translation>Sayfa no:</translation>
-    </message>
-</context>
-<context>
     <name>PrefsDialog</name>
     <message>
         <source>Choose Directory</source>
@@ -692,10 +614,6 @@
     <message>
         <source>General</source>
         <translation>Genel</translation>
-    </message>
-    <message>
-        <source>Toolbar buttons</source>
-        <translation type="obsolete">Araç çubuğu düğmeleri</translation>
     </message>
     <message>
         <source>Small icons</source>
@@ -728,10 +646,6 @@
     <message>
         <source>File Open dialog</source>
         <translation>Dosya Aç penceresini göster</translation>
-    </message>
-    <message>
-        <source>Interface locale:</source>
-        <translation type="obsolete">Arayüz dili:</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -846,10 +760,6 @@
         <translation>Öntanımlı:</translation>
     </message>
     <message>
-        <source>Auto-hide output panel unless errors occur</source>
-        <translation type="obsolete">Hata bulunmazsa çıktı panelini gizle</translation>
-    </message>
-    <message>
         <source>Line numbers</source>
         <translation>Satır numaraları</translation>
     </message>
@@ -902,10 +812,6 @@
         <translation>QtScript hata ayıklayıcısını etkinleştir</translation>
     </message>
     <message>
-        <source>Hide output panel:</source>
-        <translation type="obsolete">Çıktı panelini gizle:</translation>
-    </message>
-    <message>
         <source>Never</source>
         <extracomment>&quot;Hide console output&quot; mode</extracomment>
         <translation>Hiçbir zaman</translation>
@@ -923,16 +829,6 @@
     <message>
         <source>&lt;em&gt;Note:&lt;/em&gt; These are default settings. Changes to them will not affect windows that are already open. Use the respective items in the &amp;quot;Format&amp;quot; menu to achieve that.</source>
         <translation>&lt;em&gt;Not:&lt;/em&gt; Bunlar öntanımlı ayarlardır. Yapılacak değişiklikler halen açık olan pencereleri etkilemez. O amaçla &amp;quot;Biçim&amp;quot; menüsündeki ilgili seçenekleri kullanın.</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;strong&gt;Never:&lt;/strong&gt; Never hide the output panel after typesetting.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Automatically:&lt;/strong&gt; Hide the output panel after successful typesetting, but only if it was hidden before.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;On Success:&lt;/strong&gt; Hide the output panel after successful typesetting, regardless of its previous state.&lt;/p&gt;
-</source>
-        <translation type="obsolete">&lt;p&gt;&lt;strong&gt;Hiçbir zaman:&lt;/strong&gt; Dizgi sonrası çıktı panelini hiçbir zaman gizleme.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Otomatik olarak:&lt;/strong&gt; Dizgi başarılı ise çıktı panelini eğer önceden zaten gizli ise gizle.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Hata yoksa:&lt;/strong&gt; Dizgi başarılı ise çıktı panelini önceki durumunu dikkate almaksızın gizle.&lt;/p&gt;
-</translation>
     </message>
     <message>
         <source>Enable autocompletion</source>
@@ -968,6 +864,22 @@
         <source>Open corresponding PDF preview with TeX files</source>
         <translation>TeX dosyaları ile ilgili PDF önizlemesini aç</translation>
     </message>
+    <message>
+        <source>Page mode:</source>
+        <translation>Sayfa modu:</translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation>Tek Sayfa</translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation>Kesintisiz Tek Sayfa</translation>
+    </message>
+    <message>
+        <source>Two Page Continuous</source>
+        <translation>Kesintisiz İkişer Sayfa</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -996,10 +908,6 @@
         <translation>Belgelenmiş makrolar (*.dtx)</translation>
     </message>
     <message>
-        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.log)</source>
-        <translation type="obsolete">Yardımcı dosyalar (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.log)</translation>
-    </message>
-    <message>
         <source>Text files (*.txt)</source>
         <translation>Metin dosyaları (*.txt)</translation>
     </message>
@@ -1010,20 +918,6 @@
     <message>
         <source>All files</source>
         <translation>Tüm dosyalar</translation>
-    </message>
-    <message>
-        <source>TeXworks %1r%2 (%3)
-</source>
-        <translation type="obsolete">TeXworks %1r%2 (%3)
-</translation>
-    </message>
-    <message>
-        <source>Log files (*.log)</source>
-        <translation type="obsolete">Kayıt dosyaları (*.log)</translation>
-    </message>
-    <message>
-        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation type="obsolete">Yardımcı dosyalar (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
     </message>
     <message>
         <source>Log files (*.log *.blg)</source>
@@ -1265,24 +1159,8 @@
         <translation>&lt;p&gt;%1, TeX belgelerini düzenleme, dizme ve önizleme için basit bir ortamdır.&lt;/p&gt;</translation>
     </message>
     <message>
-        <source>&lt;br&gt;Version %1 (r.%2)</source>
-        <translation type="obsolete">&lt;br&gt;Versiyon %1 (r.%2)</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Distributed under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU General Public License&lt;/a&gt;, version 2.</source>
-        <translation type="obsolete">&lt;p&gt;&lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU Genel Kamu Lisansı&lt;/a&gt;nın 2. versiyonu ile dağıtılır.</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/&quot;&gt;Qt4&lt;/a&gt; application framework by Qt Software, a division of Nokia Corporation.</source>
-        <translation type="obsolete">&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/&quot;&gt;Qt4&lt;/a&gt; uygulama çatısı bir Nokia Corporation bölümü olan Qt Software tarafından.</translation>
-    </message>
-    <message>
         <source>&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF rendering library by Kristian H&amp;#xF8;gsberg, Albert Astals Cid and others.</source>
         <translation>&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF bezeme kitaplığı Kristian H&amp;#xF8;gsberg, Albert Astals Cid ve diğerleri tarafından.</translation>
-    </message>
-    <message>
-        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
-        <translation>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; yazım denetleyicisi L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth tarafından.</translation>
     </message>
     <message>
         <source>&lt;br&gt;Concept and resources from &lt;a href=&quot;http://www.uoregon.edu/~koch/texshop/&quot;&gt;TeXShop&lt;/a&gt; by Richard Koch.</source>
@@ -1341,14 +1219,6 @@
         <translation>Yardım dosyası bulunamıyor.</translation>
     </message>
     <message>
-        <source>&lt;br&gt;Version %1 r.%2 (%3)</source>
-        <translation>&lt;br&gt;Versiyon %1 r.%2 (%3)</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by Qt Software, a division of Nokia Corporation.</source>
-        <translation>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Qt uygulama çatısı&lt;/a&gt; v%1 bir Nokia Corporation bölümü olan Qt Software tarafından.</translation>
-    </message>
-    <message>
         <source>Save File</source>
         <translation>Dosyayı Kaydet</translation>
     </message>
@@ -1367,6 +1237,26 @@
     <message>
         <source>Clear Recent Files</source>
         <translation>Son kullanılanları temizle</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2) [r.%3, %4]</source>
+        <translation>&lt;br&gt;Versiyon %1 (%2) [r.%3, %4]</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2)</source>
+        <translation>&lt;br&gt;Versiyon %1 (%2)</translation>
+    </message>
+    <message>
+        <source>Quit TeXworks</source>
+        <translation>TeXworks&apos;den çık</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;&lt;a href=&quot;http://www.qt.io/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by The Qt Company.</source>
+        <translation>&lt;p&gt;The Qt Company tarafından &lt;a href=&quot;http://www.qt.io/&quot;&gt;Qt uygulama çatısı&lt;/a&gt; v%1.</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
+        <translation>&lt;br&gt;L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth tarafından &lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; yazım denetçisi.</translation>
     </message>
 </context>
 <context>
@@ -1430,6 +1320,15 @@
         <source>About Scripts</source>
         <translation>Eklentiler Hakkında</translation>
     </message>
+    <message>
+        <source>Script error</source>
+        <translation>Eklenti hatası</translation>
+    </message>
+    <message>
+        <source>(disabled in the preferences)</source>
+        <extracomment>This string is appended to a script language name to indicate it is currently disabled</extracomment>
+        <translation>(tercihlerden etkisizleştirilmiş)</translation>
+    </message>
 </context>
 <context>
     <name>TWSystemCmd</name>
@@ -1480,10 +1379,6 @@
         <translation>Dosya Aç</translation>
     </message>
     <message>
-        <source>Cannot close window while tool is running</source>
-        <translation type="obsolete">Araç çalışıyorken pencere kapatılamaz</translation>
-    </message>
-    <message>
         <source>Save File</source>
         <translation>Dosyayı Kaydet</translation>
     </message>
@@ -1502,12 +1397,6 @@ Değişikliklerinizi kaydetmek istiyor musunuz?</translation>
         <translation>Geri Dön</translation>
     </message>
     <message>
-        <source>Cannot read file &quot;%1&quot;:
-%2.</source>
-        <translation type="obsolete">&quot;%1&quot; dosyası okunamıyor:￼
-%2.</translation>
-    </message>
-    <message>
         <source>Unrecognized encoding</source>
         <translation>Tanınmayan kodlama</translation>
     </message>
@@ -1518,10 +1407,6 @@ It will be interpreted as %3 instead, which may result in incorrect text.</sourc
         <translation>%2&apos;de kullanılan %1 metin kodlaması desteklenmiyor.
 
 Onun yerine, hatalı metne yol açabilecek olan %3 olarak yorumlanacak.</translation>
-    </message>
-    <message>
-        <source>File &quot;%1&quot; loaded (%2)</source>
-        <translation type="obsolete">&quot;%1&quot; dosyası yüklendi (%2)</translation>
     </message>
     <message>
         <source>File changed on disk</source>
@@ -1548,14 +1433,6 @@ Diskteki versiyonun üzerine yazarak bu dosyayı kaydetmek istiyor musunuz?</tra
         <translation>&quot;%1&quot; belgesi kaydedilmedi</translation>
     </message>
     <message>
-        <source>The text encoding %1 requested for %2 is not supported.
-
-It will be saved as %3 instead, which may result in incorrect text.</source>
-        <translation type="obsolete">%2 için istenen %1 metin kodlaması desteklenmiyor.
-
-Onun yerine, hatalı metne yol açabilecek olan %3 olarak kaydedilecek.</translation>
-    </message>
-    <message>
         <source>Text cannot be converted</source>
         <translation>Metin dönüştürülemedi</translation>
     </message>
@@ -1566,20 +1443,6 @@ If you proceed, they will be replaced with default codes. Alternatively, you may
         <translation>Bu belgede %1 kodlaması ile gösterilemeyecek karakterler bulunuyor.
 
 Devam ederseniz varsayılan kodlar ile yer değiştirilecek. Alternatif olarak, veri kaybını önlemek için (UTF-8 gibi) başka bir kodlama kullanmak isteyebilirsiniz.</translation>
-    </message>
-    <message>
-        <source>Cannot write file &quot;%1&quot;:
-%2.</source>
-        <translation type="obsolete">&quot;%1&quot; dosyası yazılamıyor:￼
-%2.</translation>
-    </message>
-    <message>
-        <source>File &quot;%1&quot; saved (%2)</source>
-        <translation type="obsolete">&quot;%1&quot; dosyası kaydedildi (%2)</translation>
-    </message>
-    <message>
-        <source>default encoding</source>
-        <translation type="obsolete">varsayılan kodlama</translation>
     </message>
     <message>
         <source>untitled-%1.tex</source>
@@ -1652,22 +1515,6 @@ Devam ederseniz varsayılan kodlar ile yer değiştirilecek. Alternatif olarak, 
     <message>
         <source>Unable to execute %1</source>
         <translation>%1 çalıştırılamıyor</translation>
-    </message>
-    <message>
-        <source>The program &quot;%1&quot; was not found.
-
-Check configuration of the %2 tool and path settings in the Preferences dialog.</source>
-        <translation type="obsolete">&quot;%1&quot; programı bulunamadı.
-
-Tercihler penceresinden %2 aracının ayarlarını ve arama yolu yapılandırmasını kontrol edin.</translation>
-    </message>
-    <message>
-        <source>Hide Output Panel</source>
-        <translation type="obsolete">Çıktı Panelini Gizle</translation>
-    </message>
-    <message>
-        <source>Show Output Panel</source>
-        <translation type="obsolete">Çıktı Panelini Göster</translation>
     </message>
     <message>
         <source>Set engine to &quot;%1&quot;</source>
@@ -1832,10 +1679,6 @@ Tercihler penceresinden %2 aracının ayarlarını ve arama yolu yapılandırmas
     <message>
         <source>Clear</source>
         <translation>Temizle</translation>
-    </message>
-    <message>
-        <source>Ctrl+T</source>
-        <translation type="obsolete">Ctrl+T</translation>
     </message>
     <message>
         <source>Find...</source>
@@ -2062,10 +1905,6 @@ Tercihler penceresinden %2 aracının ayarlarını ve arama yolu yapılandırmas
         <translation>Şu dizinlerde arandı:</translation>
     </message>
     <message>
-        <source>Check configuration of the %1 tool and path settings in the Preferences dialog.</source>
-        <translation type="obsolete">Tercihler penceresinden %1 aracının ayarlarını ve arama yolu yapılandırmasını kontrol edin.</translation>
-    </message>
-    <message>
         <source>Line Numbers</source>
         <translation>Satır Numaraları</translation>
     </message>
@@ -2266,6 +2105,10 @@ Rahatsızlık için üzgünüz.</translation>
     <message>
         <source>Show Console Output</source>
         <translation>Konsol Çıktısını Göster</translation>
+    </message>
+    <message>
+        <source>Write UTF-8 byte order mark</source>
+        <translation>UTF-8 BOM yaz</translation>
     </message>
 </context>
 <context>

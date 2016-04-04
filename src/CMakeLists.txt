@@ -14,12 +14,20 @@ FILE(GLOB TEXWORKS_HDRS       "*.h")
 FILE(GLOB TEXWORKS_UIS        "*.ui")
 FILE(GLOB TEXWORKS_RCS        "${TeXworks_SOURCE_DIR}/res/*.qrc")
 FILE(GLOB TEXWORKS_TRANS_TS   "${TeXworks_SOURCE_DIR}/trans/*.ts")
-FILE(GLOB TEXWORKS_TRANS_QM   "${TeXworks_SOURCE_DIR}/trans/*.qm")
+FILE(GLOB TEXWORKS_TRANS_QM   "${TeXworks_SOURCE_DIR}/trans/*.qm" "${TeXworks_SOURCE_DIR}/trans/qt/*.qm" "${TeXworks_SOURCE_DIR}/modules/QtPDF/trans/*.qm")
 
 IF ( WIN32 )
 	FILE(GLOB TEXWORKS_WIN_RCS  "${TeXworks_SOURCE_DIR}/res/*.rc")
   LIST(APPEND TEXWORKS_SRCS ${TEXWORKS_WIN_RCS})
 ENDIF ( WIN32 )
+
+IF ( SYNCTEX_FOUND AND NOT PREFER_BUNDLED_SYNCTEX )
+  FILE(GLOB SYNCTEX_SRCS "synctex_*.c")
+  FILE(GLOB SYNCTEX_HDRS "synctex_*.h")
+
+  LIST(REMOVE_ITEM TEXWORKS_SRCS ${SYNCTEX_SRCS})
+  LIST(REMOVE_ITEM TEXWORKS_HDRS ${SYNCTEX_HDRS})
+ENDIF ( SYNCTEX_FOUND AND NOT PREFER_BUNDLED_SYNCTEX )
 
 # These source files along with the `.moc` files generated from some headers
 # form the TeXworks scripting API. We export them to variables in the
@@ -110,6 +118,19 @@ QT_ADD_RESOURCES(TEXWORKS_GEN_RCS ${TEXWORKS_RCS})
 # Add translations
 QT_ADD_QM_TRANSLATIONS(TEXWORKS_GEN_TRANS ${TEXWORKS_TRANS_QM})
 
+# Create .pro file that can be used for easy updating with `lupdate`. We sort
+# the file list to obtain a stable result (that can be kept in the repository)
+# irrespective of globbing order (which varies for different file systems).
+SET(TEXWORKS_TRANS_FILE_LIST
+  ${TEXWORKS_SRCS} ${TEXWORKS_HDRS} ${TEXWORKS_UIS} ${TEXWORKS_TRANS_TS}
+)
+LIST(SORT TEXWORKS_TRANS_FILE_LIST)
+CREATE_QT_PRO_FILE(
+  "${CMAKE_SOURCE_DIR}/trans/${PROJECT_NAME}_trans.pro"
+  "src"
+  ${TEXWORKS_TRANS_FILE_LIST}
+)
+
 IF ( APPLE OR NOT UNIX )
   SET(EXE_NAME TeXworks)
 ELSE ( APPLE OR NOT UNIX )
@@ -119,12 +140,12 @@ ENDIF ( APPLE OR NOT UNIX )
 # Compilation
 # -----------
 
-IF (NOT ${BUILD_SHARED_LIBS})
+IF (NOT ${BUILD_SHARED_PLUGINS})
   IF (WITH_LUA)
-    LIST(APPEND TeXworks_LIBS TWLuaPlugin)
+    LIST(INSERT TeXworks_LIBS 0 TWLuaPlugin ${LUA_LIBRARIES})
   ENDIF()
   IF (WITH_PYTHON)
-    LIST(APPEND TeXworks_LIBS TWPythonPlugin)
+    LIST(INSERT TeXworks_LIBS 0 TWPythonPlugin ${PYTHON_LIBRARIES})
   ENDIF()
 ENDIF()
 
@@ -136,12 +157,12 @@ ADD_EXECUTABLE( ${EXE_NAME} ${GUI_TYPE}
 )
 
 # Specify libraries to be linked to TeXworks.
-TARGET_LINK_LIBRARIES( ${EXE_NAME} ${TeXworks_LIBS} )
+TARGET_LINK_LIBRARIES( ${EXE_NAME} ${MODULE_LIBS} ${TeXworks_LIBS} )
 
 # For OS X, generate `Info.plist` and add it to the `.app` bundle.
 IF (APPLE)
   SET(VER ${TeXworks_VERSION})
-  SET(REV ${TeXworks_SVN_REV})
+  SET(REV ${TeXworks_GIT_HASH})
   CONFIGURE_FILE(${TeXworks_SOURCE_DIR}/TeXworks.plist.in
     ${TeXworks_SOURCE_DIR}/TeXworks.plist
     @ONLY
@@ -168,11 +189,12 @@ IF ( UNIX AND NOT APPLE )
   INSTALL(FILES ${TeXworks_SOURCE_DIR}/res/images/TeXworks.png DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_ICON_DIR})
   INSTALL(FILES
     ${TeXworks_SOURCE_DIR}/COPYING
-    ${TeXworks_SOURCE_DIR}/README
+    ${TeXworks_SOURCE_DIR}/README.md
     ${TeXworks_SOURCE_DIR}/NEWS
   DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_DOCS_DIR})
   INSTALL(FILES ${TeXworks_SOURCE_DIR}/man/texworks.1 DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_MAN_DIR})
   INSTALL(FILES ${TeXworks_SOURCE_DIR}/texworks.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_DESKTOP_DIR})
+  INSTALL(FILES ${TeXworks_SOURCE_DIR}/texworks.appdata.xml DESTINATION ${CMAKE_INSTALL_PREFIX}/${TeXworks_APPDATA_DIR})
 ENDIF ( UNIX AND NOT APPLE )
 
 # On OS X, ensure there is always a `qt.conf` file as all hell will break loose

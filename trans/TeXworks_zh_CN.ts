@@ -124,16 +124,16 @@
         <source>Re-wrap paragraphs</source>
         <translation>重新对段落执行换行操作</translation>
     </message>
+    <message>
+        <source>Unwrap</source>
+        <translation>取消换行（合并行）</translation>
+    </message>
 </context>
 <context>
     <name>PDFDocument</name>
     <message>
         <source>Open Recent</source>
         <translation>打开最近的文件</translation>
-    </message>
-    <message>
-        <source>PDF file &quot;%1&quot; is locked; this is not currently supported.</source>
-        <translation>PDF 文件“%1”被锁定了；这一功能现在不支持。</translation>
     </message>
     <message>
         <source>Failed to load file &quot;%1&quot;; perhaps it is not a valid PDF document.</source>
@@ -208,16 +208,11 @@
         <translation>第一页</translation>
     </message>
     <message>
-        <source>Home</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation></translation>
-    </message>
-    <message>
         <source>Previous Page</source>
         <translation>上一页</translation>
     </message>
     <message>
-        <source>PgUp</source>
+        <source>Ctrl+PgUp</source>
         <comment>shortcut key name, do not translate</comment>
         <translation></translation>
     </message>
@@ -226,18 +221,13 @@
         <translation>下一页</translation>
     </message>
     <message>
-        <source>PgDown</source>
+        <source>Ctrl+PgDown</source>
         <comment>shortcut key name, do not translate</comment>
         <translation></translation>
     </message>
     <message>
         <source>Last Page</source>
         <translation>最后一页</translation>
-    </message>
-    <message>
-        <source>End</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation></translation>
     </message>
     <message>
         <source>Go to Page...</source>
@@ -523,6 +513,42 @@
         <source>Clear Recent Files</source>
         <translation>清除近期文件</translation>
     </message>
+    <message>
+        <source>Error initializing SyncTeX</source>
+        <translation>SyncTeX 初始化错误</translation>
+    </message>
+    <message>
+        <source>Go to previous view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alt+Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Two Pages Continuous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jump to Source</source>
+        <translation type="unfinished">跳至源文件</translation>
+    </message>
+    <message>
+        <source>Go to Page</source>
+        <translation type="unfinished">跳至页码</translation>
+    </message>
+    <message>
+        <source>Page number:</source>
+        <translation type="unfinished">页码：</translation>
+    </message>
 </context>
 <context>
     <name>PDFFindDialog</name>
@@ -564,98 +590,6 @@
     </message>
 </context>
 <context>
-    <name>PDFFontsDock</name>
-    <message>
-        <source>Name</source>
-        <translation>名称</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>类型</translation>
-    </message>
-    <message>
-        <source>Subset</source>
-        <translation>子集</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>文件</translation>
-    </message>
-    <message>
-        <source>[none]</source>
-        <translation>[无]</translation>
-    </message>
-    <message>
-        <source>yes</source>
-        <translation>是</translation>
-    </message>
-    <message>
-        <source>no</source>
-        <translation>否</translation>
-    </message>
-    <message>
-        <source>[embedded]</source>
-        <translation>[已嵌入]</translation>
-    </message>
-    <message>
-        <source>Fonts</source>
-        <translation>字体</translation>
-    </message>
-</context>
-<context>
-    <name>PDFInfoDock</name>
-    <message>
-        <source>PDF Info</source>
-        <translation>PDF 文件信息</translation>
-    </message>
-</context>
-<context>
-    <name>PDFOutlineDock</name>
-    <message>
-        <source>No TOC</source>
-        <translation>没有目录 (TOC)</translation>
-    </message>
-    <message>
-        <source>Contents</source>
-        <translation>目录</translation>
-    </message>
-</context>
-<context>
-    <name>PDFWidget</name>
-    <message>
-        <source>Zoom In</source>
-        <translation>放大</translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation>缩小</translation>
-    </message>
-    <message>
-        <source>Actual Size</source>
-        <translation>实际大小</translation>
-    </message>
-    <message>
-        <source>Fit to Width</source>
-        <translation>适合页面宽度</translation>
-    </message>
-    <message>
-        <source>Fit to Window</source>
-        <translation>适合页面</translation>
-    </message>
-    <message>
-        <source>Jump to Source</source>
-        <translation>跳至源文件</translation>
-    </message>
-    <message>
-        <source>Go to Page</source>
-        <translation>跳至页码</translation>
-    </message>
-    <message>
-        <source>Page number:</source>
-        <translation>页码：</translation>
-    </message>
-</context>
-<context>
     <name>PrefsDialog</name>
     <message>
         <source>Choose Directory</source>
@@ -680,10 +614,6 @@
     <message>
         <source>General</source>
         <translation>常规</translation>
-    </message>
-    <message>
-        <source>Toolbar buttons</source>
-        <translation type="obsolete">工具栏按钮</translation>
     </message>
     <message>
         <source>Small icons</source>
@@ -716,10 +646,6 @@
     <message>
         <source>File Open dialog</source>
         <translation>文件打开对话框</translation>
-    </message>
-    <message>
-        <source>Interface locale:</source>
-        <translation type="obsolete">程序界面语言：</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -923,18 +849,34 @@
     </message>
     <message>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>图形界面设置</translation>
     </message>
     <message>
         <source>Locale:</source>
-        <translation type="unfinished"></translation>
+        <translation>区域设置（本地化）：</translation>
     </message>
     <message>
         <source>Toolbar buttons:</source>
-        <translation type="unfinished"></translation>
+        <translation>工具栏图标</translation>
     </message>
     <message>
         <source>Open corresponding PDF preview with TeX files</source>
+        <translation>打开 TeX 文件对应的PDF预览</translation>
+    </message>
+    <message>
+        <source>Page mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Two Page Continuous</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -977,20 +919,12 @@
         <translation>所有文件</translation>
     </message>
     <message>
-        <source>Log files (*.log)</source>
-        <translation type="obsolete">日志文件（*.log）</translation>
-    </message>
-    <message>
-        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation type="obsolete">辅助文件（*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl）</translation>
-    </message>
-    <message>
         <source>Log files (*.log *.blg)</source>
-        <translation type="unfinished"></translation>
+        <translation>日志文件 (*.log *.blg)</translation>
     </message>
     <message>
         <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.brf)</source>
-        <translation type="unfinished"></translation>
+        <translation>辅助文件 (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.brf)</translation>
     </message>
 </context>
 <context>
@@ -1228,10 +1162,6 @@
         <translation>&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF 渲染库由 Kristian H&amp;#xF8;gsberg, Albert Astals Cid 及其他人开发。</translation>
     </message>
     <message>
-        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
-        <translation>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; 语法检查器由 L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth 开发。</translation>
-    </message>
-    <message>
         <source>&lt;br&gt;Concept and resources from &lt;a href=&quot;http://www.uoregon.edu/~koch/texshop/&quot;&gt;TeXShop&lt;/a&gt; by Richard Koch.</source>
         <translation>&lt;br&gt;构想和实现方法来源于 Richard Koch 开发的 &lt;a href=&quot;http://www.uoregon.edu/~koch/texshop/&quot;&gt;TeXShop&lt;/a&gt; 。</translation>
     </message>
@@ -1292,14 +1222,6 @@
         <translation>保存文件</translation>
     </message>
     <message>
-        <source>&lt;br&gt;Version %1 r.%2 (%3)</source>
-        <translation>&lt;br&gt;版本 %1 r%2 (%3)</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by Qt Software, a division of Nokia Corporation.</source>
-        <translation>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Qt应用程序框架&lt;/a&gt;v%1 由Nokia公司子公司 Qt Software 开发。</translation>
-    </message>
-    <message>
         <source>Permission request</source>
         <translation>请求权限</translation>
     </message>
@@ -1314,6 +1236,26 @@
     <message>
         <source>Clear Recent Files</source>
         <translation>清除近期文件</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2) [r.%3, %4]</source>
+        <translation>&lt;br&gt;版本 %1 (%2) [r.%3, %4] </translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2)</source>
+        <translation>&lt;br&gt;版本 %1 (%2)</translation>
+    </message>
+    <message>
+        <source>Quit TeXworks</source>
+        <translation type="unfinished">退出 TeXworks</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;&lt;a href=&quot;http://www.qt.io/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by The Qt Company.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1363,7 +1305,7 @@
     </message>
     <message>
         <source>Scripts may be used to add new commands to %1, and to extend or modify its behavior.</source>
-        <translation type="unfinished">脚本可用于添加新的命令到 %1，以及扩展或修改命令。</translation>
+        <translation>脚本可用于添加新的命令到 %1，以及扩展或修改程序行为。</translation>
     </message>
     <message>
         <source>For more information on creating and using scripts, see %1&lt;/p&gt;</source>
@@ -1376,6 +1318,15 @@
     <message>
         <source>About Scripts</source>
         <translation>关于脚本</translation>
+    </message>
+    <message>
+        <source>Script error</source>
+        <translation>脚本错误</translation>
+    </message>
+    <message>
+        <source>(disabled in the preferences)</source>
+        <extracomment>This string is appended to a script language name to indicate it is currently disabled</extracomment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2146,6 +2097,10 @@ We are sorry for the inconvenience.</source>
     <message>
         <source>Show Console Output</source>
         <translation>显示控制台输出</translation>
+    </message>
+    <message>
+        <source>Write UTF-8 byte order mark</source>
+        <translation>写入 UTF-8 字节顺序标记(BOM)</translation>
     </message>
 </context>
 <context>

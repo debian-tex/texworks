@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2010-2013  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2010-2015  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #ifndef TW_PYTHON_PLUGIN_H
 #define TW_PYTHON_PLUGIN_H
 
-#ifdef __APPLE__ // can't use Q_WS_MAC as it's not defined yet!
+#ifdef __APPLE__ // can't use Q_OS_DARWIN as it's not defined yet!
 #include <Python/Python.h>
 #else
 #include <Python.h>

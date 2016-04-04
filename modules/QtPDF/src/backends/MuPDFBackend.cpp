@@ -395,11 +395,17 @@ Document::~Document()
 
 void Document::reload()
 {
+  // Clear the processing thread
+  // NB: Do this before acquiring _docLock. See clearWorkStack() documentation.
+  // This should not cause any problems as we are supposed to currently be in
+  // the main (GUI) thread, and only this thread is supposed to add items to the
+  // work stack.
+  _processingThread.clearWorkStack();
+
   QWriteLocker docLocker(_docLock.data());
   MuPDFLocaleResetter lr;
 
   clearPages();
-  _processingThread.clearWorkStack();
   _pageCache.clear();
 
   if (_mupdf_data) {
@@ -1313,8 +1319,9 @@ inline bool polygonContains(const QPolygonF & poly, const QRectF & rect)
   return (qAbs(r.width() * r.height() - rect.width() * rect.height()) < 1e-6);
 }
 
-QString Page::selectedText(const QList<QPolygonF> & selection)
+QString Page::selectedText(const QList<QPolygonF> & selection, QMap<int, QRectF> * wordBoxes /* = NULL */, QMap<int, QRectF> * charBoxes /* = NULL */)
 {
+  // FIXME: Implement wordBoxes and charBoxes
   QReadLocker pageLocker(_pageLock);
 
   QString retVal;

@@ -124,16 +124,16 @@
         <source>Re-wrap paragraphs</source>
         <translation>문단 재정렬</translation>
     </message>
+    <message>
+        <source>Unwrap</source>
+        <translation>줄 바꿈 취소</translation>
+    </message>
 </context>
 <context>
     <name>PDFDocument</name>
     <message>
         <source>Open Recent</source>
         <translation>최근 문서 열기</translation>
-    </message>
-    <message>
-        <source>PDF file &quot;%1&quot; is locked; this is not currently supported.</source>
-        <translation>&quot;%1&quot; 파일이 잠겨 있습니다. 잠긴 파일 처리는 아직 지원하지 않습니다.</translation>
     </message>
     <message>
         <source>Failed to load file &quot;%1&quot;; perhaps it is not a valid PDF document.</source>
@@ -208,16 +208,11 @@
         <translation>첫 쪽</translation>
     </message>
     <message>
-        <source>Home</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation></translation>
-    </message>
-    <message>
         <source>Previous Page</source>
         <translation>이전 쪽</translation>
     </message>
     <message>
-        <source>PgUp</source>
+        <source>Ctrl+PgUp</source>
         <comment>shortcut key name, do not translate</comment>
         <translation></translation>
     </message>
@@ -226,18 +221,13 @@
         <translation>다음 쪽</translation>
     </message>
     <message>
-        <source>PgDown</source>
+        <source>Ctrl+PgDown</source>
         <comment>shortcut key name, do not translate</comment>
         <translation></translation>
     </message>
     <message>
         <source>Last Page</source>
         <translation>끝 쪽</translation>
-    </message>
-    <message>
-        <source>End</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation></translation>
     </message>
     <message>
         <source>Go to Page...</source>
@@ -523,6 +513,42 @@
         <source>Clear Recent Files</source>
         <translation>최근 목록 지우기</translation>
     </message>
+    <message>
+        <source>Error initializing SyncTeX</source>
+        <translation>SyncTeX 초기화 실패</translation>
+    </message>
+    <message>
+        <source>Go to previous view</source>
+        <translation>이전으로 돌아가기</translation>
+    </message>
+    <message>
+        <source>Alt+Left</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation>한 쪽씩 따로</translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation>한 쪽씩 이어서</translation>
+    </message>
+    <message>
+        <source>Two Pages Continuous</source>
+        <translation>맞쪽 이어서</translation>
+    </message>
+    <message>
+        <source>Jump to Source</source>
+        <translation>소스의 여기로 가기</translation>
+    </message>
+    <message>
+        <source>Go to Page</source>
+        <translation>쪽 찾아가기</translation>
+    </message>
+    <message>
+        <source>Page number:</source>
+        <translation>쪽 번호:</translation>
+    </message>
 </context>
 <context>
     <name>PDFFindDialog</name>
@@ -564,98 +590,6 @@
     </message>
 </context>
 <context>
-    <name>PDFFontsDock</name>
-    <message>
-        <source>Name</source>
-        <translation>이름</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>종류</translation>
-    </message>
-    <message>
-        <source>Subset</source>
-        <translation>서브셋</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>파일</translation>
-    </message>
-    <message>
-        <source>[none]</source>
-        <translation>[없음]</translation>
-    </message>
-    <message>
-        <source>yes</source>
-        <translation>예</translation>
-    </message>
-    <message>
-        <source>no</source>
-        <translation>아니오</translation>
-    </message>
-    <message>
-        <source>[embedded]</source>
-        <translation>[내장]</translation>
-    </message>
-    <message>
-        <source>Fonts</source>
-        <translation>글꼴</translation>
-    </message>
-</context>
-<context>
-    <name>PDFInfoDock</name>
-    <message>
-        <source>PDF Info</source>
-        <translation>PDF 정보</translation>
-    </message>
-</context>
-<context>
-    <name>PDFOutlineDock</name>
-    <message>
-        <source>No TOC</source>
-        <translation>차례 없음</translation>
-    </message>
-    <message>
-        <source>Contents</source>
-        <translation>차례</translation>
-    </message>
-</context>
-<context>
-    <name>PDFWidget</name>
-    <message>
-        <source>Zoom In</source>
-        <translation>확대</translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation>축소</translation>
-    </message>
-    <message>
-        <source>Actual Size</source>
-        <translation>실제 크기</translation>
-    </message>
-    <message>
-        <source>Fit to Width</source>
-        <translation>창너비에 맞추기</translation>
-    </message>
-    <message>
-        <source>Fit to Window</source>
-        <translation>창크기에 맞추기</translation>
-    </message>
-    <message>
-        <source>Jump to Source</source>
-        <translation>소스의 여기로 가기</translation>
-    </message>
-    <message>
-        <source>Go to Page</source>
-        <translation>쪽 찾아가기</translation>
-    </message>
-    <message>
-        <source>Page number:</source>
-        <translation>쪽 번호:</translation>
-    </message>
-</context>
-<context>
     <name>PrefsDialog</name>
     <message>
         <source>Choose Directory</source>
@@ -680,10 +614,6 @@
     <message>
         <source>General</source>
         <translation>일반</translation>
-    </message>
-    <message>
-        <source>Toolbar buttons</source>
-        <translation type="obsolete">툴바 단추</translation>
     </message>
     <message>
         <source>Small icons</source>
@@ -716,10 +646,6 @@
     <message>
         <source>File Open dialog</source>
         <translation>파일 열기 대화상자</translation>
-    </message>
-    <message>
-        <source>Interface locale:</source>
-        <translation type="obsolete">인터페이스 언어:</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -834,10 +760,6 @@
         <translation>기본값:</translation>
     </message>
     <message>
-        <source>Auto-hide output panel unless errors occur</source>
-        <translation type="obsolete">에러 없이 종료하면 콘솔 패널 자동 숨김</translation>
-    </message>
-    <message>
         <source>Line numbers</source>
         <translation>줄번호 표시</translation>
     </message>
@@ -890,10 +812,6 @@
         <translation>Qt스크립트 디버거 활성화</translation>
     </message>
     <message>
-        <source>Hide output panel:</source>
-        <translation type="obsolete">콘솔 패널 숨기기:</translation>
-    </message>
-    <message>
         <source>Never</source>
         <extracomment>&quot;Hide console output&quot; mode</extracomment>
         <translation>안 함</translation>
@@ -911,16 +829,6 @@
     <message>
         <source>&lt;em&gt;Note:&lt;/em&gt; These are default settings. Changes to them will not affect windows that are already open. Use the respective items in the &amp;quot;Format&amp;quot; menu to achieve that.</source>
         <translation>&lt;em&gt;주의:&lt;/em&gt; 이곳에서는 기본값을 설정합니다. 이미 열려 있는 창에는 효과가 없습니다. 열려 있는 창에 적용하려면 &amp;quot;모양&amp;quot; 메뉴 아래의 항목들을 이용하세요.</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;strong&gt;Never:&lt;/strong&gt; Never hide the output panel after typesetting.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Automatically:&lt;/strong&gt; Hide the output panel after successful typesetting, but only if it was hidden before.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;On Success:&lt;/strong&gt; Hide the output panel after successful typesetting, regardless of its previous state.&lt;/p&gt;
-</source>
-        <translation type="obsolete">&lt;p&gt;&lt;strong&gt;안 함:&lt;/strong&gt; 조판이 끝나도 콘솔 패널을 닫지 않습니다.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;자동으로:&lt;/strong&gt; 조판이 성공하면 콘솔 패널을 닫습니다. 단, 컴파일 시작시 닫혀 있었어야 합니다.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;성공하면:&lt;/strong&gt; 조판이 성공하면 콘솔 패널을 닫습니다. 컴파일 시작시 닫혀 있었는지 불문합니다.&lt;/p&gt;
-</translation>
     </message>
     <message>
         <source>Enable autocompletion</source>
@@ -942,19 +850,35 @@
     </message>
     <message>
         <source>Interface</source>
-        <translation type="unfinished"></translation>
+        <translation>인터페이스</translation>
     </message>
     <message>
         <source>Locale:</source>
-        <translation type="unfinished"></translation>
+        <translation>언어:</translation>
     </message>
     <message>
         <source>Toolbar buttons:</source>
-        <translation type="unfinished"></translation>
+        <translation>툴바 단추:</translation>
     </message>
     <message>
         <source>Open corresponding PDF preview with TeX files</source>
-        <translation type="unfinished"></translation>
+        <translation>TeX 파일과 함께 PDF도 열기</translation>
+    </message>
+    <message>
+        <source>Page mode:</source>
+        <translation>쪽 보기 방식:</translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation>한 쪽씩 따로</translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation>한 쪽씩 이어서</translation>
+    </message>
+    <message>
+        <source>Two Page Continuous</source>
+        <translation>맞쪽 이어서</translation>
     </message>
 </context>
 <context>
@@ -984,10 +908,6 @@
         <translation>문서화된 매크로 (*.dtx)</translation>
     </message>
     <message>
-        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.log)</source>
-        <translation type="obsolete">부수 파일 (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.log)</translation>
-    </message>
-    <message>
         <source>Text files (*.txt)</source>
         <translation>텍스트 파일 (*.txt)</translation>
     </message>
@@ -1000,20 +920,12 @@
         <translation>모든 파일</translation>
     </message>
     <message>
-        <source>Log files (*.log)</source>
-        <translation type="obsolete">로그 파일 (*.log)</translation>
-    </message>
-    <message>
-        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation type="obsolete">부수 파일 (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
-    </message>
-    <message>
         <source>Log files (*.log *.blg)</source>
-        <translation type="unfinished"></translation>
+        <translation>로그 파일 (*.log *.blg)</translation>
     </message>
     <message>
         <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.brf)</source>
-        <translation type="unfinished"></translation>
+        <translation>부수 파일 (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.brf)</translation>
     </message>
 </context>
 <context>
@@ -1247,24 +1159,8 @@
         <translation>&lt;p&gt;%1는 TeX 문서를 편집하고 조판하고 미리보기할 수 있는 심플한 환경을 제공합니다.&lt;/p&gt;</translation>
     </message>
     <message>
-        <source>&lt;br&gt;Version %1 (r.%2)</source>
-        <translation type="obsolete">&lt;br&gt;버전 %1 (r.%2)</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Distributed under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU General Public License&lt;/a&gt;, version 2.</source>
-        <translation type="obsolete">&lt;p&gt;&lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU General Public License&lt;/a&gt;, version 2에 따릅니다.</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/&quot;&gt;Qt4&lt;/a&gt; application framework by Qt Software, a division of Nokia Corporation.</source>
-        <translation type="obsolete">&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/&quot;&gt;Qt4&lt;/a&gt; 응용 프레임워크는 Nokia Corporation 소속의 Qt Software가 제공합니다.</translation>
-    </message>
-    <message>
         <source>&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF rendering library by Kristian H&amp;#xF8;gsberg, Albert Astals Cid and others.</source>
         <translation>&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF 렌더링 라이브러리는 Kristian H&amp;#xF8;gsberg, Albert Astals Cid 등이 제공합니다.</translation>
-    </message>
-    <message>
-        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
-        <translation>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; 철자 검사기는 L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth가 제공합니다.</translation>
     </message>
     <message>
         <source>&lt;br&gt;Concept and resources from &lt;a href=&quot;http://www.uoregon.edu/~koch/texshop/&quot;&gt;TeXShop&lt;/a&gt; by Richard Koch.</source>
@@ -1288,7 +1184,7 @@
     </message>
     <message>
         <source>[translator&apos;s name/email]</source>
-        <translation>Dohyun Kim&amp;lt;nomos@ktug.or.kr&amp;gt;</translation>
+        <translation>Dohyun Kim&amp;lt;nomos@ktug.org&amp;gt;</translation>
     </message>
     <message>
         <source>About %1</source>
@@ -1319,14 +1215,6 @@
         <translation>TeX 관련 프로그램의 경로를 찾을 수 없습니다.&lt;p&gt;&lt;small&gt;문서처리를 위해서는 TeX 배포판의 바이너리 디렉토리를 환경 설정 대화상자의 문서처리 탭에서 설정해야 합니다.</translation>
     </message>
     <message>
-        <source>&lt;br&gt;Version %1 r.%2 (%3)</source>
-        <translation>&lt;br&gt;버전 %1 r.%2 (%3)</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by Qt Software, a division of Nokia Corporation.</source>
-        <translation>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Qt 응용 프레임워크&lt;/a&gt; v%1은(는) Nokia Corporation 소속의 Qt Software가 제공합니다.</translation>
-    </message>
-    <message>
         <source>Save File</source>
         <translation>파일 저장</translation>
     </message>
@@ -1349,6 +1237,26 @@
     <message>
         <source>Clear Recent Files</source>
         <translation>최근 목록 지우기</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2) [r.%3, %4]</source>
+        <translation>&lt;br&gt;버전 %1 (%2) [r.%3, %4]</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2)</source>
+        <translation>&lt;br&gt;버전 %1 (%2)</translation>
+    </message>
+    <message>
+        <source>Quit TeXworks</source>
+        <translation>TeXworks 종료</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;&lt;a href=&quot;http://www.qt.io/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by The Qt Company.</source>
+        <translation>&lt;p&gt;&lt;a href=&quot;http://www.qt.io/&quot;&gt;Qt 응용 프레임워크&lt;/a&gt; v%1은(는) The Qt Company가 제공합니다.</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
+        <translation>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; 철자검사기는 L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth가 제공합니다.</translation>
     </message>
 </context>
 <context>
@@ -1412,6 +1320,15 @@
         <source>About Scripts</source>
         <translation>스크립트에 대하여</translation>
     </message>
+    <message>
+        <source>Script error</source>
+        <translation>스크립트 오류</translation>
+    </message>
+    <message>
+        <source>(disabled in the preferences)</source>
+        <extracomment>This string is appended to a script language name to indicate it is currently disabled</extracomment>
+        <translation>(환경설정에서 꺼져 있음)</translation>
+    </message>
 </context>
 <context>
     <name>TWSystemCmd</name>
@@ -1462,10 +1379,6 @@
         <translation>파일 열기</translation>
     </message>
     <message>
-        <source>Cannot close window while tool is running</source>
-        <translation type="obsolete">도구 실행 중에는 창을 닫을 수 없습니다</translation>
-    </message>
-    <message>
         <source>Save File</source>
         <translation>파일 저장</translation>
     </message>
@@ -1483,12 +1396,6 @@ Do you want to save your changes?</source>
         <translation>복구</translation>
     </message>
     <message>
-        <source>Cannot read file &quot;%1&quot;:
-%2.</source>
-        <translation type="obsolete">&quot;%1&quot; 파일을 열 수 없습니다:
-%2.</translation>
-    </message>
-    <message>
         <source>Unrecognized encoding</source>
         <translation>알 수 없는 인코딩</translation>
     </message>
@@ -1499,10 +1406,6 @@ It will be interpreted as %3 instead, which may result in incorrect text.</sourc
         <translation>%2에 사용된 %1 인코딩은 지원되지 않는 인코딩입니다.
 
 대신 %3 인코딩으로 읽겠습니다. 글자가 깨질 수 있습니다.</translation>
-    </message>
-    <message>
-        <source>File &quot;%1&quot; loaded (%2)</source>
-        <translation type="obsolete">&quot;%1&quot; 파일을 읽어들임 (%2)</translation>
     </message>
     <message>
         <source>File changed on disk</source>
@@ -1529,14 +1432,6 @@ Do you want to proceed with saving this file, overwriting the version on disk?</
         <translation>&quot;%1&quot; 문서가 저장되지 않았습니다</translation>
     </message>
     <message>
-        <source>The text encoding %1 requested for %2 is not supported.
-
-It will be saved as %3 instead, which may result in incorrect text.</source>
-        <translation type="obsolete">%2에서 요구한 %1 인코딩은 지원되지 않는 인코딩입니다.
-
-대신 %3 인코딩으로 저장하겠습니다. 글자가 깨질 수 있습니다.</translation>
-    </message>
-    <message>
         <source>Text cannot be converted</source>
         <translation>텍스트를 변환할 수 없습니다</translation>
     </message>
@@ -1547,20 +1442,6 @@ If you proceed, they will be replaced with default codes. Alternatively, you may
         <translation>문서가 %1 인코딩에 속하지 않는 글자를 가지고 있습니다.
 
 계속 진행하면 이 글자들은 기본 코드로 대체됩니다. 데이터 손실을 막으려면 다른 인코딩(예: UTF-8)으로 저장하십시오.</translation>
-    </message>
-    <message>
-        <source>Cannot write file &quot;%1&quot;:
-%2.</source>
-        <translation type="obsolete">&quot;%1&quot; 파일을 저장할 수 없습니다:
-%2.</translation>
-    </message>
-    <message>
-        <source>File &quot;%1&quot; saved (%2)</source>
-        <translation type="obsolete">&quot;%1&quot; 파일이 저장되었습니다 (%2)</translation>
-    </message>
-    <message>
-        <source>default encoding</source>
-        <translation type="obsolete">기본 인코딩</translation>
     </message>
     <message>
         <source>untitled-%1.tex</source>
@@ -1633,14 +1514,6 @@ If you proceed, they will be replaced with default codes. Alternatively, you may
     <message>
         <source>Unable to execute %1</source>
         <translation>%1을 실행할 수 없습니다</translation>
-    </message>
-    <message>
-        <source>Hide Output Panel</source>
-        <translation type="obsolete">콘솔 패널 숨기기</translation>
-    </message>
-    <message>
-        <source>Show Output Panel</source>
-        <translation type="obsolete">콘솔 패널 보기</translation>
     </message>
     <message>
         <source>Set engine to &quot;%1&quot;</source>
@@ -2027,10 +1900,6 @@ If you proceed, they will be replaced with default codes. Alternatively, you may
         <translation>다음 디렉토리를 검색했습니다:</translation>
     </message>
     <message>
-        <source>Check configuration of the %1 tool and path settings in the Preferences dialog.</source>
-        <translation type="obsolete">환경 설정 대화상자에서 %1 도구와 경로 설정을 확인하세요.</translation>
-    </message>
-    <message>
         <source>Hard Wrap...</source>
         <translation>자동 줄 바꿈...</translation>
     </message>
@@ -2191,7 +2060,7 @@ Do you want to stop it now?</source>
     </message>
     <message>
         <source>You need a &lt;b&gt;TeX distribution&lt;/b&gt; like &lt;a href=&quot;http://tug.org/texlive/&quot;&gt;TeX Live&lt;/a&gt; or &lt;a href=&quot;http://miktex.org/&quot;&gt;MiKTeX&lt;/a&gt; installed on your system to typeset your document.</source>
-        <translation>문서를 조판하기 위해서는 &lt;a href=&quot;http://tug.org/texlive/&quot;&gt;TeX Live&lt;/a&gt;나 &lt;a href=&quot;http://miktex.org/&quot;&gt;MiKTeX&lt;/a&gt; 같은   &lt;b&gt;텍배포판&lt;/b&gt;이 설치돼 있어야 합니다.</translation>
+        <translation>문서를 조판하기 위해서는 &lt;a href=&quot;http://tug.org/texlive/&quot;&gt;TeX Live&lt;/a&gt;나 &lt;a href=&quot;http://miktex.org/&quot;&gt;MiKTeX&lt;/a&gt; 같은 &lt;b&gt;텍배포판&lt;/b&gt;이 설치돼 있어야 합니다.</translation>
     </message>
     <message>
         <source>You need a &lt;b&gt;TeX distribution&lt;/b&gt; like &lt;a href=&quot;http://www.tug.org/mactex/&quot;&gt;MacTeX&lt;/a&gt; installed on your system to typeset your document.</source>
@@ -2234,6 +2103,10 @@ We are sorry for the inconvenience.</source>
     <message>
         <source>Show Console Output</source>
         <translation>콘솔 출력 보기</translation>
+    </message>
+    <message>
+        <source>Write UTF-8 byte order mark</source>
+        <translation>UTF-8 BOM (byte order mark) 넣기</translation>
     </message>
 </context>
 <context>

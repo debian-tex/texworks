@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2014  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2016  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -29,11 +29,10 @@
 #include "TWSystemCmd.h"
 
 #include "TWVersion.h"
-#include "SvnRev.h"
 #include "ResourcesDialog.h"
 #include "TWTextCodecs.h"
 
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 #include "DefaultBinaryPathsWin.h"
 #else
 #include "DefaultBinaryPaths.h"
@@ -56,17 +55,18 @@
 #include <QTranslator>
 #include <QUrl>
 #include <QDesktopServices>
+#include <QLibraryInfo>
 
-#if defined(HAVE_POPPLER_XPDF_HEADERS) && (defined(Q_WS_MAC) || defined(Q_WS_WIN))
+#if defined(HAVE_POPPLER_XPDF_HEADERS) && (defined(Q_OS_DARWIN) || defined(Q_OS_WIN))
 #include "poppler-config.h"
 #include "GlobalParams.h"
 #endif
 
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 #include <CoreServices/CoreServices.h>
 #endif
 
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 #include <windows.h>
 #ifndef VER_SUITE_WH_SERVER /* not defined in my mingw system */
 #define VER_SUITE_WH_SERVER 0x00008000
@@ -79,6 +79,9 @@ const int kDefaultMaxRecentFiles = 20;
 
 TWApp *TWApp::theAppInstance = NULL;
 
+const QEvent::Type TWDocumentOpenEvent::type = static_cast<QEvent::Type>(QEvent::registerEventType());
+
+
 TWApp::TWApp(int &argc, char **argv)
 	: ConfigurableApp(argc, argv)
 	, defaultCodec(NULL)
@@ -87,7 +90,7 @@ TWApp::TWApp(int &argc, char **argv)
 	, engineList(NULL)
 	, defaultEngineIndex(0)
 	, scriptManager(NULL)
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 	, messageTargetWindow(NULL)
 #endif
 {
@@ -107,7 +110,7 @@ void TWApp::init()
 	customTextCodecs << new MacCentralEurRomanCodec();
 
 	QIcon appIcon;
-#ifdef Q_WS_X11
+#if defined(Q_OS_UNIX) && !defined(Q_OS_DARWIN)
 	// The Compiz window manager doesn't seem to support icons larger than
 	// 128x128, so we add a suitable one first
 	appIcon.addFile(":/images/images/TeXworks-128.png");
@@ -120,7 +123,7 @@ void TWApp::init()
 	setApplicationName(TEXWORKS_NAME);
 	
 	// <Check for portable mode>
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 	QDir appDir(applicationDirPath() + "/../../.."); // move up to dir containing the .app package
 #else
 	QDir appDir(applicationDirPath());
@@ -145,24 +148,23 @@ void TWApp::init()
 			*defaultBinPaths = portable.value("defaultbinpaths").toString().split(PATH_LIST_SEP, QString::SkipEmptyParts);
 		}
 	}
-	const char *envPath;
-	envPath = getenv("TW_INIPATH");
-	if (envPath != NULL && iniPath.cd(QString(envPath))) {
+	QString envPath = QString::fromLocal8Bit(getenv("TW_INIPATH"));
+	if (envPath != NULL && iniPath.cd(envPath)) {
 		setSettingsFormat(QSettings::IniFormat);
 		QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, iniPath.absolutePath());
 	}
-	envPath = getenv("TW_LIBPATH");
-	if (envPath != NULL && libPath.cd(QString(envPath))) {
+	envPath = QString::fromLocal8Bit(getenv("TW_LIBPATH"));
+	if (envPath != NULL && libPath.cd(envPath)) {
 		portableLibPath = libPath.absolutePath();
 	}
 	// </Check for portable mode>
 
-#if defined(HAVE_POPPLER_XPDF_HEADERS) && (defined(Q_WS_MAC) || defined(Q_WS_WIN))
+#if defined(HAVE_POPPLER_XPDF_HEADERS) && (defined(Q_OS_DARWIN) || defined(Q_OS_WIN))
 	// for Mac and Windows, support "local" poppler-data directory
 	// (requires patched poppler-qt4 lib to be effective,
 	// otherwise the GlobalParams gets overwritten when a
 	// document is opened)
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 	QDir popplerDataDir(applicationDirPath() + "/../poppler-data");
 #else
 	QDir popplerDataDir(applicationDirPath() + "/poppler-data");
@@ -194,11 +196,9 @@ void TWApp::init()
 
 	scriptManager = new TWScriptManager;
 
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 	setQuitOnLastWindowClosed(false);
-
-	extern void qt_mac_set_menubar_icons(bool);
-	qt_mac_set_menubar_icons(false);
+	setAttribute(Qt::AA_DontShowIconsInMenus);
 
 	menuBar = new QMenuBar;
 
@@ -215,6 +215,7 @@ void TWApp::init()
 
 	actionPreferences = new QAction(tr("Preferences..."), this);
 	actionPreferences->setIcon(QIcon(":/images/tango/preferences-system.png"));
+	actionPreferences->setMenuRole(QAction::PreferencesRole);
 	menuFile->addAction(actionPreferences);
 	connect(actionPreferences, SIGNAL(triggered()), this, SLOT(preferences()));
 
@@ -229,6 +230,11 @@ void TWApp::init()
 	connect(actionClear_Recent_Files, SIGNAL(triggered()), this, SLOT(clearRecentFiles()));
 	updateRecentFileActions();
 	menuFile->addMenu(menuRecent);
+
+	actionQuit = new QAction(tr("Quit TeXworks"), this);
+	actionQuit->setMenuRole(QAction::QuitRole);
+	menuFile->addAction(actionQuit);
+	connect(actionQuit, SIGNAL(triggered()), this, SLOT(quit()));
 
 	menuHelp = menuBar->addMenu(tr("Help"));
 
@@ -255,18 +261,18 @@ void TWApp::init()
 
 void TWApp::maybeQuit()
 {
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 	setQuitOnLastWindowClosed(true);
 #endif
 	closeAllWindows();
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 	setQuitOnLastWindowClosed(false);
 #endif
 }
 
 void TWApp::changeLanguage()
 {
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 	menuFile->setTitle(tr("File"));
 	actionNew->setText(tr("New"));
 	actionNew->setShortcut(QKeySequence(tr("Ctrl+N")));
@@ -274,6 +280,8 @@ void TWApp::changeLanguage()
 	actionNew_from_Template->setShortcut(QKeySequence(tr("Ctrl+Shift+N")));
 	actionOpen->setText(tr("Open..."));
 	actionOpen->setShortcut(QKeySequence(tr("Ctrl+O")));
+	actionQuit->setText(tr("Quit TeXworks"));
+	actionQuit->setShortcut(QKeySequence("Ctrl+Q"));
 
 	menuRecent->setTitle(tr("Open Recent"));
 
@@ -289,12 +297,15 @@ void TWApp::about()
 {
 	QString aboutText = tr("<p>%1 is a simple environment for editing, typesetting, and previewing TeX documents.</p>").arg(TEXWORKS_NAME);
 	aboutText += "<small>";
-	aboutText += "<p>&#xA9; 2007-2014  Jonathan Kew, Stefan L&#xF6;ffler, Charlie Sharpsteen";
-	aboutText += tr("<br>Version %1 r.%2 (%3)").arg(TEXWORKS_VERSION).arg(SVN_REVISION).arg(TW_BUILD_ID_STR);
+	aboutText += "<p>&#xA9; 2007-2016  Jonathan Kew, Stefan L&#xF6;ffler, Charlie Sharpsteen";
+	if (TWUtils::isGitInfoAvailable())
+		aboutText += tr("<br>Version %1 (%2) [r.%3, %4]").arg(TEXWORKS_VERSION).arg(TW_BUILD_ID_STR).arg(TWUtils::gitCommitHash()).arg(TWUtils::gitCommitDate().toLocalTime().toString(Qt::SystemLocaleShortDate));
+	else
+		aboutText += tr("<br>Version %1 (%2)").arg(TEXWORKS_VERSION).arg(TW_BUILD_ID_STR);
 	aboutText += tr("<p>Distributed under the <a href=\"http://www.gnu.org/licenses/gpl-2.0.html\">GNU General Public License</a>, version 2 or (at your option) any later version.");
-	aboutText += tr("<p><a href=\"http://qt.nokia.com/\">Qt application framework</a> v%1 by Qt Software, a division of Nokia Corporation.").arg(qVersion());
+	aboutText += tr("<p><a href=\"http://www.qt.io/\">Qt application framework</a> v%1 by The Qt Company.").arg(qVersion());
 	aboutText += tr("<br><a href=\"http://poppler.freedesktop.org/\">Poppler</a> PDF rendering library by Kristian H&#xF8;gsberg, Albert Astals Cid and others.");
-	aboutText += tr("<br><a href=\"http://hunspell.sourceforge.net/\">Hunspell</a> spell checker by L&#xE1;szl&#xF3; N&#xE9;meth.");
+	aboutText += tr("<br><a href=\"http://hunspell.github.io/\">Hunspell</a> spell checker by L&#xE1;szl&#xF3; N&#xE9;meth.");
 	aboutText += tr("<br>Concept and resources from <a href=\"http://www.uoregon.edu/~koch/texshop/\">TeXShop</a> by Richard Koch.");
 	aboutText += tr("<br><a href=\"http://itexmac.sourceforge.net/SyncTeX.html\">SyncTeX</a> technology by J&#xE9;r&#xF4;me Laurens.");
 	aboutText += tr("<br>Some icons used are from the <a href=\"http://tango.freedesktop.org/\">Tango Desktop Project</a>.");
@@ -318,7 +329,7 @@ void TWApp::goToHomePage()
 	openUrl(QUrl("http://www.tug.org/texworks/"));
 }
 
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 /* based on MSDN sample code from http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx */
 typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
 
@@ -427,7 +438,7 @@ unsigned int TWApp::GetWindowsVersion()
 
 const QStringList TWApp::getBinaryPaths(QStringList& systemEnvironment)
 {
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 #define PATH_CASE_SENSITIVE	Qt::CaseInsensitive
 #else
 #define PATH_CASE_SENSITIVE	Qt::CaseSensitive
@@ -454,14 +465,14 @@ QString TWApp::findProgram(const QString& program, const QStringList& binPaths)
 	QStringListIterator pathIter(binPaths);
 	bool found = false;
 	QFileInfo fileInfo;
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 	QStringList executableTypes = QStringList() << "exe" << "com" << "cmd" << "bat";
 #endif
 	while (pathIter.hasNext() && !found) {
 		QString path = pathIter.next();
 		fileInfo = QFileInfo(path, program);
 		found = fileInfo.exists() && fileInfo.isExecutable();
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 		// try adding common executable extensions, if one was not already present
 		if (!found && !executableTypes.contains(fileInfo.suffix())) {
 			QStringListIterator extensions(executableTypes);
@@ -481,8 +492,8 @@ void TWApp::writeToMailingList()
 	QString address("texworks@tug.org");
 	QString body("Thank you for taking the time to write an email to the TeXworks mailing list. Please read the instructions below carefully as following them will greatly facilitate the communication.\n\nInstructions:\n-) Please write your message in English (it's in your own best interest; otherwise, many people will not be able to understand it and therefore will not answer).\n\n-) Please type something meaningful in the subject line.\n\n-) If you are having a problem, please describe it step-by-step in detail.\n\n-) After reading, please delete these instructions (up to the \"configuration info\" below which we may need to find the source of problems).\n\n\n\n----- configuration info -----\n");
 
-	body += "TeXworks version : " TEXWORKS_VERSION "r" SVN_REVISION_STR " (" TW_BUILD_ID_STR ")\n";
-#ifdef Q_WS_MAC
+	body += "TeXworks version : " TEXWORKS_VERSION "r." + TWUtils::gitCommitHash() + " (" TW_BUILD_ID_STR ")\n";
+#if defined(Q_OS_DARWIN)
 	body += "Install location : " + QDir(applicationDirPath() + "/../..").absolutePath() + "\n";
 #else
 	body += "Install location : " + applicationFilePath() + "\n";
@@ -502,10 +513,10 @@ void TWApp::writeToMailingList()
 	body += "pdfTeX location  : " + pdftex + "\n";
 	
 	body += "Operating system : ";
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 	body += "Windows " + GetWindowsVersionString() + "\n";
 #else
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 #define UNAME_CMDLINE "uname -v"
 #else
 #define UNAME_CMDLINE "uname -a"
@@ -516,7 +527,7 @@ void TWApp::writeToMailingList()
 	unameCmd.start(UNAME_CMDLINE);			
 	if (unameCmd.waitForStarted(1000) && unameCmd.waitForFinished(1000))
 		unameResult = unameCmd.getResult().trimmed();
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 	SInt32 major = 0, minor = 0, bugfix = 0;
 	Gestalt(gestaltSystemVersionMajor, &major);
 	Gestalt(gestaltSystemVersionMinor, &minor);
@@ -533,7 +544,7 @@ void TWApp::writeToMailingList()
 	body += " (runtime)\n";
 	body += "------------------------------\n";
 
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 	body.replace('\n', "\r\n");
 #endif
 
@@ -560,8 +571,9 @@ void TWApp::launchAction()
 			open();
 			break;
 	}
-#ifndef Q_WS_MAC	// on Mac OS, it's OK to end up with no document (we still have the app menu bar)
-					// but on W32 and X11 we need a window otherwise the user can't interact at all
+#if !defined(Q_OS_DARWIN)
+	// on Mac OS, it's OK to end up with no document (we still have the app menu bar)
+	// but on W32 and X11 we need a window otherwise the user can't interact at all
 	if (TeXDocument::documentList().size() == 0 && PDFDocument::documentList().size() == 0) {
 		newFile();
 		if (TeXDocument::documentList().size() == 0) {
@@ -611,7 +623,7 @@ void TWApp::openRecentFile()
 QStringList TWApp::getOpenFileNames(QString selectedFilter)
 {
 	QFileDialog::Options	options = 0;
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
 #endif
 	QSETTINGS_OBJECT(settings);
@@ -626,7 +638,7 @@ QStringList TWApp::getOpenFileNames(QString selectedFilter)
 QString TWApp::getOpenFileName(QString selectedFilter)
 {
 	QFileDialog::Options	options = 0;
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
 #endif
 	QSETTINGS_OBJECT(settings);
@@ -641,7 +653,7 @@ QString TWApp::getOpenFileName(QString selectedFilter)
 QString TWApp::getSaveFileName(const QString& defaultName)
 {
 	QFileDialog::Options	options = 0;
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 	if(TWApp::GetWindowsVersion() < 0x06000000) options |= QFileDialog::DontUseNativeDialog;
 #endif
 	QString selectedFilter;
@@ -685,7 +697,7 @@ QObject* TWApp::openFile(const QString &fileName, int pos /* = 0 */)
 		if (doc != NULL) {
 			if (pos > 0)
 				doc->widget()->goToPage(pos - 1);
-			QTimer::singleShot(0, doc, SLOT(selectWindow()));
+			doc->selectWindow();
 			return doc;
 		}
 		return NULL;
@@ -728,7 +740,7 @@ void TWApp::setMaxRecentFiles(int value)
 
 void TWApp::updateRecentFileActions()
 {
-#ifdef Q_WS_MAC
+#if defined(Q_OS_DARWIN)
 	TWUtils::updateRecentFileActions(this, recentFileActions, menuRecent, actionClear_Recent_Files);
 #endif
 	emit recentFileActionsChanged();
@@ -767,6 +779,11 @@ void TWApp::arrangeWindows(TWUtils::WindowArrangementFunction func)
 
 bool TWApp::event(QEvent *event)
 {
+	if (event->type() == TWDocumentOpenEvent::type) {
+		TWDocumentOpenEvent * e = static_cast<TWDocumentOpenEvent*>(event);
+		openFile(e->filename, e->pos);
+		return true;
+	}
 	switch (event->type()) {
 		case QEvent::FileOpen:
 			openFile(static_cast<QFileOpenEvent *>(event)->file());        
@@ -785,15 +802,15 @@ void TWApp::setDefaultPaths()
 		binaryPaths->clear();
 	if (defaultBinPaths)
 		*binaryPaths = *defaultBinPaths;
-#ifndef Q_WS_MAC
+#if !defined(Q_OS_DARWIN)
 	// on OS X, this will be the path to {TW_APP_PACKAGE}/Contents/MacOS/
 	// which doesn't make any sense as a search dir for TeX binaries
 	if (!binaryPaths->contains(appDir.absolutePath()))
 		binaryPaths->append(appDir.absolutePath());
 #endif
-	const char *envPath = getenv("PATH");
-	if (envPath != NULL)
-		foreach (const QString& s, QString(envPath).split(PATH_LIST_SEP, QString::SkipEmptyParts))
+	QString envPath = QString::fromLocal8Bit(getenv("PATH"));
+	if (!envPath.isEmpty())
+		foreach (const QString& s, envPath.split(PATH_LIST_SEP, QString::SkipEmptyParts))
 		if (!binaryPaths->contains(s))
 			binaryPaths->append(s);
 	if (!defaultBinPaths) {
@@ -1021,32 +1038,33 @@ void TWApp::applyTranslation(const QString& locale)
 	translators.clear();
 
 	if (!locale.isEmpty()) {
-		QString basicTranslations = ":/resfiles/translations";
-		QString extraTranslations = TWUtils::getLibraryPath("translations");
-		
-		QTranslator *qtTranslator = new QTranslator(this);
-		if (qtTranslator->load("qt_" + locale, extraTranslations)) {
-			installTranslator(qtTranslator);
-			translators.append(qtTranslator);
-		}
-		else if (qtTranslator->load("qt_" + locale, basicTranslations)) {
-			installTranslator(qtTranslator);
-			translators.append(qtTranslator);
-		}
-		else
-			delete qtTranslator;
+		// According to the Qt docs, translators are searched in reverse order
+		// (the last installed one is tried first). Here, we use the following
+		// search order (1. is tried first):
+		// 1. The user's files in <resources>/translations
+		// 2. The system-wide translation
+		// 3. The bundled translation
+		// Note that the bundled translations are not copied to <resources>, so
+		// this search order is not messed up.
+		QStringList names, directories;
+		names << QString::fromLatin1("qt") + locale \
+					<< QString::fromLatin1("QtPDF_") + locale \
+					<< QString::fromLatin1(TEXWORKS_NAME) + QString::fromLatin1("_") + locale;
+		directories << QString::fromLatin1(":/resfiles/translations") \
+								<< QLibraryInfo::location(QLibraryInfo::TranslationsPath) \
+								<< TWUtils::getLibraryPath("translations");
 
-		QTranslator *twTranslator = new QTranslator(this);
-		if (twTranslator->load(TEXWORKS_NAME "_" + locale, extraTranslations)) {
-			installTranslator(twTranslator);
-			translators.append(twTranslator);
+		foreach (QString name, names) {
+			foreach (QString dir, directories) {
+				QTranslator * t = new QTranslator(this);
+				if (t->load(name, dir)) {
+					installTranslator(t);
+					translators.append(t);
+				}
+				else
+					delete t;
+			}
 		}
-		else if (twTranslator->load(TEXWORKS_NAME "_" + locale, basicTranslations)) {
-			installTranslator(twTranslator);
-			translators.append(twTranslator);
-		}
-		else
-			delete twTranslator;
 	}
 
 	emit updatedTranslators();
@@ -1123,7 +1141,7 @@ void TWApp::showScriptsFolder()
 	QDesktopServices::openUrl(QUrl::fromLocalFile(TWUtils::getLibraryPath("scripts")));
 }
 
-#ifdef Q_WS_WIN	// support for the Windows single-instance code
+#if defined(Q_OS_WIN) // support for the Windows single-instance code
 #include <windows.h>
 
 LRESULT CALLBACK TW_HiddenWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -1162,7 +1180,7 @@ void TWApp::createMessageTarget(QWidget* aWindow)
 	if (!aWindow || !aWindow->isWindow())
 		return;
 
-	HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(aWindow->winId(), GWLP_HINSTANCE);
+	HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr((HWND)aWindow->winId(), GWLP_HINSTANCE);
 	if (hInstance == NULL)
 		return;
 

@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2014  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2016  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ QList<TeXHighlighter::HighlightingSpec> *TeXHighlighter::syntaxRules = NULL;
 QList<TeXHighlighter::TagPattern> *TeXHighlighter::tagPatterns = NULL;
 
 TeXHighlighter::TeXHighlighter(QTextDocument *parent, TeXDocument *texDocument)
-	: QSyntaxHighlighter((QObject*)NULL)
+	: QSyntaxHighlighter(parent)
 	, texDoc(texDocument)
 	, highlightIndex(-1)
 	, isTagging(true)
@@ -42,9 +42,10 @@ TeXHighlighter::TeXHighlighter(QTextDocument *parent, TeXDocument *texDocument)
 	, textDoc(parent)
 {
 	loadPatterns();
-	spellFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
+	// TODO: We should use QTextCharFormat::SpellCheckUnderline here, but that
+	// causes problems for some fonts/font sizes in Qt 5 (QTBUG-50499)
+	spellFormat.setUnderlineStyle(QTextCharFormat::WaveUnderline);
 	spellFormat.setUnderlineColor(Qt::red);
-	QTimer::singleShot(1000, this, SLOT(delayedInstallParent()));
 }
 
 void TeXHighlighter::spellCheckRange(const QString &text, int index, int limit, const QTextCharFormat &spellFormat)
@@ -176,7 +177,7 @@ void TeXHighlighter::loadPatterns()
 	if (syntaxRules == NULL) {
 		syntaxRules = new QList<HighlightingSpec>;
 		QFile syntaxFile(configDir.filePath("syntax-patterns.txt"));
-		QRegExp sectionRE("^\\[([^]]+)\\]");
+		QRegExp sectionRE("^\\[([^\\]]+)\\]");
 		if (syntaxFile.open(QIODevice::ReadOnly)) {
 			HighlightingSpec spec;
 			spec.name = tr("default");

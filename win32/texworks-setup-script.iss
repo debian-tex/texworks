@@ -41,6 +41,7 @@ Name: "fr"; MessagesFile: "compiler:Languages\French.isl"
 Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"
 Name: "ja"; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "nn"; MessagesFile: "compiler:Languages\Norwegian.isl"
 Name: "pl"; MessagesFile: "compiler:Languages\Polish.isl"
 Name: "pt_BR"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
@@ -54,29 +55,31 @@ Name: "tr"; MessagesFile: "extra-setup-languages\Turkish-3-5.1.11.isl"
 Name: "zh_cn"; MessagesFile: "extra-setup-languages\ChineseSimp-12-5.1.11.isl"
 
 [CustomMessages]
-ManualName=A short manual for TeXworks
-ca.CreateFileAssoc=Obri el següents fitxers amb TeXworks per defecte:
-cs.CreateFileAssoc=Nastavit TeXworks jako výchozí program pro otevírání následujících typů souborů:
+ManualNameEn=A short manual for TeXworks
+ManualNameFr=Petit manuel pour TeXworks
+ca.CreateFileAssoc=Obri els següents tipus de fitxers amb TeXworks per defecte:
+cs.CreateFileAssoc=Vždy otevírat následující typy souborů v TeXworks:
 de.CreateFileAssoc=Folgende Dateitypen standardmäßig mit TeXworks öffnen:
 en.CreateFileAssoc=Open the following file types with TeXworks by default:
-es.CreateFileAssoc=De manera predeterminada abrir los siguientes tipos de archivo con TeXworks:
+es.CreateFileAssoc=Abrir estos tipos de archivo con TeXworks como programa predeterminado:
 fr.CreateFileAssoc=Ouvrir par défaut les types de fichiers suivant avec TeXworks:
 it.CreateFileAssoc=Apri di default i seguenti tipi di file con TeXworks:
-nl.CreateFileAssoc=Verbind de volgende bestandstypen met TeXworks:
+nl.CreateFileAssoc=Open de volgende bestandstypen bij voorkeur met TeXworks:
+nn.CreateFileAssoc=Opna desse filtypane med TeXworks som standard:
 pl.CreateFileAssoc=Domyślnie otwieraj następujące typy plików za pomocą edytora TeXworks:
 pt_BR.CreateFileAssoc=
 ru.CreateFileAssoc=Открывать следующие файлы по умолчанию в TeXworks:
 sl.CreateFileAssoc=Uporabi TeXworks za odpiranje naslednjih vrst datotek:
 
-af.CreateFileAssoc=Maak by verstek die volgende lêertipes met TeXworks oop:
+af.CreateFileAssoc=Maar die volgende lêer-tipes by verstek met TeXworks oop:
 ar.CreateFileAssoc=افتح أنواع الملفات التالية في TeXworks مبدئيا:
 fa.CreateFileAssoc=پرونده‌های از نوع زیر را به‌طور پیش‌فرض با تک‌ورکس بازکن:
-ja.CreateFileAssoc=デフォルトで次の種類のファイルを TeXworks で開く:
+ja.CreateFileAssoc=常にTeXworksを使ってこれらの種類のファイルを開く:
 ko.CreateFileAssoc=다음 유형의 파일을 열 때 기본값으로 TeXworks를 이용합니다:
 tr.CreateFileAssoc=Aşağıdaki dosya türlerini öntanımlı olarak TeXworks ile aç:
 zh_cn.CreateFileAssoc=默认使用 TeXworks 打开下列文件类型：
 ; Inno Setup doesn't support Faroese (yet)
-; fo.CreateFileAssoc=Opna sum standard hesi fílusløg við TeXworks:
+; fo.CreateFileAssoc=Lat altíð hesi sløgini av fílum upp við TeXworks:
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
@@ -94,7 +97,8 @@ Source: "..\release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs cr
 [Icons]
 Name: "{group}\TeXworks"; Filename: "{app}\TeXworks.exe"
 Name: "{group}\{cm:ProgramOnTheWeb,TeXworks}"; Filename: "http://www.tug.org/texworks/"
-Name: "{group}\{cm:ManualName}"; Filename: "{app}\texworks-help\TeXworks-manual\en\TeXworks-manual.pdf"
+Name: "{group}\{cm:ManualNameEn}"; Filename: "{app}\texworks-help\TeXworks-manual\en\TeXworks-manual-en.pdf"
+Name: "{group}\{cm:ManualNameFr}"; Filename: "{app}\texworks-help\TeXworks-manual\fr\TeXworks-manual-fr.pdf"
 Name: "{group}\{cm:UninstallProgram,TeXworks}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\TeXworks"; Filename: "{app}\TeXworks.exe"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\TeXworks"; Filename: "{app}\TeXworks.exe"; Tasks: quicklaunchicon
