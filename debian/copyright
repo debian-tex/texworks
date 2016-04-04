@@ -2,7 +2,7 @@ This work was packaged for Debian by:
 
     Atsuhito KOHDA <kohda@debian.org> on Sun, 11 Oct 2009 15:25:52 +0900
 
-It was downloaded from <http://code.google.com/p/texworks/>
+It was downloaded from <https://github.com/TeXworks/texwork/releases>
 
 Upstream Authors:
 
@@ -66,6 +66,7 @@ License of the Beamer templates:
 The Debian packaging is:
 
     Copyright (C) 2009 Atsuhito KOHDA <kohda@debian.org>
+    Copyright (C) 2016 Norbert Preining <preining@debian.org>
 
 and is licensed under the GPL version 3, 
 see `/usr/share/common-licenses/GPL-3'.
