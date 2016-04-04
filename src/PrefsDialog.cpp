@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2013  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2015  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ void PrefsDialog::addPath()
 								QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 	// remove the trailing / (if any)
 	dir = QDir::fromNativeSeparators(dir);
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN)
 	if (dir.length() > 2)
 #else
 	if (dir.length() > 1)
@@ -342,6 +342,19 @@ void PrefsDialog::restoreDefaults()
 					break;
 			}
 			scale->setValue(kDefault_PreviewScale);
+			switch (kDefault_PDFPageMode) {
+				case QtPDF::PDFDocumentView::PageMode_SinglePage:
+					pdfPageMode->setCurrentIndex(0);
+					break;
+				case QtPDF::PDFDocumentView::PageMode_OneColumnContinuous:
+				default:
+					pdfPageMode->setCurrentIndex(1);
+					break;
+				case QtPDF::PDFDocumentView::PageMode_TwoColumnContinuous:
+					pdfPageMode->setCurrentIndex(2);
+				break;
+			}
+
 			resolution->setValue(QApplication::desktop()->logicalDpiX());
 			
 			switch (kDefault_MagnifierSize) {
@@ -558,6 +571,18 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 			break;
 	}
 	dlg.scale->setValue(settings.value("previewScale", kDefault_PreviewScale).toInt());
+	switch (settings.value("pdfPageMode", kDefault_PDFPageMode).toInt()) {
+		case QtPDF::PDFDocumentView::PageMode_SinglePage:
+			dlg.pdfPageMode->setCurrentIndex(0);
+			break;
+		case QtPDF::PDFDocumentView::PageMode_OneColumnContinuous:
+		default:
+			dlg.pdfPageMode->setCurrentIndex(1);
+			break;
+		case QtPDF::PDFDocumentView::PageMode_TwoColumnContinuous:
+			dlg.pdfPageMode->setCurrentIndex(2);
+			break;
+	}
 
 	int oldResolution = settings.value("previewResolution", QApplication::desktop()->logicalDpiX()).toInt();
 	dlg.resolution->setValue(oldResolution);
@@ -709,7 +734,18 @@ QDialog::DialogCode PrefsDialog::doPrefsDialog(QWidget *parent)
 		int scale = dlg.scale->value();
 		settings.setValue("scaleOption", scaleOption);
 		settings.setValue("previewScale", scale);
-		
+		switch (dlg.pdfPageMode->currentIndex()) {
+			case 0:
+				settings.setValue("pdfPageMode", QtPDF::PDFDocumentView::PageMode_SinglePage);
+				break;
+			case 1:
+				settings.setValue("pdfPageMode", QtPDF::PDFDocumentView::PageMode_OneColumnContinuous);
+				break;
+			case 2:
+				settings.setValue("pdfPageMode", QtPDF::PDFDocumentView::PageMode_TwoColumnContinuous);
+				break;
+		}
+
 		int resolution = dlg.resolution->value();
 		if (resolution != oldResolution) {
 			settings.setValue("previewResolution", resolution);

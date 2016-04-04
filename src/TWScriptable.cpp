@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2009-2013  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2009-2015  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ void TWScriptManager::loadPlugins()
 #if defined(Q_OS_WIN)
 	if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
 		pluginsDir.cdUp();
-#elif defined(Q_OS_MAC) // "plugins" directory is alongside "MacOS" within the package's Contents dir
+#elif defined(Q_OS_DARWIN) // "plugins" directory is alongside "MacOS" within the package's Contents dir
 	if (pluginsDir.dirName() == "MacOS")
 		pluginsDir.cdUp();
 	if (!pluginsDir.exists("plugins")) { // if not found, try for a dir alongside the .app package
@@ -175,9 +175,9 @@ void TWScriptManager::loadPlugins()
 #endif
 
 	// allow an env var to override the default plugin path
-	const char* pluginPath = getenv("TW_PLUGINPATH");
-	if (pluginPath != NULL)
-		pluginsDir.cd(QString(pluginPath));
+	QString pluginPath = QString::fromLocal8Bit(getenv("TW_PLUGINPATH"));
+	if (!pluginPath.isEmpty())
+		pluginsDir.cd(pluginPath);
 
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
@@ -580,7 +580,7 @@ TWScriptable::runScript(QObject* script, TWScript::ScriptType scriptType)
 	else {
 		if (result.isNull())
 			result = tr("unknown error");
-		statusBar()->showMessage(tr("Script \"%1\": %2").arg(s->getTitle()).arg(result.toString()));
+		QMessageBox::information(this, tr("Script error"), tr("Script \"%1\": %2").arg(s->getTitle()).arg(result.toString()), QMessageBox::Ok, QMessageBox::Ok);
 	}
 }
 
@@ -596,7 +596,10 @@ TWScriptable::runHooks(const QString& hookName)
 void
 TWScriptable::doAboutScripts()
 {
-	QString scriptingLink = QString("<a href=\"%1\">%1</a>").arg("http://code.google.com/p/texworks/wiki/ScriptingTeXworks");
+	QSETTINGS_OBJECT(settings);
+	bool enableScriptsPlugins = settings.value("enableScriptingPlugins", false).toBool();
+
+	QString scriptingLink = QString("<a href=\"%1\">%1</a>").arg("https://github.com/TeXworks/texworks/wiki/ScriptingTeXworks");
 	QString aboutText = "<p>";
 	aboutText += tr("Scripts may be used to add new commands to %1, "
 					"and to extend or modify its behavior.").arg(TEXWORKS_NAME);
@@ -613,7 +616,12 @@ TWScriptable::doAboutScripts()
 		aboutText += i->scriptLanguageURL();
 		aboutText += "\">";
 		aboutText += i->scriptLanguageName();
-		aboutText += "</a></li>";
+		aboutText += "</a>";
+		if (!enableScriptsPlugins && !qobject_cast<const JSScriptInterface*>(plugin)) {
+			//: This string is appended to a script language name to indicate it is currently disabled
+			aboutText += " " + tr("(disabled in the preferences)");
+		}
+		aboutText += "</li>";
 	}
 	QMessageBox::about(NULL, tr("About Scripts"), aboutText);
 }

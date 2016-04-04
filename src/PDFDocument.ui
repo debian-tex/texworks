@@ -87,6 +87,10 @@
     <addaction name="actionFit_to_Width"/>
     <addaction name="actionFit_to_Window"/>
     <addaction name="separator"/>
+    <addaction name="actionPageMode_Single"/>
+    <addaction name="actionPageMode_Continuous"/>
+    <addaction name="actionPageMode_TwoPagesContinuous"/>
+    <addaction name="separator"/>
     <addaction name="actionFull_Screen"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
@@ -185,6 +189,7 @@
    <addaction name="separator"/>
    <addaction name="actionMagnify"/>
    <addaction name="actionScroll"/>
+   <addaction name="actionSelect_Text"/>
    <addaction name="separator"/>
    <addaction name="actionFind"/>
   </widget>
@@ -204,9 +209,6 @@
    <property name="text">
     <string>First Page</string>
    </property>
-   <property name="shortcut">
-    <string comment="shortcut key name, do not translate">Home</string>
-   </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
    </property>
@@ -220,7 +222,7 @@
     <string>Previous Page</string>
    </property>
    <property name="shortcut">
-    <string comment="shortcut key name, do not translate">PgUp</string>
+    <string comment="shortcut key name, do not translate">Ctrl+PgUp</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -235,7 +237,7 @@
     <string>Next Page</string>
    </property>
    <property name="shortcut">
-    <string comment="shortcut key name, do not translate">PgDown</string>
+    <string comment="shortcut key name, do not translate">Ctrl+PgDown</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -248,9 +250,6 @@
    </property>
    <property name="text">
     <string>Last Page</string>
-   </property>
-   <property name="shortcut">
-    <string comment="shortcut key name, do not translate">End</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -595,8 +594,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/images/images/hand.png</normaloff>:/images/images/hand.png</iconset>
+    <iconset resource="../modules/QtPDF/QtPDF_icons.qrc">
+     <normaloff>:/QtPDF/icons/hand.png</normaloff>:/QtPDF/icons/hand.png</iconset>
    </property>
    <property name="text">
     <string>Scroll</string>
@@ -607,8 +606,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/images/images/text-tool.png</normaloff>:/images/images/text-tool.png</iconset>
+    <iconset resource="../modules/QtPDF/QtPDF_icons.qrc">
+     <normaloff>:/QtPDF/icons/select-text.png</normaloff>:/QtPDF/icons/select-text.png</iconset>
    </property>
    <property name="text">
     <string>Select Text</string>
@@ -753,9 +752,56 @@
     <string>Clear Recent Files</string>
    </property>
   </action>
+  <action name="actionPrevious_ViewRect">
+   <property name="text">
+    <string>Go to previous view</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Left</string>
+   </property>
+  </action>
+  <actiongroup name="actionPageModes">
+   <action name="actionPageMode_Single">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="../modules/QtPDF/QtPDF_icons.qrc">
+      <normaloff>:/QtPDF/icons/pagemode-single.png</normaloff>:/QtPDF/icons/pagemode-single.png</iconset>
+    </property>
+    <property name="text">
+     <string>Single Page</string>
+    </property>
+   </action>
+   <action name="actionPageMode_Continuous">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="../modules/QtPDF/QtPDF_icons.qrc">
+      <normaloff>:/QtPDF/icons/pagemode-continuous.png</normaloff>:/QtPDF/icons/pagemode-continuous.png</iconset>
+    </property>
+    <property name="text">
+     <string>Single Page Continuous</string>
+    </property>
+   </action>
+   <action name="actionPageMode_TwoPagesContinuous">
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="icon">
+     <iconset resource="../modules/QtPDF/QtPDF_icons.qrc">
+      <normaloff>:/QtPDF/icons/pagemode-twocols.png</normaloff>:/QtPDF/icons/pagemode-twocols.png</iconset>
+    </property>
+    <property name="text">
+     <string>Two Pages Continuous</string>
+    </property>
+   </action>
+  </actiongroup>
  </widget>
  <resources>
   <include location="../res/resources.qrc"/>
+  <include location="../modules/QtPDF/QtPDF_icons.qrc"/>
  </resources>
  <connections>
   <connection>

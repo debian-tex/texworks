@@ -258,9 +258,9 @@ void PDFPageProcessingThread::run()
     else {
 #ifdef DEBUG
       qDebug() << "going to sleep";
+#endif
       _idle = true;
       _idleCondition.wakeAll();
-#endif
       _waitCondition.wait(&_mutex);
       _idle = false;
 #ifdef DEBUG
@@ -268,6 +268,7 @@ void PDFPageProcessingThread::run()
 #endif
     }
   }
+  _mutex.unlock();
 }
 
 void PDFPageProcessingThread::clearWorkStack()

@@ -49,6 +49,8 @@ class PDFDocumentView : public QGraphicsView {
   QList<QGraphicsItem *> _searchResults;
   QFutureWatcher< QList<Backend::SearchResult> > _searchResultWatcher;
   int _currentSearchResult;
+  QBrush _searchResultHighlightBrush;
+  QBrush _currentSearchResultHighlightBrush;
   bool _useGrayScale;
 
   friend class DocumentTool::AbstractTool;
@@ -86,11 +88,20 @@ public:
     return addHighlightPath(page, path, QBrush(color), pen);
   }
 
+  QBrush searchResultHighlightBrush() const { return _searchResultHighlightBrush; }
+  void setSearchResultHighlightBrush(const QBrush & brush);
+
+  QBrush currentSearchResultHighlightBrush() const { return _currentSearchResultHighlightBrush; }
+  void setCurrentSearchResultHighlightBrush(const QBrush & brush);
+
+  bool canGoPrevViewRects() const { return !_oldViewRects.empty(); }
+
 public slots:
   void goPrev();
   void goNext();
   void goFirst();
   void goLast();
+  void goPrevViewRect();
   // `alignment` can be (a combination of) 0, Qt::AlignLeft, Qt::AlignRight,
   // Qt::AlignHCenter, Qt::AlignTop, Qt::AlignBottom, Qt::AlignVCenter.
   // 0 corresponds to no alignment, i.e., the view will change so that the
@@ -100,7 +111,7 @@ public slots:
   // default alignment is centering here, which is also used if `alignment` == 0.
   // `anchor` must be given in item coordinates
   void goToPage(const int pageNum, const QPointF anchor, const int alignment = Qt::AlignHCenter | Qt::AlignVCenter);
-  void setPageMode(PageMode pageMode);
+  void setPageMode(const PageMode pageMode, const bool forceRelayout = false);
   void setSinglePageMode() { setPageMode(PageMode_SinglePage); }
   void setOneColContPageMode() { setPageMode(PageMode_OneColumnContinuous); }
   void setTwoColContPageMode() { setPageMode(PageMode_TwoColumnContinuous); }
@@ -115,14 +126,14 @@ public slots:
   void setMagnifierSize(const int size);
   void setUseGrayScale(const bool grayScale = true) { _useGrayScale = grayScale; }
 
-  void zoomBy(const qreal zoomFactor);
-  void zoomIn();
-  void zoomOut();
+  void zoomBy(const qreal zoomFactor, const QGraphicsView::ViewportAnchor anchor = QGraphicsView::AnchorViewCenter);
+  void zoomIn(const QGraphicsView::ViewportAnchor anchor = QGraphicsView::AnchorViewCenter);
+  void zoomOut(const QGraphicsView::ViewportAnchor anchor = QGraphicsView::AnchorViewCenter);
   void zoomToRect(QRectF a_rect);
   void zoomFitWindow();
   void zoomFitWidth();
   void zoom100();
-  void setZoomLevel(const qreal zoomLevel);
+  void setZoomLevel(const qreal zoomLevel, const QGraphicsView::ViewportAnchor anchor = QGraphicsView::AnchorViewCenter);
 
   void search(QString searchText, Backend::SearchFlags flags = Backend::Search_CaseInsensitive);
   void nextSearchResult();
@@ -132,11 +143,13 @@ public slots:
 signals:
   void changedPage(int pageNum);
   void changedZoom(qreal zoomLevel);
+  void changedPageMode(QtPDF::PDFDocumentView::PageMode newMode);
   // emitted, e.g., if a new document was loaded, or if the existing document
   // has changed (e.g., if it was unlocked)
   void changedDocument(const QWeakPointer<QtPDF::Backend::Document> newDoc);
 
   void searchProgressChanged(int percent, int occurrences);
+  void searchResultHighlighted(const int pageNum, const QList<QPolygonF> region);
 
   void requestOpenUrl(const QUrl url);
   void requestExecuteCommand(QString command);
@@ -173,6 +186,7 @@ protected slots:
   void goToPage(const PDFPageGraphicsItem * page, const QRectF view, const bool mayZoom = false);
   void goToPage(const PDFPageGraphicsItem * page, const int alignment = Qt::AlignLeft | Qt::AlignTop);
   void goToPage(const PDFPageGraphicsItem * page, const QPointF anchor, const int alignment = Qt::AlignHCenter | Qt::AlignVCenter);
+  void goToPDFDestination(const PDFDestination & dest, bool saveOldViewRect = true);
   void searchResultReady(int index);
   void searchProgressValueChanged(int progressValue);
   void switchInterfaceLocale(const QLocale & newLocale);
@@ -185,6 +199,8 @@ private:
   QVector<DocumentTool::AbstractTool*> _tools;
   DocumentTool::AbstractTool * _armedTool;
   QMap<uint, DocumentTool::AbstractTool*> _toolAccessors;
+
+  QStack<PDFDestination> _oldViewRects;
   
   static QTranslator * _translator;
   static QString _translatorLanguage;
@@ -442,9 +458,9 @@ public:
   int pageNumFor(const PDFPageGraphicsItem * const graphicsItem) const;
   PDFPageLayout& pageLayout() { return _pageLayout; }
 
-  void showOnePage(const int pageIdx) const;
-  void showOnePage(const PDFPageGraphicsItem * page) const;
-  void showAllPages() const;
+  void showOnePage(const int pageIdx);
+  void showOnePage(const PDFPageGraphicsItem * page);
+  void showAllPages();
 
   bool watchForDocumentChangesOnDisk() const { return _fileWatcher.files().size() > 0; }
   void setWatchForDocumentChangesOnDisk(const bool doWatch = true);
@@ -472,6 +488,9 @@ protected slots:
   void finishUnlock();
 
 protected:
+  // Used in non-continuous mode to keep track of currently shown page across
+  // reloads. -2 is used in continuous mode. -1 indicates an invalid value.
+  int _shownPageIdx;
   bool event(QEvent* event);
   
   QWidget * _unlockWidget;

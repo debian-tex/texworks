@@ -145,10 +145,16 @@ Document::~Document()
 
 void Document::reload()
 {
+  // Clear the processing thread
+  // NB: Do this before acquiring _docLock. See clearWorkStack() documentation.
+  // This should not cause any problems as we are supposed to currently be in
+  // the main (GUI) thread, and only this thread is supposed to add items to the
+  // work stack.
+  _processingThread.clearWorkStack();
+
   QWriteLocker docLocker(_docLock.data());
 
   clearPages();
-  _processingThread.clearWorkStack();
   _pageCache.clear();
 
   {
@@ -269,6 +275,13 @@ QWeakPointer<Backend::Page> Document::page(int at)
 
   if( _pages.isEmpty() )
     _pages.resize(_numPages);
+
+  // If we got here, we don't have the page cached. As we need to create a new
+  // page, we need to make sure the Poppler document is valid and does not go
+  // out of scope
+  QMutexLocker popplerLocker(_poppler_docLock);
+  if (!_poppler_doc)
+    return QWeakPointer<Backend::Page>();
 
   _pages[at] = QSharedPointer<Backend::Page>(new Page(this, at, _docLock));
   return _pages[at].toWeakRef();
@@ -859,13 +872,8 @@ QList< Backend::Page::Box > Page::boxes()
   return retVal;
 }
 
-QString Page::selectedText(const QList<QPolygonF> & selection)
+QString Page::selectedText(const QList<QPolygonF> & selection, QMap<int, QRectF> * wordBoxes /* = NULL */, QMap<int, QRectF> * charBoxes /* = NULL */, const bool onlyFullyEnclosed /* = false */)
 {
-  // FIXME: Properly implement selectedText() with poppler
-  // Since poppler doesn't provide a reliable way to extract the text inside (a
-  // list of) polygons, we bail out for now
-  return QString();
-
   QReadLocker pageLocker(_pageLock);
   Q_ASSERT(_poppler_page != NULL);
   // Using the bounding rects of the selection polygons is almost
@@ -875,14 +883,79 @@ QString Page::selectedText(const QList<QPolygonF> & selection)
   // list of words. Hence, by iterating over them, we get a list of words with
   // no whitespace inbetween
   QString retVal;
-  foreach (QPolygonF poly, selection) {
-    QRectF boundingRect = poly.boundingRect();
-    // Poppler returns the entire page text if an empty rect is given. We don't
-    // want that here
-    if (boundingRect.isEmpty())
-      continue;
-    retVal.append(_poppler_page->text(boundingRect));
-  }
+
+	// Get a list of all boxes
+	QList<Poppler::TextBox*> poppler_boxes = _poppler_page->textList();
+	Poppler::TextBox * lastPopplerBox = NULL;
+
+	// Filter boxes by selection
+	foreach (Poppler::TextBox * poppler_box, poppler_boxes) {
+		if (!poppler_box)
+			continue;
+		bool include = false;
+		bool includeEntirely = false;
+		foreach (const QPolygonF & p, selection) {
+			if (!p.intersected(poppler_box->boundingBox()).empty()) {
+				include = true;
+				includeEntirely = QPolygonF(poppler_box->boundingBox()).subtracted(p).empty();
+				break;
+			}
+		}
+		if (!include)
+			continue;
+		// If we get here, we found a box in the selection, so we append its text
+
+		// Guess ends of line: if the new box is entirely below the old box, we
+		// assume it's a new line. This should work reasonably well for normal text
+		// (including RTL text), but may fail in some less common cases (e.g.,
+		// subscripts after superscripts, formulas, etc.).
+		if (lastPopplerBox && lastPopplerBox->boundingBox().bottom() < poppler_box->boundingBox().top())
+			retVal += QString::fromLatin1("\n");
+
+		bool appendSpace = false;
+		if (includeEntirely) {
+			retVal += poppler_box->text();
+			appendSpace = poppler_box->hasSpaceAfter();
+		}
+		else {
+			for (int i = 0; i < poppler_box->text().length(); ++i) {
+				foreach (const QPolygonF & p, selection) {
+					// Append text for char boxes if they are entirely inside the
+					// selection area or onlyFullyEnclosed == false; using "intersection
+					// only" can cause problems for overlapping char boxes (if selection
+					// is made of entire char boxes, it would return characters that are
+					// not actually inside the selection but are just "edge cases") but is
+					// necessary if selection comes from external sources, such as SyncTeX
+					if (p.intersected(poppler_box->charBoundingBox(i)).empty())
+						continue;
+					if (!onlyFullyEnclosed || QPolygonF(poppler_box->charBoundingBox(i)).subtracted(p).empty()) {
+						retVal += poppler_box->text()[i];
+						if (i == poppler_box->text().length() - 1)
+							appendSpace = poppler_box->hasSpaceAfter();
+						break;
+					}
+				}
+			}
+		}
+		if (appendSpace)
+			retVal += QString::fromLatin1(" ");
+
+		if (wordBoxes) {
+			for (int i = 0; i < poppler_box->text().length(); ++i)
+				(*wordBoxes)[wordBoxes->count()] = poppler_box->boundingBox();
+			if (poppler_box->hasSpaceAfter())
+				(*wordBoxes)[wordBoxes->count()] = poppler_box->boundingBox();
+		}
+		if (charBoxes) {
+			for (int i = 0; i < poppler_box->text().length(); ++i)
+				(*charBoxes)[charBoxes->count()] = poppler_box->charBoundingBox(i);
+			if (poppler_box->hasSpaceAfter())
+				(*charBoxes)[charBoxes->count()] = poppler_box->boundingBox();
+		}
+
+		lastPopplerBox = poppler_box;
+	}
+
   return retVal;
 }
 

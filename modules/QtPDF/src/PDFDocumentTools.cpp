@@ -92,7 +92,7 @@ void ZoomIn::mouseReleaseEvent(QMouseEvent * event)
   if (event->buttons() == Qt::NoButton && event->button() == Qt::LeftButton) {
     QPoint offset = event->pos() - _startPos;
     if (offset.manhattanLength() <  QApplication::startDragDistance())
-      _parent->zoomIn();
+      _parent->zoomIn(QGraphicsView::AnchorUnderMouse);
   }
   _started = false;
 }
@@ -125,7 +125,7 @@ void ZoomOut::mouseReleaseEvent(QMouseEvent * event)
   if (event->buttons() == Qt::NoButton && event->button() == Qt::LeftButton) {
     QPoint offset = event->pos() - _startPos;
     if (offset.manhattanLength() <  QApplication::startDragDistance())
-      _parent->zoomOut();
+      _parent->zoomOut(QGraphicsView::AnchorUnderMouse);
   }
   _started = false;
 }
@@ -135,7 +135,8 @@ void ZoomOut::mouseReleaseEvent(QMouseEvent * event)
 // ==============================
 //
 MagnifyingGlass::MagnifyingGlass(PDFDocumentView * parent) : 
-  AbstractTool(parent)
+  AbstractTool(parent),
+  _started(false)
 {
   _magnifier = new PDFDocumentMagnifierView(parent);
   _cursor = QCursor(QPixmap(QString::fromUtf8(":/QtPDF/icons/magnifiercursor.png")));
@@ -227,7 +228,8 @@ void MagnifyingGlass::paintEvent(QPaintEvent * event)
 // ==========================
 //
 MarqueeZoom::MarqueeZoom(PDFDocumentView * parent) :
-  AbstractTool(parent)
+  AbstractTool(parent),
+  _started(false)
 {
   Q_ASSERT(_parent);
   _rubberBand = new QRubberBand(QRubberBand::Rectangle, _parent->viewport());
@@ -289,7 +291,8 @@ void MarqueeZoom::mouseReleaseEvent(QMouseEvent * event)
 // ===================
 //
 Move::Move(PDFDocumentView * parent) :
-  AbstractTool(parent)
+  AbstractTool(parent),
+  _started(false)
 {
   _cursor = QCursor(Qt::OpenHandCursor);
   _closedHandCursor = QCursor(Qt::ClosedHandCursor);
@@ -671,10 +674,13 @@ inline double distanceFromRect(const QPointF & pt, const QRectF & rect) {
 
 Select::Select(PDFDocumentView * parent) :
   AbstractTool(parent),
+  _cursorOverBox(false),
   _highlightPath(NULL),
   _mouseMode(MouseMode_None),
   _rubberBand(NULL),
-  _pageNum(-1)
+  _pageNum(-1),
+  _startBox(0),
+  _startSubbox(0)
 {
   // We default to the cross cursor. Only when over a text box we change to the
   // IBeam cursor
@@ -733,7 +739,9 @@ void Select::mousePressEvent(QMouseEvent * event)
   // Clear any previous selection
   _highlightPath->setPath(QPainterPath());
 
-  _startPos = event->pos();
+  // Save the starting position (in scene coordinates so we can handle scrolling
+  // etc.)
+  _startPos = _parent->mapToScene(event->pos());
   // Set the mouse mode. Note that _cursorOverBox is updated dynamically in
   // mouseMoveEvent()
   _mouseMode = (_cursorOverBox ? MouseMode_TextSelect : MouseMode_MarqueeSelect);
@@ -742,7 +750,7 @@ void Select::mousePressEvent(QMouseEvent * event)
     // Create the rubber band widget if it doesn't exist and show it
     if (!_rubberBand)
       _rubberBand = new QRubberBand(QRubberBand::Rectangle, _parent->viewport());
-    _rubberBand->setGeometry(QRect(_startPos, _startPos));
+    _rubberBand->setGeometry(QRect(event->pos(), event->pos()));
     _rubberBand->show();
   }
   else if (_mouseMode == MouseMode_TextSelect) {
@@ -812,37 +820,31 @@ void Select::mouseMoveEvent(QMouseEvent *event)
     if (!_highlightPath || _boxes.size() == 0)
       break;
     if (_rubberBand)
-      _rubberBand->setGeometry(QRect(_startPos, event->pos()));
+      _rubberBand->setGeometry(QRect(_parent->mapFromScene(_startPos), event->pos()));
     // Get the selection rect in pdf coords (bp)
-    QPointF startPdfCoords = pageGraphicsItem->pointScale().inverted().map(pageGraphicsItem->mapFromScene(_parent->mapToScene(_startPos)));
+    QPointF startPdfCoords = pageGraphicsItem->pointScale().inverted().map(pageGraphicsItem->mapFromScene(_startPos));
     QRectF marqueeRect(startPdfCoords, curPdfCoords);
     QPainterPath highlightPath;
-    // Note: Below, we cannot just use highlightPath.addRect(); in the case of
-    // overlapping pdf boxes, this would create gaps due to the winding fill
-    // rule. This in turn does not look good and may also prevent
-    // Backend::Page::selectedText() from catching all selected boxes
+    // Set WindingFill so overlapping, individual paths are both filled
+    // completely.
+    highlightPath.setFillRule(Qt::WindingFill);
     foreach(Backend::Page::Box b, _boxes) {
       // Note: If b.boundingBox is fully contained in the marqueeRect, add it
       // without iterating over the subboxes. Otherwise, add all intersected
       // subboxes
       if (marqueeRect.intersects(b.boundingBox)) {
-        if (b.subBoxes.isEmpty() || marqueeRect.contains(b.boundingBox)) {
-          QPainterPath pp;
-          pp.addRect(toView.mapRect(b.boundingBox));
-          highlightPath |= pp;
-        }          
+        if (b.subBoxes.isEmpty() || marqueeRect.contains(b.boundingBox))
+          highlightPath.addRect(toView.mapRect(b.boundingBox));
         else {
           foreach(Backend::Page::Box sb, b.subBoxes) {
-            if (marqueeRect.intersects(sb.boundingBox)) {
-              QPainterPath pp;
-              pp.addRect(toView.mapRect(sb.boundingBox));
-              highlightPath |= pp;
-            }
+            if (marqueeRect.intersects(sb.boundingBox))
+              highlightPath.addRect(toView.mapRect(sb.boundingBox));
           }
         }
       }
     }
     _highlightPath->setPath(highlightPath);
+    _highlightPath->setParentItem(pageGraphicsItem);
     break;
   }
   case MouseMode_TextSelect:
@@ -887,10 +889,9 @@ void Select::mouseMoveEvent(QMouseEvent *event)
     }
     
     QPainterPath highlightPath;
-    // Note: Below, we cannot just use highlightPath.addRect(); in the case of
-    // overlapping pdf boxes, this would create gaps due to the winding fill
-    // rule. This in turn does not look good and may also prevent
-    // Backend::Page::selectedText() from catching all selected boxes
+    // Set WindingFill so overlapping, individual paths are both filled
+    // completely.
+    highlightPath.setFillRule(Qt::WindingFill);
     for (i = startBox; i <= endBox; ++i) {
       // Iterate over subboxes in the case that not the whole box might be
       // selected
@@ -898,16 +899,11 @@ void Select::mouseMoveEvent(QMouseEvent *event)
         for (j = 0; j < _boxes[i].subBoxes.size(); ++j) {
           if ((i == startBox && j < startSubbox) || (i == endBox && j > endSubbox))
             continue;
-          QPainterPath pp;
-          pp.addRect(toView.mapRect(_boxes[i].subBoxes[j].boundingBox));
-          highlightPath |= pp;
+          highlightPath.addRect(toView.mapRect(_boxes[i].subBoxes[j].boundingBox));
         }
       }
-      else {
-        QPainterPath pp;
-        pp.addRect(toView.mapRect(_boxes[i].boundingBox));
-        highlightPath |= pp;
-      }
+      else
+        highlightPath.addRect(toView.mapRect(_boxes[i].boundingBox));
     }
     _highlightPath->setPath(highlightPath);
     _highlightPath->setParentItem(pageGraphicsItem);
@@ -952,7 +948,7 @@ void Select::keyPressEvent(QKeyEvent *event)
         Q_ASSERT(pageGraphicsItem != NULL);
       
         QTransform fromView = pageGraphicsItem->pointScale().inverted();
-        QString textToCopy = page->selectedText(_highlightPath->path().toFillPolygons(fromView));
+        QString textToCopy = page->selectedText(_highlightPath->path().toFillPolygons(fromView), NULL, NULL, true);
         // If the text is empty (e.g., there is no valid selection or the backend
         // doesn't (properly) support selectedText()) we don't overwrite the
         // clipboard
@@ -966,7 +962,7 @@ void Select::keyPressEvent(QKeyEvent *event)
         // TODO: Add hint to unlock document w/ password, once we allow to
         // provide a password to an unlocked document (i.e., one which we can
         // display, but for which we don't have author's privileges)
-        QMessageBox::information(_parent, PDFDocumentView::trUtf8("Insufficient permission"), PDFDocumentView::trUtf8("Text extraction is not allowed for this document."));
+        QMessageBox::information(_parent, ::QtPDF::PDFDocumentView::trUtf8("Insufficient permission"), ::QtPDF::PDFDocumentView::trUtf8("Text extraction is not allowed for this document."));
       }
     }
   }

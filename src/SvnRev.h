@@ -1,2 +1,0 @@
-#define SVN_REVISION 1361
-#define SVN_REVISION_STR "1361"

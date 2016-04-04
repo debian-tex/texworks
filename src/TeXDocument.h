@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2013  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2015  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -87,6 +87,8 @@ public:
 	int cursorPosition() const { return textCursor().position(); }
 	int selectionStart() const { return textCursor().selectionStart(); }
 	int selectionLength() const { return textCursor().selectionEnd() - textCursor().selectionStart(); }
+	QString getCurrentCodecName() const { return (codec ? codec->name() : QString()); }
+	bool getUTF8BOM() const { return utf8BOM; }
 	
 	QString spellcheckLanguage() const;
 
@@ -123,9 +125,11 @@ public:
 	Q_PROPERTY(bool untitled READ untitled STORED false)
 	Q_PROPERTY(bool modified READ isModified WRITE setModified STORED false)
 	Q_PROPERTY(QString spellcheckLanguage READ spellcheckLanguage WRITE setSpellcheckLanguage STORED false)
+	Q_PROPERTY(QString currentCodecName READ getCurrentCodecName STORED false)
+	Q_PROPERTY(bool writeUTF8BOM READ getUTF8BOM STORED false)
 	
 signals:
-	void syncFromSource(const QString&, int, bool);
+	void syncFromSource(const QString& sourceFile, int lineNo, int col, bool activatePreview);
 	void activatedWindow(QWidget*);
 	void tagListUpdated();
 	void asyncFlashStatusBarMessage(const QString & msg, const int timeout = 0);
@@ -174,7 +178,7 @@ public slots:
 	void showSelection();
 	void toggleConsoleVisibility();
 	void goToPreview();
-	void syncClick(int lineNo);
+	void syncClick(int lineNo, int col);
 	void openAt(QAction *action);
 	void sideBySide();
 	void removeAuxFiles();
@@ -198,7 +202,6 @@ private slots:
 	void doReplace(ReplaceDialog::DialogCode mode);
 	void pdfClosed();
 	void updateRecentFileActions();
-	void clearRecentFiles() { TWApp::instance()->clearRecentFiles(); }
 	void updateWindowMenu();
 	void updateEngineList();
 	void showCursorPosition();
@@ -217,6 +220,7 @@ private slots:
 	void lineEndingLabelClick(QMouseEvent * event) { lineEndingPopup(event->pos()); }
 	void encodingLabelClick(QMouseEvent * event) { encodingPopup(event->pos()); }
 	void anchorClicked(const QUrl& url);
+	void delayedInit();
 
 private:
 	void init();
@@ -226,7 +230,7 @@ private:
 	void clearFileWatcher();
 	QTextCodec *scanForEncoding(const QString &peekStr, bool &hasMetadata, QString &reqName);
 	QString readFile(const QString &fileName, QTextCodec **codecUsed, int *lineEndings = NULL, QTextCodec * forceCodec = NULL);
-	void loadFile(const QString &fileName, bool asTemplate = false, bool inBackground = false, QTextCodec * forceCodec = NULL);
+	void loadFile(const QString &fileName, bool asTemplate = false, bool inBackground = false, bool reload = false, QTextCodec * forceCodec = NULL);
 	bool saveFile(const QString &fileName);
 	void setCurrentFile(const QString &fileName);
 	void saveRecentFileInfo();

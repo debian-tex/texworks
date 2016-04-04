@@ -63,35 +63,35 @@
     </message>
     <message>
         <source>&amp;Wrap around</source>
-        <translation>En todo el documento</translation>
+        <translation>&amp;Buscar en todo el documento</translation>
     </message>
     <message>
         <source>Find &amp;backwards</source>
-        <translation>Buscar desde el inicio</translation>
+        <translation>Buscar &amp;hacia atrás</translation>
     </message>
     <message>
         <source>Search within &amp;selection</source>
-        <translation>Buscar en la parte seleccionada</translation>
+        <translation>Buscar en la parte &amp;seleccionada</translation>
     </message>
     <message>
         <source>Find &amp;all occurrences</source>
-        <translation>Localizar todos los casos</translation>
+        <translation>Hallar &amp;todos los casos</translation>
     </message>
     <message>
         <source>Search all &amp;open files</source>
-        <translation>Buscar en todos los archivos abiertos</translation>
+        <translation>Buscar en los &amp;archivos abiertos</translation>
     </message>
     <message>
         <source>&amp;Case sensitive</source>
-        <translation>Diferenciar mayúsculas/minúsculas</translation>
+        <translation>&amp;Diferenciar mayúsculas/minúsculas</translation>
     </message>
     <message>
         <source>W&amp;hole words</source>
-        <translation>Palabras completas</translation>
+        <translation>&amp;Palabras completas</translation>
     </message>
     <message>
         <source>&amp;Regular expression</source>
-        <translation>Expresión regular</translation>
+        <translation>&amp;Expresión regular</translation>
     </message>
     <message>
         <source>No recent search strings</source>
@@ -110,7 +110,7 @@
     </message>
     <message>
         <source>Wrap lines to:</source>
-        <translation>Ajustar líneas en:</translation>
+        <translation>Ajuste de líneas:</translation>
     </message>
     <message>
         <source>Current window size</source>
@@ -123,6 +123,10 @@
     <message>
         <source>Re-wrap paragraphs</source>
         <translation>Reformatear parágrafos</translation>
+    </message>
+    <message>
+        <source>Unwrap</source>
+        <translation>Desajustar líneas</translation>
     </message>
 </context>
 <context>
@@ -158,11 +162,11 @@
     <message>
         <source>Unfortunately, this version of %1 is unable to print Pdf documents due to various technical reasons.
 </source>
-        <translation>Desafortunadamente esta versión de %1 es incapaz de imprimir documentos PDF por varias razones técnicas.</translation>
+        <translation>Lo sentimos, esta versión de %1 es incapaz de imprimir documentos PDF debido a varias razones técnicas.</translation>
     </message>
     <message>
         <source>Do you want to open the file in the default viewer for printing instead?</source>
-        <translation>¿Prefiere abrir el archivo con el programa lector de PDFs predeterminado para imprimirlo?</translation>
+        <translation>¿Prefiere utilizar el programa lector de PDF predeterminado para imprimir este archivo?</translation>
     </message>
     <message>
         <source> (remember to close it again to avoid access problems)</source>
@@ -217,36 +221,26 @@
         <translation>Primera página</translation>
     </message>
     <message>
-        <source>Home</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation>Home</translation>
-    </message>
-    <message>
         <source>Previous Page</source>
         <translation>Página anterior</translation>
     </message>
     <message>
-        <source>PgUp</source>
+        <source>Ctrl+PgUp</source>
         <comment>shortcut key name, do not translate</comment>
-        <translation>PgUp</translation>
+        <translation>Ctrl+PgUp</translation>
     </message>
     <message>
         <source>Next Page</source>
         <translation>Página siguiente</translation>
     </message>
     <message>
-        <source>PgDown</source>
+        <source>Ctrl+PgDown</source>
         <comment>shortcut key name, do not translate</comment>
-        <translation>PgDown</translation>
+        <translation>Ctrl+PgDown</translation>
     </message>
     <message>
         <source>Last Page</source>
         <translation>Última página</translation>
-    </message>
-    <message>
-        <source>End</source>
-        <comment>shortcut key name, do not translate</comment>
-        <translation>End</translation>
     </message>
     <message>
         <source>Go to Page...</source>
@@ -477,10 +471,6 @@
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <source>Update Scripts</source>
-        <translation type="obsolete">Actualizar Scripts</translation>
-    </message>
-    <message>
         <source>Manage Scripts</source>
         <translation>Administrar Scripts</translation>
     </message>
@@ -491,10 +481,6 @@
     <message>
         <source>About Scripts...</source>
         <translation>Acerca de Scripts...</translation>
-    </message>
-    <message>
-        <source>PDF file &quot;%1&quot; is locked; this is not currently supported.</source>
-        <translation>Archivo PDF &quot;%1&quot; bloqueado; la operación no pudo efectuarse.</translation>
     </message>
     <message>
         <source>Find...</source>
@@ -519,28 +505,48 @@
         <translation>Interrumpir compilación</translation>
     </message>
     <message>
-        <source>Home</source>
-        <translation type="obsolete">Home</translation>
-    </message>
-    <message>
-        <source>PgUp</source>
-        <translation type="obsolete">PgUp</translation>
-    </message>
-    <message>
-        <source>PgDown</source>
-        <translation type="obsolete">PgDown</translation>
-    </message>
-    <message>
-        <source>Ctrl+T</source>
-        <translation type="obsolete">Ctrl+T</translation>
-    </message>
-    <message>
         <source>Settings and Resources...</source>
         <translation>Configuración y Recursos ...</translation>
     </message>
     <message>
         <source>Clear Recent Files</source>
         <translation>Limpiar lista de archivos recientes</translation>
+    </message>
+    <message>
+        <source>Error initializing SyncTeX</source>
+        <translation>Error al iniciar SyncTeX</translation>
+    </message>
+    <message>
+        <source>Go to previous view</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Alt+Left</source>
+        <translation>Alt+Left</translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation>Página por separado</translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation>Página continua</translation>
+    </message>
+    <message>
+        <source>Two Pages Continuous</source>
+        <translation>Dos páginas continuas</translation>
+    </message>
+    <message>
+        <source>Jump to Source</source>
+        <translation>Código fuente</translation>
+    </message>
+    <message>
+        <source>Go to Page</source>
+        <translation>Saltar a la página</translation>
+    </message>
+    <message>
+        <source>Page number:</source>
+        <translation>Número de página:</translation>
     </message>
 </context>
 <context>
@@ -563,115 +569,23 @@
     </message>
     <message>
         <source>&amp;Wrap around</source>
-        <translation>Buscar desde el principio</translation>
+        <translation>&amp;Buscar en todo el documento</translation>
     </message>
     <message>
         <source>Find &amp;backwards</source>
-        <translation>Buscar hacia atrás</translation>
+        <translation>Buscar &amp;hacia atrás</translation>
     </message>
     <message>
         <source>Find &amp;all occurrences</source>
-        <translation>Hallar todos los casos</translation>
+        <translation>Hallar &amp;todos los casos</translation>
     </message>
     <message>
         <source>&amp;Case sensitive</source>
-        <translation>Distinguir mayúsculas/minúsculas</translation>
+        <translation>&amp;Diferenciar mayúsculas/minúsculas</translation>
     </message>
     <message>
         <source>&amp;Sync to source</source>
         <translation>&amp;Sincronizar con código fuente</translation>
-    </message>
-</context>
-<context>
-    <name>PDFFontsDock</name>
-    <message>
-        <source>Name</source>
-        <translation>Nombre</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation>Tipo</translation>
-    </message>
-    <message>
-        <source>Subset</source>
-        <translation>Subconjunto</translation>
-    </message>
-    <message>
-        <source>File</source>
-        <translation>Archivo</translation>
-    </message>
-    <message>
-        <source>[none]</source>
-        <translation>[ninguno]</translation>
-    </message>
-    <message>
-        <source>yes</source>
-        <translation>sí</translation>
-    </message>
-    <message>
-        <source>no</source>
-        <translation>no</translation>
-    </message>
-    <message>
-        <source>[embedded]</source>
-        <translation>[incluído]</translation>
-    </message>
-    <message>
-        <source>Fonts</source>
-        <translation>Fuentes</translation>
-    </message>
-</context>
-<context>
-    <name>PDFInfoDock</name>
-    <message>
-        <source>PDF Info</source>
-        <translation>Información sobre el PDF</translation>
-    </message>
-</context>
-<context>
-    <name>PDFOutlineDock</name>
-    <message>
-        <source>No TOC</source>
-        <translation>Sin Sumario</translation>
-    </message>
-    <message>
-        <source>Contents</source>
-        <translation>Соntenido</translation>
-    </message>
-</context>
-<context>
-    <name>PDFWidget</name>
-    <message>
-        <source>Zoom In</source>
-        <translation>Ampliar</translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation>Reducir</translation>
-    </message>
-    <message>
-        <source>Actual Size</source>
-        <translation>Tamaño natural</translation>
-    </message>
-    <message>
-        <source>Fit to Width</source>
-        <translation>Ajustar a lo ancho</translation>
-    </message>
-    <message>
-        <source>Fit to Window</source>
-        <translation>Ajustar a la ventana</translation>
-    </message>
-    <message>
-        <source>Jump to Source</source>
-        <translation>Código fuente</translation>
-    </message>
-    <message>
-        <source>Go to Page</source>
-        <translation>Saltar a la página</translation>
-    </message>
-    <message>
-        <source>Page number:</source>
-        <translation>Número de página:</translation>
     </message>
 </context>
 <context>
@@ -699,10 +613,6 @@
     <message>
         <source>General</source>
         <translation>General</translation>
-    </message>
-    <message>
-        <source>Toolbar buttons</source>
-        <translation type="obsolete">Botones de la barra de herramientas</translation>
     </message>
     <message>
         <source>Small icons</source>
@@ -735,10 +645,6 @@
     <message>
         <source>File Open dialog</source>
         <translation>Caja de diálogo para seleccionar Archivo</translation>
-    </message>
-    <message>
-        <source>Interface locale:</source>
-        <translation type="obsolete">Idioma local de la interfaz:</translation>
     </message>
     <message>
         <source>Editor</source>
@@ -846,7 +752,7 @@
     </message>
     <message>
         <source>Paths for TeX and related programs</source>
-        <translation>Localización de TeX y programas relativos</translation>
+        <translation>Ubicación de TeX y programas relativos</translation>
     </message>
     <message>
         <source>Processing tools</source>
@@ -859,10 +765,6 @@
     <message>
         <source>Default:</source>
         <translation>Predeterminada:</translation>
-    </message>
-    <message>
-        <source>Auto-hide output panel unless errors occur</source>
-        <translation type="obsolete">Mantener oculto el panel de salida mientras no ocurran errores</translation>
     </message>
     <message>
         <source>Scripts</source>
@@ -896,7 +798,7 @@
     </message>
     <message>
         <source>Allow scripts to run system commands</source>
-        <translation>Autorizar que los scripts ejecuten comandos del sistema</translation>
+        <translation>Autorizar que los scripts puedan ejecutar comandos del sistema</translation>
     </message>
     <message>
         <source>Line numbers</source>
@@ -909,10 +811,6 @@
     <message>
         <source>Highlight current line</source>
         <translation>Resaltar la línea actual</translation>
-    </message>
-    <message>
-        <source>Hide output panel:</source>
-        <translation type="obsolete">Ocultar panel de salida:</translation>
     </message>
     <message>
         <source>Never</source>
@@ -931,17 +829,7 @@
     </message>
     <message>
         <source>&lt;em&gt;Note:&lt;/em&gt; These are default settings. Changes to them will not affect windows that are already open. Use the respective items in the &amp;quot;Format&amp;quot; menu to achieve that.</source>
-        <translation>&lt;em&gt;Nota: &lt;/em&gt; Estos son los valores predeterminados de la configuración. Los cambios que realice en ellos no afectarán las ventanas que ha abierto. Válgase de los elementos correspondientes en el menú &amp;quot;Formato&amp;quot; para conseguir dicho propósito.</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;strong&gt;Never:&lt;/strong&gt; Never hide the output panel after typesetting.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Automatically:&lt;/strong&gt; Hide the output panel after successful typesetting, but only if it was hidden before.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;On Success:&lt;/strong&gt; Hide the output panel after successful typesetting, regardless of its previous state.&lt;/p&gt;
-</source>
-        <translation type="obsolete">&lt;p&gt;&lt;strong&gt;Nunca:&lt;/strong&gt; No ocultar nunca el panel de salida después de cada compilación.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Automáticamente:&lt;/strong&gt; Ocultar el panel de salida luego de que la compilación haya sido fructífera, pero sólo si antes éste había permanecido oculto.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;En caso de éxito:&lt;/strong&gt; Ocultar el panel de salida luego de que la compilación haya ocurrido sin problemas, independientemente de su estado anterior.&lt;/p&gt;
-</translation>
+        <translation>&lt;em&gt;Nota: &lt;/em&gt; Estos son los valores predeterminados de la configuración. Los cambios que realice en ellos no afectarán las ventanas que haya abierto. Válgase de los elementos correspondientes en el menú &amp;quot;Formato&amp;quot; para conseguir dicho propósito.</translation>
     </message>
     <message>
         <source>Enable autocompletion</source>
@@ -949,20 +837,18 @@
     </message>
     <message>
         <source>Hide console output:</source>
-        <translation>Ocultar panel de salida:</translation>
+        <translation>Ocultar la consola de salida:</translation>
     </message>
     <message>
         <source>&lt;p&gt;&lt;strong&gt;Never:&lt;/strong&gt; Never hide the console output panel after typesetting.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Automatically:&lt;/strong&gt; Hide the console output panel after successful typesetting, but only if it was hidden before.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;On Success:&lt;/strong&gt; Hide the console output panel after successful typesetting, regardless of its previous state.&lt;/p&gt;
 </source>
-        <translation>&lt;p&gt;&lt;strong&gt;Nunca: &lt;/strong&gt;No ocultar nunca el panel de salida después de cada compilación.&lt;/p&gt;
+        <translation>&lt;p&gt;&lt;strong&gt;Nunca: &lt;/strong&gt;No ocultar nunca la consola de salida después de cada compilación.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;Automáticamente: &lt;/strong&gt;Efectuada la compilación correctamente, ocultar el panel de salida 
-sólo si éste había estado oculto antes.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Automáticamente: &lt;/strong&gt;Efectuada la compilación correctamente, ocultar la consola de salida sólo si ésta estaba oculta antes.&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;En caso de éxito: &lt;/strong&gt;Si la compilación ocurre sin contratiempos, ocultar el panel de salida 
-sin importar su estado anterior.&lt;/p&gt;</translation>
+&lt;p&gt;&lt;strong&gt;En caso de éxito: &lt;/strong&gt;Si la compilación ocurre sin contratiempos, ocultar la consola de salida sin importar su estado anterior.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Interface</source>
@@ -979,6 +865,22 @@ sin importar su estado anterior.&lt;/p&gt;</translation>
     <message>
         <source>Open corresponding PDF preview with TeX files</source>
         <translation>Mostrar el PDF asociado a cada archivo TeX </translation>
+    </message>
+    <message>
+        <source>Page mode:</source>
+        <translation>Modo de exhibir las páginas:</translation>
+    </message>
+    <message>
+        <source>Single Page</source>
+        <translation>Página por separado</translation>
+    </message>
+    <message>
+        <source>Single Page Continuous</source>
+        <translation>Página continua</translation>
+    </message>
+    <message>
+        <source>Two Page Continuous</source>
+        <translation>Dos páginas continuas</translation>
     </message>
 </context>
 <context>
@@ -1008,10 +910,6 @@ sin importar su estado anterior.&lt;/p&gt;</translation>
         <translation>Macros documentadas (*.dtx)</translation>
     </message>
     <message>
-        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.log)</source>
-        <translation type="obsolete">Archivos auxiliares (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl *.log)</translation>
-    </message>
-    <message>
         <source>Text files (*.txt)</source>
         <translation>Archivos de texto (*.txt)</translation>
     </message>
@@ -1022,20 +920,6 @@ sin importar su estado anterior.&lt;/p&gt;</translation>
     <message>
         <source>All files</source>
         <translation>Todos los archivos</translation>
-    </message>
-    <message>
-        <source>TeXworks %1r%2 (%3)
-        </source>
-        <translation type="obsolete">TeXworks %1р%2 (%3)</translation>
-    </message>
-    <message>
-        <source>TeXworks %1r%2 (%3)
-</source>
-        <translation type="obsolete">TeXworks %1r%2 (%3)</translation>
-    </message>
-    <message>
-        <source>Auxiliary files (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</source>
-        <translation type="obsolete">Archivos auxiliares (*.aux *.toc *.lot *.lof *.nav *.out *.snm *.ind *.idx *.bbl)</translation>
     </message>
     <message>
         <source>Log files (*.log *.blg)</source>
@@ -1082,27 +966,27 @@ sin importar su estado anterior.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&amp;Wrap around</source>
-        <translation>Desde el principio</translation>
+        <translation>&amp;Buscar en todo el documento</translation>
     </message>
     <message>
         <source>Find &amp;backwards</source>
-        <translation>Buscar hacia atrás</translation>
+        <translation>Buscar &amp;hacia atrás</translation>
     </message>
     <message>
         <source>Replace within &amp;selection</source>
-        <translation>Reemplazar en la parte seleccionada </translation>
+        <translation>Reemplazar en la parte &amp;seleccionada </translation>
     </message>
     <message>
         <source>Replace in all &amp;open files</source>
-        <translation>Reemplazar en todos los archivos abiertos</translation>
+        <translation>Reemplazar en los &amp;archivos abiertos</translation>
     </message>
     <message>
         <source>&amp;Case sensitive</source>
-        <translation>Diferenciar mayúsculas/minúsculas</translation>
+        <translation>&amp;Diferenciar mayúsculas/minúsculas</translation>
     </message>
     <message>
         <source>W&amp;hole words</source>
-        <translation>Palabras completas</translation>
+        <translation>&amp;Palabras completas</translation>
     </message>
     <message>
         <source>&amp;Regular expression</source>
@@ -1274,35 +1158,11 @@ sin importar su estado anterior.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;%1 is a simple environment for editing, typesetting, and previewing TeX documents.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;%1 es un simple recurso para editar, compilar y visualizar documentos TeX.&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;br&gt;Version %1 (r.%2)</source>
-        <translation type="obsolete">&lt;br&gt;Versión %1 (r.%2)</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Distributed under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU General Public License&lt;/a&gt;, version 2.</source>
-        <translation type="obsolete">&lt;p&gt;Se distribuye amparado por la &lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;Licencia Pública General de GNU&lt;/a&gt;, versión 2.</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/&quot;&gt;Qt4&lt;/a&gt; application framework by Qt Software, a division of Nokia Corporation.</source>
-        <translation type="obsolete">&lt;p&gt;&lt;a href=&quot;http://trolltech.com/products/&quot;&gt;Qt4&lt;/a&gt; plataforma de desarrollo de aplicaciones propiedad de Qt Software, una división de Nokia Corporation.</translation>
-    </message>
-    <message>
-        <source>&lt;br&gt;Version %1 r.%2 (%3)</source>
-        <translation>&lt;br&gt;Versión %1 р.%2 (%3)</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by Qt Software, a division of Nokia Corporation.</source>
-        <translation>&lt;p&gt;&lt;a href=&quot;http://qt.nokia.com/&quot;&gt;Plataforma de desarrollo de aplicaciones Qt&lt;/a&gt; v%1 propiedad de Qt Software, una división de Nokia Corporation.</translation>
+        <translation>&lt;p&gt;%1 es un simple recurso para editar, compilar y previsualizar documentos TeX.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; PDF rendering library by Kristian H&amp;#xF8;gsberg, Albert Astals Cid and others.</source>
         <translation>&lt;br&gt;&lt;a href=&quot;http://poppler.freedesktop.org/&quot;&gt;Poppler&lt;/a&gt; es la biblioteca para el renderizado PDF, obra de Kristian H&amp;#xF8;gsberg, Albert Astals Cid y colegas.</translation>
-    </message>
-    <message>
-        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
-        <translation>&lt;br&gt;&lt;a href=&quot;http://hunspell.sourceforge.net/&quot;&gt;Hunspell&lt;/a&gt; es un corrector ortográfico creado por L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</translation>
     </message>
     <message>
         <source>&lt;br&gt;Concept and resources from &lt;a href=&quot;http://www.uoregon.edu/~koch/texshop/&quot;&gt;TeXShop&lt;/a&gt; by Richard Koch.</source>
@@ -1334,7 +1194,7 @@ sin importar su estado anterior.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Unable to access &quot;%1&quot;; perhaps your browser or mail application is not properly configured?</source>
-        <translation>Imposible acceder a &quot;%1&quot;; verifique la configuración de su navegador o cliente de correos.</translation>
+        <translation>No se pudo acceder a &quot;%1&quot;; ¿podría verificar la configuración de su navegador o cliente de correos?</translation>
     </message>
     <message>
         <source>Unable to create window</source>
@@ -1342,7 +1202,7 @@ sin importar su estado anterior.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Something is badly wrong; %1 was unable to create a document window. The application will now quit.</source>
-        <translation>Ha ocurrido un error grave; %1 no ha podido crear la ventana para el documento. El programa se va a cerrar enseguida.</translation>
+        <translation>Ha ocurrido un error grave; %1 no se ha podido crear la ventana para el documento. El programa se va a cerrar enseguida.</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -1354,7 +1214,7 @@ sin importar su estado anterior.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No default binary directory found</source>
-        <translation>No se encontró el directorio predeterminado con lo binarios</translation>
+        <translation>No se encontró el directorio predeterminado con lo binarios respectivos</translation>
     </message>
     <message>
         <source>None of the predefined directories for TeX-related programs could be found.&lt;p&gt;&lt;small&gt;To run any processes, you will need to set the binaries directory (or directories) for your TeX distribution using the Typesetting tab of the Preferences dialog.</source>
@@ -1365,25 +1225,13 @@ sin importar su estado anterior.&lt;/p&gt;</translation>
         <translation>Imposible localizar el archivo de ayuda.</translation>
     </message>
     <message>
-        <source>Failed to execute system command: %1</source>
-        <translation type="obsolete">Ha fallado la ejecución del comando de sistema: %1</translation>
-    </message>
-    <message>
-        <source>Error executing system command: %1</source>
-        <translation type="obsolete">Error de ejecución del comando de sistema: %1</translation>
-    </message>
-    <message>
-        <source>System command execution is disabled (see Preferences)</source>
-        <translation type="obsolete">La ejecución de comandos del sistema está deshabilitada (véase Preferencias)</translation>
-    </message>
-    <message>
         <source>Permission request</source>
         <translation>Solicitud de permisos</translation>
     </message>
     <message>
         <source>The script &quot;%1&quot; is trying to open the file &quot;%2&quot; without sufficient permissions. Do you want to open the file?</source>
-        <translation>El script &quot;%1&quot; está tratando de abrir el archivo &quot;%2&quot; sin contar con los permisos
-adecuados. ¿Quiere abrirlo de todos modos?</translation>
+        <translation>El script &quot;%1&quot; intenta abrir el archivo &quot;%2&quot; sin contar con los permisos
+necesarios. ¿Quiere abrirlo de todos modos?</translation>
     </message>
     <message>
         <source>&lt;p&gt;Distributed under the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-2.0.html&quot;&gt;GNU General Public License&lt;/a&gt;, version 2 or (at your option) any later version.</source>
@@ -1391,7 +1239,27 @@ adecuados. ¿Quiere abrirlo de todos modos?</translation>
     </message>
     <message>
         <source>Clear Recent Files</source>
-        <translation>Limpiar lista de archivos recientes</translation>
+        <translation>Limpiar la lista de archivos recientes</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2) [r.%3, %4]</source>
+        <translation>&lt;br&gt;Versión %1 (%2) [r.%3, %4]</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;Version %1 (%2)</source>
+        <translation>o&lt;br&gt;Versión %1 (%2)</translation>
+    </message>
+    <message>
+        <source>Quit TeXworks</source>
+        <translation>Salir de TeXworks</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;&lt;a href=&quot;http://www.qt.io/&quot;&gt;Qt application framework&lt;/a&gt; v%1 by The Qt Company.</source>
+        <translation>&lt;p&gt;&lt;a href=&quot;http://www.qt.io/&quot;&gt;Plataforma de desarrollo de aplicaciones Qt&lt;/a&gt; v%1 de The Qt Company.</translation>
+    </message>
+    <message>
+        <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
+        <translation>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; es un corrector ortográfico creado por  L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</translation>
     </message>
 </context>
 <context>
@@ -1455,6 +1323,15 @@ adecuados. ¿Quiere abrirlo de todos modos?</translation>
         <source>Script &quot;%1&quot;: %2</source>
         <translation>Script &quot;%1&quot;: %2</translation>
     </message>
+    <message>
+        <source>Script error</source>
+        <translation>Error en el script</translation>
+    </message>
+    <message>
+        <source>(disabled in the preferences)</source>
+        <extracomment>This string is appended to a script language name to indicate it is currently disabled</extracomment>
+        <translation>(deshabilitado en Preferencias)</translation>
+    </message>
 </context>
 <context>
     <name>TWSystemCmd</name>
@@ -1505,10 +1382,6 @@ adecuados. ¿Quiere abrirlo de todos modos?</translation>
         <translation>Abrir archivo</translation>
     </message>
     <message>
-        <source>Cannot close window while tool is running</source>
-        <translation type="obsolete">No se puede cerrar esta ventana mientras el programa está en ejecución</translation>
-    </message>
-    <message>
         <source>Save File</source>
         <translation>Guardar archivo</translation>
     </message>
@@ -1532,12 +1405,6 @@ Do you want to save your changes?</source>
         <translation>Deshacer</translation>
     </message>
     <message>
-        <source>Cannot read file &quot;%1&quot;:
-%2.</source>
-        <translation type="obsolete">Error de lectura del archivo &quot;%1&quot;:
-%2.</translation>
-    </message>
-    <message>
         <source>Unrecognized encoding</source>
         <translation>Codificación desconocida </translation>
     </message>
@@ -1548,10 +1415,6 @@ It will be interpreted as %3 instead, which may result in incorrect text.</sourc
         <translation>La codificación de texto %1, empleada en %2 no está soportada.
 
 Será interpretada como %3, lo cual podría dar como resultado un texto incorrecto.</translation>
-    </message>
-    <message>
-        <source>File &quot;%1&quot; loaded (%2)</source>
-        <translation type="obsolete">Archivo &quot;%1&quot; abierto (%2)</translation>
     </message>
     <message>
         <source>File changed on disk</source>
@@ -1578,14 +1441,6 @@ Do you want to proceed with saving this file, overwriting the version on disk?</
         <translation>El documento &quot;%1&quot; no ha sido guardado</translation>
     </message>
     <message>
-        <source>The text encoding %1 requested for %2 is not supported.
-
-It will be saved as %3 instead, which may result in incorrect text.</source>
-        <translation type="obsolete">La codificación de texto %1 escogida para %2 no cuenta con soporte.
-
-Se utilizará %3, lo cual puede dar como resultado un texto incorrecto.</translation>
-    </message>
-    <message>
         <source>Text cannot be converted</source>
         <translation>Este texto no se puede convertir</translation>
     </message>
@@ -1598,12 +1453,6 @@ If you proceed, they will be replaced with default codes. Alternatively, you may
 Si desea continuar, esos símbolos serán reemplazados por los de la codificación predeterminada. Una alternativa consiste en utilizar otro código (por ejemplo, UTF-8) para evitar la pérdida de información.</translation>
     </message>
     <message>
-        <source>Cannot write file &quot;%1&quot;:
-%2.</source>
-        <translation type="obsolete">Error de escritura del archivo &quot;%1&quot;:
-%2.</translation>
-    </message>
-    <message>
         <source>Cannot read file &quot;%1&quot;:
 %2</source>
         <translation>Error de lectura del archivo &quot;%1&quot;:
@@ -1614,14 +1463,6 @@ Si desea continuar, esos símbolos serán reemplazados por los de la codificaci�
 %2</source>
         <translation>Error de escritura del archivo &quot;%1&quot;:
 %2</translation>
-    </message>
-    <message>
-        <source>File &quot;%1&quot; saved (%2)</source>
-        <translation type="obsolete">Archivo &quot;%1&quot; guardado (%2)</translation>
-    </message>
-    <message>
-        <source>default encoding</source>
-        <translation type="obsolete">Codificación predeterminada</translation>
     </message>
     <message>
         <source>Ctrl+R</source>
@@ -1682,23 +1523,24 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     </message>
     <message numerus="yes">
         <source>Found %n occurrence(s)</source>
+        <translatorcomment>Se encontraron %n casos</translatorcomment>
         <translation>
             <numerusform>%n caso(s) encontrado(s)</numerusform>
-            <numerusform></numerusform>
+            <numerusform>Se encontró %n caso</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%n occurrence(s)</source>
         <translation>
-            <numerusform>%n caso(s)</numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n caso encontrado</numerusform>
+            <numerusform>%n caso encontrados</numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>%n documents</source>
         <translation>
-            <numerusform>%n documento(s)</numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n documento</numerusform>
+            <numerusform>%n documentos</numerusform>
         </translation>
     </message>
     <message>
@@ -1708,8 +1550,8 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     <message numerus="yes">
         <source>Replaced %n occurrence(s)</source>
         <translation>
-            <numerusform>%n caso(s) reemplzado(s)</numerusform>
-            <numerusform></numerusform>
+            <numerusform>%n reemplazo</numerusform>
+            <numerusform>%n reemplazos</numerusform>
         </translation>
     </message>
     <message>
@@ -1731,14 +1573,6 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     <message>
         <source>Abort typesetting</source>
         <translation>Interrumpir compilación</translation>
-    </message>
-    <message>
-        <source>Hide Output Panel</source>
-        <translation type="obsolete">Ocultar panel de salida</translation>
-    </message>
-    <message>
-        <source>Show Output Panel</source>
-        <translation type="obsolete">Mostrar panel de salida</translation>
     </message>
     <message>
         <source>Set engine to &quot;%1&quot;</source>
@@ -1786,7 +1620,7 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     </message>
     <message>
         <source>Console output</source>
-        <translation>Panel de salida</translation>
+        <translation>Consola de salida</translation>
     </message>
     <message>
         <source>Show</source>
@@ -2145,28 +1979,12 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
         <translation>Ctrl+Alt+S</translation>
     </message>
     <message>
-        <source>Update Scripts</source>
-        <translation type="obsolete">Actualizar Scripts</translation>
-    </message>
-    <message>
         <source>Manage Scripts</source>
         <translation>Administrar Scripts</translation>
     </message>
     <message>
         <source>Auto-Follow Focus</source>
         <translation>Sincronizar cursor</translation>
-    </message>
-    <message>
-        <source>Make Bold</source>
-        <translation type="obsolete">Convertir a negritas</translation>
-    </message>
-    <message>
-        <source>Make Emphasized</source>
-        <translation type="obsolete">Texto enfatizado</translation>
-    </message>
-    <message>
-        <source>Title Case</source>
-        <translation type="obsolete">Iniciales en mayúsculas</translation>
     </message>
     <message>
         <source>About Scripts...</source>
@@ -2183,10 +2001,6 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     <message>
         <source>Searched in directories:</source>
         <translation>Búsqueda en directorios:</translation>
-    </message>
-    <message>
-        <source>Check configuration of the %1 tool and path settings in the Preferences dialog.</source>
-        <translation type="obsolete">Verifique la configuración de la herramienta &quot;%1&quot; así como la carpeta de los archivos usando la ventana Preferencias.</translation>
     </message>
     <message>
         <source>Process interrupted by user</source>
@@ -2209,10 +2023,6 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     <message>
         <source>Line Numbers</source>
         <translation>Números de línea</translation>
-    </message>
-    <message>
-        <source>Ctrl+T</source>
-        <translation type="obsolete">Ctrl+T</translation>
     </message>
     <message>
         <source>Settings and Resources...</source>
@@ -2256,8 +2066,8 @@ Do you want to discard your current changes, and reload the file from disk with 
     <message>
         <source>A typesetting process is still running and must be stopped before closing this window.
 Do you want to stop it now?</source>
-        <translation>El proceso de compilación que sigue corriendo tendría que ser detenido antes de cerrar esta ventana.
-¿Quiere interrumpirlo ahora?</translation>
+        <translation>El proceso de compilación, que aún sigue corriendo, tendría que ser detenido antes de cerrar esta ventana.
+¿Desea interrumpirlo ahora?</translation>
     </message>
     <message>
         <source>You need a &lt;b&gt;TeX distribution&lt;/b&gt; like &lt;a href=&quot;http://tug.org/texlive/&quot;&gt;TeX Live&lt;/a&gt; or &lt;a href=&quot;http://miktex.org/&quot;&gt;MiKTeX&lt;/a&gt; installed on your system to typeset your document.</source>
@@ -2282,7 +2092,7 @@ o &lt;a href=&quot;http://miktex.org/&quot;&gt;MiKTeX&lt;/a&gt; en su sistema pa
     </message>
     <message>
         <source>Hide Console Output</source>
-        <translation>Ocultar panel de salida</translation>
+        <translation>Ocultar consola de salida</translation>
     </message>
     <message>
         <source>Layout Problem</source>
@@ -2295,21 +2105,20 @@ o &lt;a href=&quot;http://miktex.org/&quot;&gt;MiKTeX&lt;/a&gt; en su sistema pa
  -) Resize the window
 
 We are sorry for the inconvenience.</source>
-        <translatorcomment>Se produjo un problema a la hora de desplegar el documento en el editor.
-Este error obedece a un problema con Qt que puede causar que TeXworks 
-deje de funcionar en ciertas circunstancias. Los síntomas de este problema 
-se muestran como líneas ocultas o sobrepuestas.
-Para sortear este problema, realice alguna de las siguientes acciones:
+        <translation>Se produjo un problema al desplegar el documento en el editor. Este error obedece a un problema con Qt, el cual puede ocasionar que TeXworks deje de funcionar en ciertas circunstancias. Los síntomas de este problema se muestran como líneas ocultas o sobrepuestas. Para sortear este problema, realice alguna de las siguientes acciones:
   -) Active y desactive el resaltado de sintaxis
   -) Active y desactive la numeración de líneas
   -) Cambie el tamaño de la ventana
 
-Ofrecemos disculpas por las molestias ocasionadas.</translatorcomment>
-        <translation></translation>
+Ofrecemos disculpas por las molestias ocasionadas.</translation>
     </message>
     <message>
         <source>Show Console Output</source>
-        <translation>Mostrar panel de salida</translation>
+        <translation>Mostrar consola de salida</translation>
+    </message>
+    <message>
+        <source>Write UTF-8 byte order mark</source>
+        <translation>Escribir la etiqueta UTF-8</translation>
     </message>
 </context>
 <context>
@@ -2328,7 +2137,7 @@ Ofrecemos disculpas por las molestias ocasionadas.</translatorcomment>
     </message>
     <message>
         <source>Choose template for the new document:</source>
-        <translation>Seleccionar Plantilla para nuevo documento:</translation>
+        <translation>Seleccionar Plantilla para el nuevo documento:</translation>
     </message>
 </context>
 <context>

@@ -30,6 +30,7 @@
 #include <QWaitCondition>
 #include <QEvent>
 #include <QMap>
+#include <QWeakPointer>
 
 namespace QtPDF {
 
@@ -113,7 +114,7 @@ public:
                          ProgramType_CIDCFF, ProgramType_OpenType };
   enum FontSource { Source_Embedded, Source_File, Source_Builtin };
   
-  PDFFontInfo() { };
+  PDFFontInfo() : _source(Source_Builtin), _fontType(FontType_Type1), _CIDType(CIDFont_None), _fontProgramType(ProgramType_None) { };
   virtual ~PDFFontInfo() { };
   
   FontType fontType() const { return _fontType; }
@@ -332,6 +333,12 @@ public:
   void addPageProcessingRequest(PageProcessingRequest * request);
 
   // drop all remaining processing requests
+  // WARNING: This function *must not* be called while the calling thread holds
+  // any locks that would prevent and work item from finishing. Otherwise, we
+  // could run into the following deadlock scenario:
+  // clearWorkStack() waits for the currently active work items to finish. The
+  // currently active work item waits to acquire a lock necessary for it to
+  // finish. However, that lock is held by the caller of clearWorkStack().
   void clearWorkStack();
 
 protected:
@@ -584,7 +591,14 @@ public:
   // The returned text should contain all characters inside (at least) one of
   // the `selection` polygons.
   // The `selection` polygons must be in pdf coords (i.e., in bp)
-  virtual QString selectedText(const QList<QPolygonF> & selection) { return QString(); }
+  // Optionally, the function can also return wordBoxes and/or charBoxes for
+  // each character (i.e., a rect enclosing the word the character is part of
+  // and/or a rect enclosing the actual character)
+  virtual QString selectedText(const QList<QPolygonF> & selection, QMap<int, QRectF> * wordBoxes = NULL, QMap<int, QRectF> * charBoxes = NULL, const bool onlyFullyEnclosed = false) {
+    if (wordBoxes) wordBoxes->clear();
+    if (charBoxes) charBoxes->clear();
+    return QString();
+  }
 
   // Uses page-read-lock and doc-read-lock.
   virtual QImage renderToImage(double xres, double yres, QRect render_box = QRect(), bool cache = false) = 0;
