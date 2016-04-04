@@ -1,8 +1,10 @@
-texworks (0.6.0-0.1) UNRELEASED; urgency=medium
+texworks (0.6.0-1) unstable; urgency=medium
 
+  * take texworks over into Debian TeX Maint, adjust maint/uploaders
   * Imported Upstream version 0.6.0
+  * help files are independently packaged in src:texworks-help
 
- -- Norbert Preining <preining@debian.org>  Mon, 04 Apr 2016 10:59:54 +0900
+ -- Norbert Preining <preining@debian.org>  Mon, 04 Apr 2016 13:01:25 +0900
 
 texworks (0.5~svn1363-6) unstable; urgency=medium
 

@@ -1,7 +1,8 @@
 Source: texworks
 Section: editors
 Priority: extra
-Maintainer: Debian QA Group <packages@qa.debian.org>
+Maintainer: Debian TeX maintainers <debian-tex-maint@lists.debian.org>
+Uploaders: Norbert Preining <preining@debian.org>
 Build-Depends: debhelper (>= 9),
  pkg-config,
  cmake (>= 2.8.6),
@@ -12,8 +13,8 @@ Build-Depends: debhelper (>= 9),
  python-dev,
  zlib1g-dev,
  libsynctex-dev,
-Standards-Version: 3.9.6
-Homepage: http://www.tug.org/texworks/
+Standards-Version: 3.9.7
+Homepage: http://www.tug.org/texworks.
 Vcs-Git: git://anonscm.debian.org/collab-maint/texworks.git
 Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/texworks.git
 
@@ -52,10 +53,3 @@ Description: Plugin to bring Python scripting to TeXworks
  simple interface accessible to casual and non-technical users.
  .
  This package contains a Python scripting plugin for TeXworks.
-
-Package: texworks-help-en
-Architecture: all
-Depends: ${misc:Depends}
-Recommends: texworks
-Description: English help files for TeXworks
- For furter information, see http://tug.org/texworks/
