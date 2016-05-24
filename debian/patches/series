@@ -3,3 +3,4 @@
 #patch-luatex
 #patch-py
 #QtXml.patch
+fix-dictionary-path
