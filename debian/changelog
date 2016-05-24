@@ -1,3 +1,11 @@
+texworks (0.6.0-2) UNRELEASED; urgency=medium
+
+  * TeXworks now searches for myspell dicts in /usr/share/hunspell
+    (Closes: #824852). This is the correct path according to
+    https://dict-common.alioth.debian.org/dsdt-policy.html#installdir
+
+ -- Hilmar Preuße <hille42@web.de>  Mon, 23 May 2016 18:23:34 +0200
+
 texworks (0.6.0-1) unstable; urgency=medium
 
   * take texworks over into Debian TeX Maint, adjust maint/uploaders
