@@ -9,8 +9,9 @@ texworks (0.6.1-1) unstable; urgency=medium
   * change devel place to debian-tex, adjust vcs fields
   * move dictionary fix into quilt patch
   * Imported Upstream version 0.6.1 (Closes: #834127)
+  * bump standards version, no changes necessary
 
- -- Norbert Preining <preining@debian.org>  Fri, 12 Aug 2016 22:50:14 +0900
+ -- Norbert Preining <preining@debian.org>  Fri, 12 Aug 2016 22:52:23 +0900
 
 texworks (0.6.0-1) unstable; urgency=medium
 
