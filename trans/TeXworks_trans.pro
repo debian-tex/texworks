@@ -17,6 +17,7 @@ SOURCES = \
   "../src/PDFDocument.cpp" \
   "../src/PrefsDialog.cpp" \
   "../src/ResourcesDialog.cpp" \
+  "../src/ScreenCalibrationWidget.cpp" \
   "../src/ScriptManager.cpp" \
   "../src/TWApp.cpp" \
   "../src/TWScript.cpp" \
@@ -30,9 +31,7 @@ SOURCES = \
   "../src/TeXDocument.cpp" \
   "../src/TeXHighlighter.cpp" \
   "../src/TemplateDialog.cpp" \
-  "../src/main.cpp" \
-  "../src/synctex_parser.c" \
-  "../src/synctex_parser_utils.c"
+  "../src/main.cpp"
 
 HEADERS = \
   "../src/ClickableLabel.h" \
@@ -50,6 +49,7 @@ HEADERS = \
   "../src/PDFDocument.h" \
   "../src/PrefsDialog.h" \
   "../src/ResourcesDialog.h" \
+  "../src/ScreenCalibrationWidget.h" \
   "../src/ScriptManager.h" \
   "../src/TWApp.h" \
   "../src/TWScript.h" \
@@ -63,9 +63,7 @@ HEADERS = \
   "../src/TeXDocks.h" \
   "../src/TeXDocument.h" \
   "../src/TeXHighlighter.h" \
-  "../src/TemplateDialog.h" \
-  "../src/synctex_parser.h" \
-  "../src/synctex_parser_utils.h"
+  "../src/TemplateDialog.h"
 
 FORMS = \
   "../src/ConfirmDelete.ui" \
