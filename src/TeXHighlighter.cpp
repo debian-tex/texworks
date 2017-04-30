@@ -1,6 +1,6 @@
 /*
 	This is part of TeXworks, an environment for working with TeX documents
-	Copyright (C) 2007-2016  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
+	Copyright (C) 2007-2017  Jonathan Kew, Stefan Löffler, Charlie Sharpsteen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -371,6 +371,7 @@ void NonblockingSyntaxHighlighter::process()
 		const QTextBlock & block = nextBlockToHighlight();
 		if (block.isValid()) {
 			int prevUserState = block.userState();
+			_currentBlock = block;
 			_currentFormatRanges.clear();
 			highlightBlock(block.text());
 

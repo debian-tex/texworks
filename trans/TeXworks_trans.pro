@@ -31,7 +31,9 @@ SOURCES = \
   "../src/TeXDocument.cpp" \
   "../src/TeXHighlighter.cpp" \
   "../src/TemplateDialog.cpp" \
-  "../src/main.cpp"
+  "../src/main.cpp" \
+  "../src/synctex_parser.c" \
+  "../src/synctex_parser_utils.c"
 
 HEADERS = \
   "../src/ClickableLabel.h" \
@@ -63,7 +65,9 @@ HEADERS = \
   "../src/TeXDocks.h" \
   "../src/TeXDocument.h" \
   "../src/TeXHighlighter.h" \
-  "../src/TemplateDialog.h"
+  "../src/TemplateDialog.h" \
+  "../src/synctex_parser.h" \
+  "../src/synctex_parser_utils.h"
 
 FORMS = \
   "../src/ConfirmDelete.ui" \
