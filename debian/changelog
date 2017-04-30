@@ -1,9 +1,9 @@
-texworks (0.6.2~git20170424-1) experimental; urgency=medium
+texworks (0.6.2-1) experimental; urgency=medium
 
-  * New upstream version 0.6.2~git20170424
+  * New upstream version 0.6.2
   * update libluaN.N-dev dep
 
- -- Norbert Preining <preining@debian.org>  Mon, 24 Apr 2017 00:10:19 +0900
+ -- Norbert Preining <preining@debian.org>  Mon, 01 May 2017 04:25:14 +0900
 
 texworks (0.6.1-1) unstable; urgency=medium
 
