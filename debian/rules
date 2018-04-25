@@ -39,3 +39,7 @@ override_dh_auto_install:
 
 override_dh_installchangelogs:
 	dh_installchangelogs NEWS
+
+
+# how to export from upstream git
+# git archive --format=tar --prefix=texworks-0.7.0~20180425/ master | gzip -c > texworks-0.7.0~20180425.tar.gz
