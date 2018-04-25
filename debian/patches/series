@@ -4,3 +4,5 @@
 #patch-py
 #QtXml.patch
 fix-dictionary-path
+496cc1785f335f0eb4451005025fe11ae295d3e4.patch
+trans_pro.patch
