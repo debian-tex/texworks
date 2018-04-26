@@ -5,6 +5,7 @@ texworks (0.6.2-3) UNRELEASED; urgency=medium
     - add patch trans_pro.patch to revert changes made during build
   * 496cc1785f335f0eb4451005025fe11ae295d3e4.patch:
     Update to synctex 1.19 to fix build w/ TL 2018 (Closes: #896568)
+  * Tighten BDepends version of libsynctex-dev
   * 3 times W: $package: priority-extra-is-replaced-by-priority-optional
     -> fixed.
 

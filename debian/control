@@ -14,7 +14,7 @@ Build-Depends: debhelper (>= 9),
  liblua5.3-dev | liblua5.2-dev,
  python-dev,
  zlib1g-dev,
- libsynctex-dev,
+ libsynctex-dev (>= 2018.20180119.46378-1)
 Standards-Version: 3.9.8
 Homepage: http://www.tug.org/texworks.
 Vcs-Git: git://anonscm.debian.org/debian-tex/texworks.git
