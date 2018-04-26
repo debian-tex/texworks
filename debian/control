@@ -17,8 +17,8 @@ Build-Depends: debhelper (>= 9),
  libsynctex-dev (>= 2018.20180119.46378)
 Standards-Version: 3.9.8
 Homepage: http://www.tug.org/texworks.
-Vcs-Git: git://anonscm.debian.org/debian-tex/texworks.git
-Vcs-Browser: https://anonscm.debian.org/cgit/debian-tex/texworks.git
+Vcs-Git: https://salsa.debian.org/tex-team/texworks.git
+Vcs-Browser: https://salsa.debian.org/tex-team/texworks
 
 Package: texworks
 Architecture: any

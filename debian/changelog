@@ -7,7 +7,7 @@ texworks (0.6.2-3) UNRELEASED; urgency=medium
     Update to synctex 1.19 to fix build w/ TL 2018 (Closes: #896568)
   * Tighten BDepends version of libsynctex-dev
   * 3 times W: $package: priority-extra-is-replaced-by-priority-optional
-    -> fixed.
+  * W: vcs-deprecated-in-debian-infrastructure
 
  -- Norbert Preining <preining@debian.org>  Wed, 25 Apr 2018 21:23:04 +0200
 
