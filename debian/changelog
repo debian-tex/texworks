@@ -1,4 +1,4 @@
-texworks (0.6.2-3) UNRELEASED; urgency=medium
+texworks (0.6.2-3) unstable; urgency=medium
 
   [ Hilmar Preuße ]
   * d/clean: some files are not deleted in clean target.
@@ -12,7 +12,7 @@ texworks (0.6.2-3) UNRELEASED; urgency=medium
     - E: appstream-metadata-legacy-format
     - W: appstream-metadata-in-legacy-location
 
- -- Norbert Preining <preining@debian.org>  Wed, 25 Apr 2018 21:23:04 +0200
+ -- Norbert Preining <preining@debian.org>  Thu, 26 Apr 2018 21:55:06 +0900
 
 texworks (0.6.2-2) unstable; urgency=medium
 
