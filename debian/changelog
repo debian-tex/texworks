@@ -1,3 +1,10 @@
+texworks (0.6.2.20190306-1) experimental; urgency=medium
+
+  * New upstream version 0.6.2.20190306
+  * cleanup patches for new release
+
+ -- Norbert Preining <norbert@preining.info>  Wed, 06 Mar 2019 11:35:34 +0900
+
 texworks (0.6.2-4) unstable; urgency=medium
 
   * fix Homepage fields (Closes: #908118)
