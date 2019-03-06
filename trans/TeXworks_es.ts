@@ -2,10 +2,41 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="es_MX">
 <context>
+    <name>CitationSelectDialog</name>
+    <message>
+        <source>Select Citations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Journal</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CompletingEdit</name>
     <message>
         <source>Jump to PDF</source>
-        <translation>Pasar al PDF</translation>
+        <translation>Ir al PDF</translation>
     </message>
     <message>
         <source>No suggestions</source>
@@ -198,7 +229,7 @@
     </message>
     <message>
         <source>Show</source>
-        <translation>Exhibir</translation>
+        <translation>Mostrar</translation>
     </message>
     <message>
         <source>Typeset</source>
@@ -538,11 +569,11 @@
     </message>
     <message>
         <source>Jump to Source</source>
-        <translation>Código fuente</translation>
+        <translation>Ir al código fuente</translation>
     </message>
     <message>
         <source>Go to Page</source>
-        <translation>Saltar a la página</translation>
+        <translation>Ir a la página</translation>
     </message>
     <message>
         <source>Page number:</source>
@@ -573,6 +604,38 @@ Do you want to continue?</source>
         <source>Zoom level:</source>
         <translation>Ampliación:</translation>
     </message>
+    <message>
+        <source>Fit to Content Width</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+4</source>
+        <translation type="unfinished">Ctrl+4</translation>
+    </message>
+    <message>
+        <source>Ctrl+=</source>
+        <translation type="unfinished">Ctrl+=</translation>
+    </message>
+    <message>
+        <source>200%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>150%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>100%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>75%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>50%</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PDFFindDialog</name>
@@ -586,7 +649,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Find in PDF</source>
-        <translation>Buscar en el archivo PDF</translation>
+        <translation>Buscar en el documento PDF</translation>
     </message>
     <message>
         <source>Find:</source>
@@ -768,16 +831,12 @@ Do you want to continue?</source>
         <translation>Resolución de pantalla:</translation>
     </message>
     <message>
-        <source> dpi</source>
-        <translation type="obsolete"> dpi</translation>
-    </message>
-    <message>
         <source>Typesetting</source>
         <translation>Compilación</translation>
     </message>
     <message>
         <source>Paths for TeX and related programs</source>
-        <translation>Ubicación de TeX y programas relativos</translation>
+        <translation>Ubicación de TeX y programas relacionados</translation>
     </message>
     <message>
         <source>Processing tools</source>
@@ -893,11 +952,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Page mode:</source>
-        <translation>Modo de exhibir las páginas:</translation>
+        <translation>Modo de página:</translation>
     </message>
     <message>
         <source>Single Page</source>
-        <translation>Página por separado</translation>
+        <translation>Página separada</translation>
     </message>
     <message>
         <source>Single Page Continuous</source>
@@ -906,6 +965,34 @@ Do you want to continue?</source>
     <message>
         <source>Two Page Continuous</source>
         <translation>Dos páginas continuas</translation>
+    </message>
+    <message>
+        <source>Synchronization Resolution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source &gt; Preview:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Highlight Character</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Highlight Word</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Highlight Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preview &gt; Source :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (%1)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -959,11 +1046,11 @@ Do you want to continue?</source>
     <name>ReplaceDialog</name>
     <message>
         <source>Replace</source>
-        <translation>Reemplazar</translation>
+        <translation>Cambiar</translation>
     </message>
     <message>
         <source>Replace All</source>
-        <translation>Reemplazar todos</translation>
+        <translation>Cambiar todos</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -983,7 +1070,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Replace:</source>
-        <translation>Reemplazar:</translation>
+        <translation>Cambiar:</translation>
     </message>
     <message>
         <source>With:</source>
@@ -999,11 +1086,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Replace within &amp;selection</source>
-        <translation>Reemplazar en la parte &amp;seleccionada </translation>
+        <translation>Cambiar en la parte &amp;seleccionada </translation>
     </message>
     <message>
         <source>Replace in all &amp;open files</source>
-        <translation>Reemplazar en los &amp;archivos abiertos</translation>
+        <translation>Cambiar en los &amp;archivos abiertos</translation>
     </message>
     <message>
         <source>&amp;Case sensitive</source>
@@ -1323,6 +1410,18 @@ necesarios. ¿Quiere abrirlo de todos modos?</translation>
         <source>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; spell checker by L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</source>
         <translation>&lt;br&gt;&lt;a href=&quot;http://hunspell.github.io/&quot;&gt;Hunspell&lt;/a&gt; es un corrector ortográfico creado por  L&amp;#xE1;szl&amp;#xF3; N&amp;#xE9;meth.</translation>
     </message>
+    <message>
+        <source>Display this message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open the following file at the given position (line or page)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display version information</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TWScriptAPI</name>
@@ -1512,7 +1611,7 @@ Do you want to proceed with saving this file, overwriting the version on disk?</
 If you proceed, they will be replaced with default codes. Alternatively, you may wish to use a different encoding (such as UTF-8) to avoid loss of data.</source>
         <translation>Este documento contiene símbolos que no pueden ser representados en la codificación %1.
 
-Si desea continuar, esos símbolos serán reemplazados por los de la codificación predeterminada. Una alternativa consiste en utilizar otro código (por ejemplo, UTF-8) para evitar la pérdida de información.</translation>
+Si desea continuar, esos símbolos serán cambiados por los de la codificación predeterminada. Una alternativa consiste en utilizar otro código (por ejemplo, UTF-8) para evitar la pérdida de información.</translation>
     </message>
     <message>
         <source>Cannot read file &quot;%1&quot;:
@@ -1607,13 +1706,13 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     </message>
     <message>
         <source>Replaced %1 in %2</source>
-        <translation>Se ha reemplazado %1 en %2</translation>
+        <translation>Se ha cambiado %1 en %2</translation>
     </message>
     <message numerus="yes">
         <source>Replaced %n occurrence(s)</source>
         <translation>
-            <numerusform>%n reemplazo</numerusform>
-            <numerusform>%n reemplazos</numerusform>
+            <numerusform>%n cambio</numerusform>
+            <numerusform>%n cambios</numerusform>
         </translation>
     </message>
     <message>
@@ -1686,7 +1785,7 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     </message>
     <message>
         <source>Show</source>
-        <translation>Exhibir</translation>
+        <translation>Mostrar</translation>
     </message>
     <message>
         <source>Search</source>
@@ -1834,7 +1933,7 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     </message>
     <message>
         <source>Replace...</source>
-        <translation>Reemplazar...</translation>
+        <translation>Cambiar...</translation>
     </message>
     <message>
         <source>Ctrl+R</source>
@@ -1842,7 +1941,7 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     </message>
     <message>
         <source>Copy to Find</source>
-        <translation>Сopiar en Encontrar</translation>
+        <translation>Сopiar en búsqueda</translation>
     </message>
     <message>
         <source>Ctrl+E</source>
@@ -1850,7 +1949,7 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     </message>
     <message>
         <source>Copy to Replace</source>
-        <translation>Сopiar en Reemplazar</translation>
+        <translation>Сopiar en cambiar</translation>
     </message>
     <message>
         <source>Ctrl+Shift+E</source>
@@ -2002,7 +2101,7 @@ Ha ocurrido un error al salvar el archivo. Podría guardar una copia en otro lug
     </message>
     <message>
         <source>Replace Again</source>
-        <translation>Reemplazar otra vez</translation>
+        <translation>Cambiar de nuevo</translation>
     </message>
     <message>
         <source>Ctrl+Shift+R</source>
@@ -2102,7 +2201,7 @@ The selected encoding replaces the default one and overrides all &quot;%!TEX enc
         <extracomment>Tooltip for &quot;Reload using selected encoding&quot;</extracomment>
         <translation>Reabrir el archivo actual con la codificación seleccionada en este menú.
 
-La codificación seleccionada reemplaza la predeterminada y anula todas las líneas &quot;%!TEX encoding&quot;.
+La codificación seleccionada cambia la predeterminada y anula todas las líneas &quot;%!TEX encoding&quot;.
 </translation>
     </message>
     <message>
@@ -2150,7 +2249,7 @@ o &lt;a href=&quot;http://miktex.org/&quot;&gt;MiKTeX&lt;/a&gt; en su sistema pa
     </message>
     <message>
         <source>Check the configuration of the %1 tool and the path settings in the Preferences dialog.</source>
-        <translation>Revise la configuración de la herramienta %1, así como la &quot;Localizacion de TeX y programas relativos&quot; en la pestaña Preferencias.</translation>
+        <translation>Revise la configuración de la herramienta %1, así como la &quot;Localizacion de TeX y programas relacionados&quot; en la pestaña Preferencias.</translation>
     </message>
     <message>
         <source>Hide Console Output</source>
@@ -2181,6 +2280,54 @@ Ofrecemos disculpas por las molestias ocasionadas.</translation>
     <message>
         <source>Write UTF-8 byte order mark</source>
         <translation>Escribir la etiqueta UTF-8</translation>
+    </message>
+    <message>
+        <source>Insert Citations...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl+Shift+C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 - %2 (%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CRLF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LF (Unix, Mac OS X)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CRLF (Windows)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CR (Mac Classic)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No &apos;%!TEX bibfile&apos; modline found</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2245,7 +2392,7 @@ Ofrecemos disculpas por las molestias ocasionadas.</translation>
     </message>
     <message>
         <source>View PDF after running</source>
-        <translation>Exhibir el PDF al terminar ejecución</translation>
+        <translation>Mostrar el PDF al terminar la compilación</translation>
     </message>
 </context>
 </TS>
