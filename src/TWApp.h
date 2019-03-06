@@ -31,15 +31,16 @@
 #include <QHash>
 
 #include "TWUtils.h"
+#include "Engine.h"
 #include "TWScriptable.h"
 #include "ConfigurableApp.h"
 #include "TWScriptAPI.h"
 
 #if defined(Q_OS_WIN)
-#define PATH_LIST_SEP   ';'
+#define PATH_LIST_SEP   ";"
 #define EXE             ".exe"
 #else
-#define PATH_LIST_SEP   ':'
+#define PATH_LIST_SEP   ":"
 #define EXE
 #endif
 
