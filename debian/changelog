@@ -1,3 +1,9 @@
+texworks (0.6.3-1) experimental; urgency=medium
+
+  * New upstream release 0.6.3
+
+ -- Norbert Preining <norbert@preining.info>  Sun, 17 Mar 2019 09:07:48 +0900
+
 texworks (0.6.2.20190306-1) experimental; urgency=medium
 
   * New upstream version 0.6.2.20190306
