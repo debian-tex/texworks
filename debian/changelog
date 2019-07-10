@@ -1,3 +1,9 @@
+texworks (0.6.3-2) unstable; urgency=medium
+
+  * Upload to unstable
+
+ -- Norbert Preining <norbert@preining.info>  Wed, 10 Jul 2019 17:39:36 +0900
+
 texworks (0.6.3-1) experimental; urgency=medium
 
   * New upstream release 0.6.3
