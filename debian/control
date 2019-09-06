@@ -2,7 +2,8 @@ Source: texworks
 Section: editors
 Priority: optional
 Maintainer: Debian TeX maintainers <debian-tex-maint@lists.debian.org>
-Uploaders: Norbert Preining <norbert@preining.info>
+Uploaders: Norbert Preining <norbert@preining.info>,
+  Hilmar Preusse <hille42@web.de>
 Build-Depends: debhelper (>= 9),
  pkg-config,
  cmake (>= 2.8.6),
@@ -12,7 +13,7 @@ Build-Depends: debhelper (>= 9),
  qtscript5-dev,
  libpoppler-qt5-dev,
  liblua5.3-dev | liblua5.2-dev,
- python-dev,
+ python3-dev,
  zlib1g-dev,
  libsynctex-dev (>= 2018.20180119.46378)
 Standards-Version: 4.2.1
