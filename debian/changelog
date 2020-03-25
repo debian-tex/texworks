@@ -1,3 +1,9 @@
+texworks (0.6.5-1) unstable; urgency=medium
+
+  * New upstream version 0.6.5
+
+ -- Norbert Preining <norbert@preining.info>  Thu, 26 Mar 2020 07:20:22 +0900
+
 texworks (0.6.4-1) unstable; urgency=medium
 
   * New upstream version 0.6.4
