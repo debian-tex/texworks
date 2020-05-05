@@ -17,7 +17,7 @@ Build-Depends: debhelper-compat (= 12),
  zlib1g-dev,
  libsynctex-dev (>= 2018.20180119.46378)
 Standards-Version: 4.2.1
-Homepage: http://www.tug.org/texworks/
+Homepage: https://www.tug.org/texworks/
 Vcs-Git: https://github.com/debian-tex/texworks.git
 Vcs-Browser: https://github.com/debian-tex/texworks
 
