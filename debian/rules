@@ -37,8 +37,8 @@ override_dh_auto_install:
 	rm -rf $(CURDIR)/debian/tmp/usr/usr
 	rm $(CURDIR)/debian/tmp/usr/share/doc/texworks/COPYING
 
-override_dh_installchangelogs:
-	dh_installchangelogs NEWS
+#override_dh_installchangelogs:
+#	dh_installchangelogs NEWS
 
 
 # how to export from upstream git
