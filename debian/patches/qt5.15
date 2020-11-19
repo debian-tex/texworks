@@ -1,0 +1,14 @@
+---
+ modules/QtPDF/src/PDFBackend.cpp |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/modules/QtPDF/src/PDFBackend.cpp
++++ b/modules/QtPDF/src/PDFBackend.cpp
+@@ -15,6 +15,7 @@
+ #include <PDFBackend.h>
+ #include <QPainter>
+ #include <QApplication>
++#include <QtGui/QPainterPath>
+ 
+ namespace QtPDF {
+ 
