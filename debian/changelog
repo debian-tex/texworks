@@ -1,3 +1,10 @@
+texworks (0.6.6-1) UNRELEASED; urgency=medium
+
+  * New upstream version 0.6.6.
+    - Add qtdeclarative5-dev to B-D, disable all patches.
+
+ -- Hilmar Preusse <hille42@web.de>  Mon, 15 Mar 2021 11:33:32 +0100
+
 texworks (0.6.5-2) unstable; urgency=medium
 
   [ Debian Janitor ]
