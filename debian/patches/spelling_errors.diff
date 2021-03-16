@@ -1,3 +1,9 @@
+Description: Spelling errors.
+Origin: Hilmar Preusse <hille42@web.de>
+Forwarded: https://github.com/TeXworks/texworks/issues/929
+Author: Hilmar Preusse <hille42@web.de>
+Last-Update: Wed, 17 Mar 2021 00:26:37 +0100
+
 Index: texworks/src/PDFDocumentWindow.cpp
 ===================================================================
 --- texworks.orig/src/PDFDocumentWindow.cpp	2021-03-15 11:29:55.788913171 +0100
