@@ -1,0 +1,3 @@
+# The texworks binary contains strings from translation files. They are 
+# erroneously considered to be static symbols.
+texworks: embedded-library

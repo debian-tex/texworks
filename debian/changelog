@@ -3,6 +3,7 @@ texworks (0.6.6-1) UNRELEASED; urgency=medium
   * New upstream version 0.6.6.
     - Add qtdeclarative5-dev to B-D, disable all patches.
     - I: texworks: spelling-error-in-binary (not all of them)
+    - Add lintian override for E: embedded-library usr/bin/texworks: pcre3
 
  -- Hilmar Preusse <hille42@web.de>  Mon, 15 Mar 2021 11:33:32 +0100
 
