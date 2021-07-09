@@ -1,11 +1,11 @@
-texworks (0.6.6-1) UNRELEASED; urgency=medium
+texworks (0.6.6-1) unstable; urgency=medium
 
   * New upstream version 0.6.6.
     - Add qtdeclarative5-dev to B-D, disable all patches.
     - I: texworks: spelling-error-in-binary (not all of them)
     - Add lintian override for E: embedded-library usr/bin/texworks: pcre3
 
- -- Hilmar Preusse <hille42@web.de>  Mon, 15 Mar 2021 11:33:32 +0100
+ -- Hilmar Preusse <hille42@web.de>  Fri, 09 Jul 2021 23:54:33 +0200
 
 texworks (0.6.5-2) unstable; urgency=medium
 
