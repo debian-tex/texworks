@@ -1,3 +1,10 @@
+texworks (0.6.6-2) unstable; urgency=medium
+
+  * The last "debuild -S" run unintentionally picked up the broken
+    autopkg test suite. Upload without it.
+
+ -- Hilmar Preusse <hille42@web.de>  Sat, 10 Jul 2021 08:43:19 +0200
+
 texworks (0.6.6-1) unstable; urgency=medium
 
   * New upstream version 0.6.6.
