@@ -1,3 +1,10 @@
+texworks (0.6.6-3) UNRELEASED; urgency=medium
+
+  * Remove constraints unnecessary since buster:
+    + Build-Depends: Drop versioned constraint on cmake and libsynctex-dev.
+
+ -- Debian Janitor <janitor@jelmer.uk>  Thu, 09 Sep 2021 12:49:58 -0000
+
 texworks (0.6.6-2) unstable; urgency=medium
 
   * The last "debuild -S" run unintentionally picked up the broken
