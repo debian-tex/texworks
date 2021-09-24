@@ -6,7 +6,7 @@ Uploaders: Norbert Preining <norbert@preining.info>,
   Hilmar Preusse <hille42@web.de>
 Build-Depends: debhelper-compat (= 12),
  pkg-config,
- cmake (>= 2.8.6),
+ cmake,
  libhunspell-dev,
  qtbase5-dev,
  qttools5-dev,
@@ -16,7 +16,7 @@ Build-Depends: debhelper-compat (= 12),
  liblua5.3-dev | liblua5.2-dev,
  python3-dev,
  zlib1g-dev,
- libsynctex-dev (>= 2018.20180119.46378)
+ libsynctex-dev
 Standards-Version: 4.2.1
 Homepage: https://www.tug.org/texworks/
 Vcs-Git: https://github.com/debian-tex/texworks.git
