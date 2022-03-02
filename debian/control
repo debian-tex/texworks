@@ -18,6 +18,7 @@ Build-Depends: debhelper-compat (= 12),
  zlib1g-dev,
  libsynctex-dev
 Standards-Version: 4.2.1
+Rules-Requires-Root: no
 Homepage: https://www.tug.org/texworks/
 Vcs-Git: https://github.com/debian-tex/texworks.git
 Vcs-Browser: https://github.com/debian-tex/texworks
@@ -46,7 +47,7 @@ Description: Plugin to bring Lua scripting to TeXworks
  a Unicode-based, TeX-aware editor, integrated PDF viewer, and a clean,
  simple interface accessible to casual and non-technical users.
  .
- This package contains a lua scripting plugin for TeXworks.
+ This package contains a Lua scripting plugin for TeXworks.
 
 Package: texworks-scripting-python
 Architecture: any
