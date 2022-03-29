@@ -3,6 +3,8 @@
 set -e
 
 cd build
-make test
+
+xvfb-run /usr/bin/ctest --force-new-ctest-process
+
 # Look if all libs are available.
-ldd *
+#ldd *
