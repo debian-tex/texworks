@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+cd build
+make test
+# Look if all libs are available.
+ldd *

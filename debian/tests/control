@@ -1,0 +1,7 @@
+Tests: test-suite
+Depends: cmake,
+	qtbase5-dev,
+	build-essential,
+	xvfb,
+	xauth
+Restrictions: build-needed
