@@ -7,6 +7,7 @@ texworks (0.6.7-1) UNRELEASED; urgency=medium
   [ Hilmar Preusse ]
   * New upstream release, disable patches.
   * Add debian/gbp.conf to handle pristine-tar branch.
+  * Enable test suite from upstream using autopkgtest.
 
  -- Hilmar Preusse <hille42@web.de>  Wed, 02 Mar 2022 23:40:58 +0100
 
