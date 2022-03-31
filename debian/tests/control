@@ -1,7 +1,6 @@
 Tests: test-suite
 Depends: @builddeps@,
-	cmake,
-	qtbase5-dev,
+	poppler-data,
 	xvfb,
 	xauth
 Restrictions: build-needed
