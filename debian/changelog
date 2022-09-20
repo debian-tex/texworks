@@ -2,8 +2,10 @@ texworks (0.6.7-2) UNRELEASED; urgency=medium
 
   * We are "Debian TeX Task Force".
   * Replace "http" by "https" in "texworks.appdata.xml".
+  * Recommend fonts-urw-base35 instead of dummy package
+    gsfonts. (Closes: #1020362)
 
- -- Hilmar Preusse <hille42@web.de>  Fri, 01 Apr 2022 09:34:54 +0200
+ -- Hilmar Preusse <hille42@web.de>  Tue, 20 Sep 2022 21:05:38 +0200
 
 texworks (0.6.7-1) unstable; urgency=medium
 

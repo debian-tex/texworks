@@ -26,7 +26,7 @@ Vcs-Browser: https://github.com/debian-tex/texworks
 Package: texworks
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: gsfonts, poppler-data, texlive-latex-base, texworks-help-en
+Recommends: fonts-urw-base35, poppler-data, texlive-latex-base, texworks-help-en
 Suggests: texlive-xetex, texworks-scripting-lua, texworks-scripting-python
 Description: Environment for authoring TeX (LaTeX, ConTeXt, etc) documents
  An environment for authoring TeX (LaTeX, ConTeXt, etc) documents, with
