@@ -1,2 +1,2 @@
-texworks source: debian-watch-does-not-check-gpg-signature
+texworks source: debian-watch-does-not-check-openpgp-signature
 texworks source: prefer-uscan-symlink
