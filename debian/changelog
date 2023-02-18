@@ -1,6 +1,7 @@
-texworks (0.6.7-2) UNRELEASED; urgency=medium
+texworks (0.6.8-1) UNRELEASED; urgency=medium
 
   [ Hilmar Preusse ]
+  * New upstream release.
   * We are "Debian TeX Task Force".
   * Replace "http" by "https" in "texworks.appdata.xml".
   * Recommend fonts-urw-base35 instead of dummy package
