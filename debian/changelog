@@ -1,16 +1,15 @@
-texworks (0.6.8-1) UNRELEASED; urgency=medium
+texworks (0.6.8-1) unstable; urgency=medium
 
   [ Hilmar Preusse ]
   * New upstream release.
   * We are "Debian TeX Task Force".
-  * Replace "http" by "https" in "texworks.appdata.xml".
   * Recommend fonts-urw-base35 instead of dummy package
     gsfonts. (Closes: #1020362)
 
   [ Debian Janitor ]
   * Update renamed lintian tag names in lintian overrides.
 
- -- Hilmar Preusse <hille42@web.de>  Tue, 20 Sep 2022 21:05:38 +0200
+ -- Hilmar Preusse <hille42@web.de>  Mon, 20 Feb 2023 23:17:52 +0100
 
 texworks (0.6.7-1) unstable; urgency=medium
 
