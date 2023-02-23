@@ -1,3 +1,9 @@
+texworks (0.6.8-2) experimental; urgency=medium
+
+  * Switch to QT6
+
+ -- Hilmar Preusse <hille42@web.de>  Wed, 22 Feb 2023 23:31:48 +0100
+
 texworks (0.6.8-1) unstable; urgency=medium
 
   [ Hilmar Preusse ]
