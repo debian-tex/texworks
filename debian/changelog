@@ -1,6 +1,7 @@
 texworks (0.6.8-2) experimental; urgency=medium
 
-  * Switch to QT6
+  * Switch to QT6.
+  * Remove liblua5.2-dev as alternative B-D, add liblua5.4-dev.
 
  -- Hilmar Preusse <hille42@web.de>  Wed, 22 Feb 2023 23:31:48 +0100
 
