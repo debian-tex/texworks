@@ -1,0 +1,1454 @@
+From 417ac77edbeac78403541c1653843fc9451faf90 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Stefan=20L=C3=B6ffler?= <st.loeffler@gmail.com>
+Date: Tue, 21 Feb 2023 18:08:13 +0100
+Subject: [PATCH] <QtPDF> Fix Qt6 warnings
+
+mostly by making QtPDF size_type-aware
+---
+ modules/QtPDF/main.cpp                        |   2 +
+ modules/QtPDF/src/GuidelineEditDialog.cpp     |  14 ++-
+ modules/QtPDF/src/GuidelineEditDialog.h       |  11 +-
+ modules/QtPDF/src/PDFActions.h                |  10 +-
+ modules/QtPDF/src/PDFBackend.cpp              |  20 ++--
+ modules/QtPDF/src/PDFBackend.h                |  56 +++++----
+ modules/QtPDF/src/PDFDocumentTools.cpp        |  22 ++--
+ modules/QtPDF/src/PDFDocumentTools.h          |   7 +-
+ modules/QtPDF/src/PDFDocumentView.cpp         |  56 ++++-----
+ modules/QtPDF/src/PDFDocumentView.h           | 107 +++++++++---------
+ modules/QtPDF/src/PDFGuideline.cpp            |   2 +-
+ modules/QtPDF/src/PDFGuideline.h              |   9 +-
+ modules/QtPDF/src/PDFPageTile.h               |   7 +-
+ modules/QtPDF/src/PDFRuler.cpp                |   6 +-
+ modules/QtPDF/src/PDFRuler.h                  |   8 +-
+ modules/QtPDF/src/PDFSearcher.cpp             |  56 ++++-----
+ modules/QtPDF/src/PDFSearcher.h               |  53 ++++-----
+ .../QtPDF/src/backends/PopplerQtBackend.cpp   |  22 ++--
+ modules/QtPDF/src/backends/PopplerQtBackend.h |   4 +-
+ 19 files changed, 254 insertions(+), 218 deletions(-)
+
+--- texworks.orig/modules/QtPDF/main.cpp
++++ texworks/modules/QtPDF/main.cpp
+@@ -21,10 +21,12 @@
+ #endif
+ 
+ int main(int argc, char **argv) {
++#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+   QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+ #if QT_VERSION >= 0x050600
+   QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+ #endif
++#endif
+ 
+   QApplication app(argc, argv);
+   QIcon::setThemeName(QStringLiteral("tango-qtpdf"));
+--- texworks.orig/modules/QtPDF/src/GuidelineEditDialog.cpp
++++ texworks/modules/QtPDF/src/GuidelineEditDialog.cpp
+@@ -25,14 +25,15 @@
+   connect(cPositionUnit, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &GuidelineEditDialog::convertPositionToNewUnit);
+ }
+ 
+-int GuidelineEditDialog::guidelinePage() const
++GuidelineEditDialog::size_type GuidelineEditDialog::guidelinePage() const
+ {
+   return cPage->value();
+ }
+ 
+-void GuidelineEditDialog::setGuidelinePage(const int p)
++void GuidelineEditDialog::setGuidelinePage(const size_type p)
+ {
+-  cPage->setValue(p);
++  using value_type = decltype(cPage->value());
++  cPage->setValue(static_cast<value_type>(p));
+ }
+ 
+ Physical::Length GuidelineEditDialog::guidelinePos() const
+@@ -45,14 +46,15 @@
+   cPosition->setValue(pos.val(m_unit));
+ }
+ 
+-int GuidelineEditDialog::numPages() const
++GuidelineEditDialog::size_type GuidelineEditDialog::numPages() const
+ {
+   return cPage->maximum();
+ }
+ 
+-void GuidelineEditDialog::setNumPages(const int n)
++void GuidelineEditDialog::setNumPages(const size_type n)
+ {
+-  cPage->setMaximum(n);
++  using value_type = decltype(cPage->value());
++  cPage->setMaximum(static_cast<value_type>(n));
+ }
+ 
+ void GuidelineEditDialog::setUnit(const Physical::Length::Unit unit)
+--- texworks.orig/modules/QtPDF/src/GuidelineEditDialog.h
++++ texworks/modules/QtPDF/src/GuidelineEditDialog.h
+@@ -19,6 +19,7 @@
+ #include "PhysicalUnits.h"
+ 
+ #include <QDialog>
++#include <QVector>
+ 
+ namespace QtPDF {
+ 
+@@ -28,16 +29,18 @@
+ {
+   Q_OBJECT
+ public:
++  using size_type = QVector<int>::size_type;
++
+   explicit GuidelineEditDialog(PDFGuideline * parent);
+ 
+-  int guidelinePage() const;
+-  void setGuidelinePage(const int p);
++  size_type guidelinePage() const;
++  void setGuidelinePage(const size_type p);
+ 
+   Physical::Length guidelinePos() const;
+   void setGuidelinePos(const Physical::Length & pos);
+ 
+-  int numPages() const;
+-  void setNumPages(const int n);
++  size_type numPages() const;
++  void setNumPages(const size_type n);
+ 
+   Physical::Length::Unit unit() const { return m_unit; }
+   void setUnit(const Physical::Length::Unit unit);
+--- texworks.orig/modules/QtPDF/src/PDFActions.h
++++ texworks/modules/QtPDF/src/PDFActions.h
+@@ -20,6 +20,7 @@
+ #include <QRectF>
+ #include <QString>
+ #include <QUrl>
++#include <QVector>
+ 
+ namespace QtPDF {
+ 
+@@ -34,7 +35,8 @@
+   enum Type { Destination_XYZ, Destination_Fit, Destination_FitH, \
+               Destination_FitV, Destination_FitR, Destination_FitB, \
+               Destination_FitBH, Destination_FitBV };
+-  PDFDestination(const int page = -1) : _page(page), _rect(QRectF(-1, -1, -1, -1)) { }
++  using size_type = QVector<int>::size_type;
++  PDFDestination(const size_type page = -1) : _page(page), _rect(QRectF(-1, -1, -1, -1)) { }
+   PDFDestination(const QString destinationName) : _page(-1), _destinationName(destinationName) { }
+ 
+   bool isValid() const { return _page >= 0 || !_destinationName.isEmpty(); }
+@@ -44,7 +46,7 @@
+   // has changed since the PDFDestination object was constructed.
+   bool isExplicit() const { return _destinationName.isEmpty() && _page >= 0; }
+ 
+-  int page() const { return _page; }
++  size_type page() const { return _page; }
+   Type type() const { return _type; }
+   QString destinationName() const { return _destinationName; }
+   qreal zoom() const { return _zoom; }
+@@ -63,14 +65,14 @@
+ 
+   bool operator==(const PDFDestination & o) const;
+ 
+-  void setPage(const int page) { _page = page; }
++  void setPage(const size_type page) { _page = page; }
+   void setType(const Type type) { _type = type; }
+   void setZoom(const qreal zoom) { _zoom = zoom; }
+   void setRect(const QRectF rect) { _rect = rect; }
+   void setDestinationName(const QString destinationName) { _destinationName = destinationName; }
+ 
+ private:
+-  int _page;
++  size_type _page;
+   Type _type{Destination_XYZ};
+   QString _destinationName;
+   QRectF _rect; // depending on _type, only some of the components might be significant
+--- texworks.orig/modules/QtPDF/src/PDFBackend.cpp
++++ texworks/modules/QtPDF/src/PDFBackend.cpp
+@@ -207,10 +207,10 @@
+   _pageCache.removeDocumentTiles(this);
+ }
+ 
+-int Document::numPages() const { QReadLocker docLocker(_docLock.data()); return _numPages; }
++Document::size_type Document::numPages() const { QReadLocker docLocker(_docLock.data()); return _numPages; }
+ PDFPageProcessingThread &Document::processingThread() { QReadLocker docLocker(_docLock.data()); return _processingThread; }
+ 
+-QWeakPointer<Page> Document::page(int at)
++QWeakPointer<Page> Document::page(size_type at)
+ {
+   QReadLocker l(_docLock.data());
+   if (at < 0 || at >= _pages.size()) {
+@@ -219,15 +219,15 @@
+   return _pages[at];
+ }
+ 
+-QList<SearchResult> Document::search(const QString & searchText, const SearchFlags & flags, const int startPage)
++QList<SearchResult> Document::search(const QString & searchText, const SearchFlags & flags, const size_type startPage)
+ {
+   QReadLocker docLocker(_docLock.data());
+   QList<SearchResult> results;
+-  int start = startPage;
+-  int end = (flags.testFlag(Search_Backwards) ? -1 : _numPages);
+-  int step = (flags.testFlag(Search_Backwards) ? -1 : +1);
++  size_type start = startPage;
++  size_type end = (flags.testFlag(Search_Backwards) ? -1 : _numPages);
++  size_type step = (flags.testFlag(Search_Backwards) ? -1 : +1);
+ 
+-  for (int i = start; i != end; i += step) {
++  for (size_type i = start; i != end; i += step) {
+     QSharedPointer<Page> page(_pages[i]);
+     if (!page)
+       continue;
+@@ -237,7 +237,7 @@
+   if (flags.testFlag(Search_WrapAround)) {
+     start = ((flags & Search_Backwards) ? _numPages - 1 : 0);
+     end = startPage;
+-    for (int i = start; i != end; i += step) {
++    for (size_type i = start; i != end; i += step) {
+       QSharedPointer<Page> page(_pages[i]);
+       if (!page)
+         continue;
+@@ -297,7 +297,7 @@
+ // Note that the Page may exist in a detached state, i.e., _parent == nullptr. This
+ // is typically the case when the document discarded the page object but some
+ // other object (typically in another thread) still holds a QSharedPointer to it.
+-Page::Page(Document *parent, int at, QSharedPointer<QReadWriteLock> docLock):
++Page::Page(Document *parent, size_type at, QSharedPointer<QReadWriteLock> docLock):
+   _parent(parent),
+   _n(at),
+   _docLock(docLock)
+@@ -328,7 +328,7 @@
+   }
+ }
+ 
+-int Page::pageNum() const { QReadLocker pageLocker(&_pageLock); return _n; }
++Page::size_type Page::pageNum() const { QReadLocker pageLocker(&_pageLock); return _n; }
+ 
+ void Page::detachFromParent()
+ {
+--- texworks.orig/modules/QtPDF/src/PDFBackend.h
++++ texworks/modules/QtPDF/src/PDFBackend.h
+@@ -40,6 +40,8 @@
+ 
+ class Page;
+ class Document;
++struct SearchRequest;
++struct SearchResult;
+ 
+ // TODO: Find a better place to put this
+ QDateTime fromPDFDate(QString pdfDate);
+@@ -49,24 +51,6 @@
+ Q_DECLARE_FLAGS(SearchFlags, SearchFlag)
+ Q_DECLARE_OPERATORS_FOR_FLAGS(SearchFlags)
+ 
+-struct SearchRequest
+-{
+-  QWeakPointer<Document> doc;
+-  int pageNum;
+-  QString searchString;
+-  SearchFlags flags;
+-};
+-
+-struct SearchResult
+-{
+-  unsigned int pageNum;
+-  QRectF bbox;
+-
+-  bool operator==(const SearchResult & o) const {
+-    return (pageNum == o.pageNum && bbox == o.bbox);
+-  }
+-};
+-
+ 
+ // PDF ABCs
+ // ========
+@@ -83,6 +67,8 @@
+   friend class Page;
+ 
+ public:
++  using size_type = QVector<QSharedPointer<Page>>::size_type;
++
+   enum TrappedState { Trapped_Unknown, Trapped_True, Trapped_False };
+   enum Permission { Permission_Print = 0x0004,
+                     Permission_Change = 0x0008,
+@@ -103,7 +89,7 @@
+   virtual ~Document();
+ 
+   // Uses doc-read-lock
+-  int numPages() const;
++  size_type numPages() const;
+   // Uses doc-read-lock
+   QString fileName() const { QReadLocker docLocker(_docLock.data()); return _fileName; }
+   // Uses doc-read-lock
+@@ -113,7 +99,7 @@
+   // Uses doc-read-lock and may use doc-write-lock
+   // NB: no const variant exists as we may need to create a new Page (if it was
+   // not cached in _pages), which requires a non-const `this` pointer as parent
+-  virtual QWeakPointer<Page> page(int at);
++  virtual QWeakPointer<Page> page(size_type at);
+   virtual PDFDestination resolveDestination(const PDFDestination & namedDestination) const {
+     return (namedDestination.isExplicit() ? namedDestination : PDFDestination());
+   }
+@@ -167,7 +153,7 @@
+   //     return the search results one at a time rather than all at once.
+   //
+   //   - See TODO list in `Page::search`
+-  virtual QList<SearchResult> search(const QString & searchText, const SearchFlags & flags, const int startPage = 0);
++  virtual QList<SearchResult> search(const QString & searchText, const SearchFlags & flags, const size_type startPage = 0);
+ 
+ protected:
+   Document(const QString fileName);
+@@ -175,7 +161,7 @@
+   void clearPages();
+   virtual void clearMetaData();
+ 
+-  int _numPages{-1};
++  size_type _numPages{-1};
+   PDFPageProcessingThread _processingThread;
+   static PDFPageCache _pageCache;
+   QVector< QSharedPointer<Page> > _pages;
+@@ -204,8 +190,10 @@
+   friend class Document;
+ 
+ protected:
++  using size_type = Document::size_type;
++
+   Document *_parent{nullptr};
+-  const int _n{-1};
++  const size_type _n{-1};
+   std::unique_ptr<Transition::AbstractTransition> _transition;
+   mutable QReadWriteLock _pageLock{QReadWriteLock::Recursive};
+   const QSharedPointer<QReadWriteLock> _docLock;
+@@ -215,7 +203,7 @@
+   // The caller must hold a doc-lock. Uses a page-write-lock.
+   virtual void detachFromParent();
+ 
+-  Page(Document *parent, int at, QSharedPointer<QReadWriteLock> docLock);
++  Page(Document *parent, size_type at, QSharedPointer<QReadWriteLock> docLock);
+ 
+   // Uses doc-read-lock and page-read-lock.
+   QSharedPointer<QImage> getCachedImage(double xres, double yres, QRect render_box = QRect(), PDFPageCache::TileStatus * status = nullptr);
+@@ -238,7 +226,7 @@
+   virtual ~Page() = default;
+ 
+   Document * document() { QReadLocker pageLocker(&_pageLock); return _parent; }
+-  int pageNum() const;
++  size_type pageNum() const;
+   virtual QSizeF pageSizeF() const = 0;
+   virtual QRectF getContentBoundingBox() const;
+   Transition::AbstractTransition * transition() const { QReadLocker pageLocker(&_pageLock); return _transition.get(); }
+@@ -299,6 +287,24 @@
+   static QList<SearchResult> executeSearch(SearchRequest request);
+ };
+ 
++struct SearchRequest
++{
++  QWeakPointer<Document> doc;
++  Document::size_type pageNum;
++  QString searchString;
++  SearchFlags flags;
++};
++
++struct SearchResult
++{
++  Document::size_type pageNum;
++  QRectF bbox;
++
++  bool operator==(const SearchResult & o) const {
++    return (pageNum == o.pageNum && bbox == o.bbox);
++  }
++};
++
+ } // namespace Backend
+ 
+ class BackendInterface : public QObject
+--- texworks.orig/modules/QtPDF/src/PDFDocumentTools.cpp
++++ texworks/modules/QtPDF/src/PDFDocumentTools.cpp
+@@ -722,7 +722,7 @@
+   // get the number of the page the mouse is currently over; if the mouse is
+   // not over any page (e.g., it's between pages), there's nothing left to do
+   // here
+-  int pageNum = scene->pageNumAt(_parent->mapToScene(event->pos()));
++  size_type pageNum = scene->pageNumAt(_parent->mapToScene(event->pos()));
+   if (pageNum < 0)
+     return;
+ 
+@@ -782,7 +782,7 @@
+ 
+   // Check if the mouse cursor is over a page. If not, we bail out and keep the
+   // last "valid" state.
+-  int pageNum = scene->pageNumAt(_parent->mapToScene(event->pos()));
++  size_type pageNum = scene->pageNumAt(_parent->mapToScene(event->pos()));
+   if (pageNum < 0)
+     return;
+ 
+@@ -858,18 +858,18 @@
+ 
+     // Find the box (and subbox therein) that is closest to the current mouse
+     // position
+-    int endBox{0};
++    size_type endBox{0};
+     double minDist = -1;
+-    for (int i = 0; i < _boxes.size(); ++i) {
++    for (size_type i = 0; i < _boxes.size(); ++i) {
+       double dist = distanceFromRect(curPdfCoords, _boxes[i].boundingBox);
+       if (minDist < -.5 || dist < minDist) {
+         endBox = i;
+         minDist = dist;
+       }
+     }
+-    int endSubbox{0};
++    size_type endSubbox{0};
+     minDist = -1;
+-    for (int i = 0; i < _boxes[endBox].subBoxes.size(); ++i) {
++    for (size_type i = 0; i < _boxes[endBox].subBoxes.size(); ++i) {
+       double dist = distanceFromRect(curPdfCoords, _boxes[endBox].subBoxes[i].boundingBox);
+       if (minDist < -.5 || dist < minDist) {
+         endSubbox = i;
+@@ -879,8 +879,8 @@
+ 
+     // Ensure startBox <= endBox and (startSubbox <= endSubbox in case of
+     // equality)
+-    int startBox = _startBox;
+-    int startSubbox = _startSubbox;
++    size_type startBox = _startBox;
++    size_type startSubbox = _startSubbox;
+     if (startBox > endBox) {
+       startBox = endBox;
+       startSubbox = endSubbox;
+@@ -896,11 +896,11 @@
+     // Set WindingFill so overlapping, individual paths are both filled
+     // completely.
+     highlightPath.setFillRule(Qt::WindingFill);
+-    for (int i = startBox; i <= endBox; ++i) {
++    for (size_type i = startBox; i <= endBox; ++i) {
+       // Iterate over subboxes in the case that not the whole box might be
+       // selected
+       if ((i == startBox || i == endBox) && !_boxes[i].subBoxes.empty()) {
+-        for (int j = 0; j < _boxes[i].subBoxes.size(); ++j) {
++        for (size_type j = 0; j < _boxes[i].subBoxes.size(); ++j) {
+           if ((i == startBox && j < startSubbox) || (i == endBox && j > endSubbox))
+             continue;
+           highlightPath.addRect(toView.mapRect(_boxes[i].subBoxes[j].boundingBox));
+@@ -979,7 +979,7 @@
+   }
+ }
+ 
+-void Select::resetBoxes(const int pageNum /* = -1 */)
++void Select::resetBoxes(const size_type pageNum /* = -1 */)
+ {
+   _pageNum = pageNum;
+   _boxes.clear();
+--- texworks.orig/modules/QtPDF/src/PDFDocumentTools.h
++++ texworks/modules/QtPDF/src/PDFDocumentTools.h
+@@ -319,6 +319,7 @@
+ class Select : public AbstractTool
+ {
+   friend class QtPDF::PDFDocumentView;
++  using size_type = Backend::Document::size_type;
+ public:
+   Select(PDFDocumentView * parent);
+   Type type() const override { return Tool_Select; }
+@@ -335,7 +336,7 @@
+   void mouseReleaseEvent(QMouseEvent * event) override;
+   void keyPressEvent(QKeyEvent * event) override;
+ 
+-  void resetBoxes(const int pageNum = -1);
++  void resetBoxes(const size_type pageNum = -1);
+   // Call this to notify Select that the page graphics item it has been working
+   // on has been destroyed so all pointers to graphics items should be
+   // invalidated
+@@ -354,9 +355,9 @@
+   OwningQObjectPointer<QRubberBand> _rubberBand;
+   QColor _highlightColor;
+ 
+-  int _pageNum;
++  size_type _pageNum;
+   QList<Backend::Page::Box> _boxes;
+-  int _startBox, _startSubbox;
++  size_type _startBox, _startSubbox;
+ #ifdef DEBUG
+   // All elements of _displayBoxes are automatically added to a QGraphicsScene,
+   // which takes ownership. So we don't need a std::unqiue_ptr or similar
+--- texworks.orig/modules/QtPDF/src/PDFDocumentView.cpp
++++ texworks/modules/QtPDF/src/PDFDocumentView.cpp
+@@ -168,7 +168,7 @@
+ 
+   // Ensure we're at the top left corner (we need to set _currentPage to -1 to
+   // ensure goToPage() actually does anything.
+-  int page = _currentPage;
++  size_type page = _currentPage;
+   if (page >= 0) {
+     _currentPage = -1;
+     goToPage(page);
+@@ -182,8 +182,8 @@
+   else
+     emit changedDocument(QSharedPointer<Backend::Document>());
+ }
+-int PDFDocumentView::currentPage() { return _currentPage; }
+-int PDFDocumentView::lastPage()    { return _lastPage; }
++PDFDocumentView::size_type PDFDocumentView::currentPage() { return _currentPage; }
++PDFDocumentView::size_type PDFDocumentView::lastPage()    { return _lastPage; }
+ 
+ void PDFDocumentView::setPageMode(const PageMode pageMode, const bool forceRelayout /* = false */)
+ {
+@@ -314,7 +314,7 @@
+ }
+ 
+ // path in PDF coordinates
+-QGraphicsPathItem * PDFDocumentView::addHighlightPath(const unsigned int page, const QPainterPath & path, const QBrush & brush, const QPen & pen /* = Qt::NoPen */)
++QGraphicsPathItem * PDFDocumentView::addHighlightPath(const size_type page, const QPainterPath & path, const QBrush & brush, const QPen & pen /* = Qt::NoPen */)
+ {
+   if (!_pdf_scene)
+     return nullptr;
+@@ -520,7 +520,7 @@
+ 
+ void PDFDocumentView::goPrev()  { goToPage(_currentPage - 1, Qt::AlignBottom); }
+ void PDFDocumentView::goNext()  { goToPage(_currentPage + 1, Qt::AlignTop); }
+-void PDFDocumentView::goFirst() { goToPage(0); }
++void PDFDocumentView::goFirst() { goToPage(static_cast<size_type>(0)); }
+ void PDFDocumentView::goLast()  { goToPage(_lastPage - 1); }
+ 
+ void PDFDocumentView::goPrevViewRect() {
+@@ -536,7 +536,7 @@
+ // left corner of the viewport (if possible). Other alignments can be used in
+ // the same way. If `alignment` for a direction is not set the view will
+ // show the same portion of the new page as it did before with the old page.
+-void PDFDocumentView::goToPage(const int pageNum, const int alignment /* = Qt::AlignLeft | Qt::AlignTop */)
++void PDFDocumentView::goToPage(const size_type pageNum, const int alignment /* = Qt::AlignLeft | Qt::AlignTop */)
+ {
+   // We silently ignore any invalid page numbers.
+   if (!_pdf_scene || pageNum < 0 || pageNum >= _lastPage)
+@@ -547,7 +547,7 @@
+   goToPage(dynamic_cast<const PDFPageGraphicsItem*>(_pdf_scene->pageAt(pageNum)), alignment);
+ }
+ 
+-void PDFDocumentView::goToPage(const int pageNum, const QPointF anchor, const int alignment /* = Qt::AlignHCenter | Qt::AlignVCenter */)
++void PDFDocumentView::goToPage(const size_type pageNum, const QPointF anchor, const int alignment /* = Qt::AlignHCenter | Qt::AlignVCenter */)
+ {
+   // We silently ignore any invalid page numbers.
+   if (!_pdf_scene || pageNum < 0 || pageNum >= _lastPage)
+@@ -931,7 +931,7 @@
+ 
+ // Protected Slots
+ // --------------
+-void PDFDocumentView::searchResultReady(int pageIndex)
++void PDFDocumentView::searchResultReady(PDFSearcher::size_type pageIndex)
+ {
+   const auto & result = _searcher.resultAt(pageIndex);
+   // Convert the search result to highlight boxes
+@@ -946,10 +946,10 @@
+ 
+   // Inform the rest of the world of our progress (in %, and how many
+   // occurrences were found so far).
+-  emit searchProgressChanged(100 * (_searcher.progressValue() - _searcher.progressMinimum()) / (_searcher.progressMaximum() - _searcher.progressMinimum()), _searchResults.count());
++  emit searchProgressChanged(static_cast<int>(100 * (_searcher.progressValue() - _searcher.progressMinimum()) / (_searcher.progressMaximum() - _searcher.progressMinimum())), _searchResults.count());
+ }
+ 
+-void PDFDocumentView::searchProgressValueChanged(int progressValue)
++void PDFDocumentView::searchProgressValueChanged(PDFSearcher::size_type progressValue)
+ {
+   // Inform the rest of the world of our progress (in %, and how many
+   // occurrences were found so far)
+@@ -965,7 +965,7 @@
+   if (_searcher.progressMaximum() == _searcher.progressMinimum())
+     emit searchProgressChanged(100, _searchResults.count());
+   else
+-    emit searchProgressChanged(100 * (progressValue - _searcher.progressMinimum()) / (_searcher.progressMaximum() - _searcher.progressMinimum()), _searchResults.count());
++    emit searchProgressChanged(static_cast<int>(100 * (progressValue - _searcher.progressMinimum()) / (_searcher.progressMaximum() - _searcher.progressMinimum())), _searchResults.count());
+ }
+ 
+ void PDFDocumentView::maybeUpdateSceneRect() {
+@@ -993,7 +993,7 @@
+ {
+   if (!_pdf_scene || !page || !isPageItem(page))
+     return;
+-  int pageNum = _pdf_scene->pageNumFor(page);
++  size_type pageNum = _pdf_scene->pageNumFor(page);
+   if (pageNum == _currentPage)
+     return;
+ 
+@@ -1099,7 +1099,7 @@
+ {
+   if (!_pdf_scene || !page || !isPageItem(page))
+     return;
+-  int pageNum = _pdf_scene->pageNumFor(page);
++  size_type pageNum = _pdf_scene->pageNumFor(page);
+   if (pageNum == _currentPage)
+     return;
+ 
+@@ -1328,7 +1328,7 @@
+   if (_pdf_scene) {
+     QRect pageBbox = viewport()->rect();
+     pageBbox.setHeight(pageBbox.height() / 2);
+-    int nextCurrentPage = _pdf_scene->pageNumAt(mapToScene(pageBbox));
++    size_type nextCurrentPage = _pdf_scene->pageNumAt(mapToScene(pageBbox));
+ 
+     if ( nextCurrentPage != _currentPage && nextCurrentPage >= 0 && nextCurrentPage < _lastPage )
+     {
+@@ -1802,9 +1802,9 @@
+ // PDFLinkGraphicsItem.
+ PDFDocumentScene::PDFDocumentScene(QSharedPointer<Backend::Document> a_doc, QObject *parent /* = nullptr */, const double dpiX /* = -1 */, const double dpiY /* = -1 */):
+   Super(parent),
++  _shownPageIdx(-2),
+   _doc(a_doc),
+-  _lastPage(-1),
+-  _shownPageIdx(-2)
++  _lastPage(-1)
+ {
+   Q_ASSERT(a_doc != nullptr);
+   // We need to register a QList<PDFLinkGraphicsItem *> meta-type so we can
+@@ -1931,7 +1931,7 @@
+ 
+ // Convenience function to avoid moving the complete list of pages around
+ // between functions if only one page is needed
+-QGraphicsItem* PDFDocumentScene::pageAt(const int idx) const
++QGraphicsItem* PDFDocumentScene::pageAt(const size_type idx) const
+ {
+   if (idx < 0 || idx >= _pages.size())
+     return nullptr;
+@@ -1954,7 +1954,7 @@
+ // This is a convenience function for returning the page number of the first
+ // page item inside a given area of the scene. If no page is in the specified
+ // area, -1 is returned.
+-int PDFDocumentScene::pageNumAt(const QPolygonF &polygon)
++PDFDocumentScene::size_type PDFDocumentScene::pageNumAt(const QPolygonF &polygon)
+ {
+   QList<QGraphicsItem*> p(pages(polygon));
+   if (p.isEmpty())
+@@ -1964,12 +1964,12 @@
+ 
+ // This is a convenience function for returning the page number of the first
+ // page item at a given point. If no page is in the specified area, -1 is returned.
+-int PDFDocumentScene::pageNumAt(const QPointF &pt)
++PDFDocumentScene::size_type PDFDocumentScene::pageNumAt(const QPointF &pt)
+ {
+   return static_cast<int>(_pages.indexOf(pageAt(pt)));
+ }
+ 
+-int PDFDocumentScene::pageNumFor(const PDFPageGraphicsItem * const graphicsItem) const
++PDFDocumentScene::size_type PDFDocumentScene::pageNumFor(const PDFPageGraphicsItem * const graphicsItem) const
+ {
+   // Note: since we store QGraphicsItem* in _pages, we need to remove the const
+   // or else indexOf() complains during compilation. Since we don't do anything
+@@ -1978,7 +1978,7 @@
+   return _pages.indexOf(const_cast<PDFPageGraphicsItem *>(graphicsItem));
+ }
+ 
+-int PDFDocumentScene::lastPage() { return _lastPage; }
++PDFDocumentScene::size_type PDFDocumentScene::lastPage() { return _lastPage; }
+ 
+ // Event Handlers
+ // --------------
+@@ -2083,7 +2083,7 @@
+     if (_shownPageIdx >= _lastPage)
+       _shownPageIdx = _lastPage - 1;
+ 
+-    for (int i = 0; i < _lastPage; ++i)
++    for (size_type i = 0; i < _lastPage; ++i)
+     {
+       PDFPageGraphicsItem * pagePtr = new PDFPageGraphicsItem(_doc->page(i), _dpiX, _dpiY);
+       pagePtr->setVisible(i == _shownPageIdx || _shownPageIdx == -2);
+@@ -2115,9 +2115,9 @@
+ 
+ // Other
+ // -----
+-void PDFDocumentScene::showOnePage(const int pageIdx)
++void PDFDocumentScene::showOnePage(const size_type pageIdx)
+ {
+-  for (int i = 0; i < _pages.size(); ++i) {
++  for (size_type i = 0; i < _pages.size(); ++i) {
+     if (!isPageItem(_pages[i]))
+       continue;
+     if (i == pageIdx) {
+@@ -2131,7 +2131,7 @@
+ 
+ void PDFDocumentScene::showOnePage(const PDFPageGraphicsItem * page)
+ {
+-  for (int i = 0; i < _pages.size(); ++i) {
++  for (size_type i = 0; i < _pages.size(); ++i) {
+     if (!isPageItem(_pages[i]))
+       continue;
+     _pages[i]->setVisible(_pages[i] == page);
+@@ -2146,7 +2146,7 @@
+ 
+ void PDFDocumentScene::showAllPages()
+ {
+-  for (int i = 0; i < _pages.size(); ++i) {
++  for (size_type i = 0; i < _pages.size(); ++i) {
+     if (!isPageItem(_pages[i]))
+       continue;
+     _pages[i]->setVisible(true);
+@@ -3217,7 +3217,7 @@
+     return;
+ 
+   QList<Backend::PDFFontInfo> fonts = doc->fonts();
+-  _table->setRowCount(fonts.count());
++  _table->setRowCount(static_cast<decltype(_table->rowCount())>(fonts.count()));
+ 
+   int i = 0;
+   foreach (Backend::PDFFontInfo font, fonts) {
+@@ -3451,7 +3451,7 @@
+ {
+   Q_ASSERT(_table != nullptr);
+   int i{_table->rowCount()};
+-  _table->setRowCount(i + _annotWatcher.resultAt(index).count());
++  _table->setRowCount(static_cast<decltype(_table->rowCount())>(i + _annotWatcher.resultAt(index).count()));
+ 
+ 
+   foreach(QSharedPointer<Annotation::AbstractAnnotation> pdfAnnot, _annotWatcher.resultAt(index)) {
+--- texworks.orig/modules/QtPDF/src/PDFDocumentView.h
++++ texworks/modules/QtPDF/src/PDFDocumentView.h
+@@ -39,19 +39,6 @@
+   Q_OBJECT
+   typedef QGraphicsView Super;
+ 
+-  QSharedPointer<PDFDocumentScene> _pdf_scene;
+-
+-  qreal _zoomLevel{1.0};
+-  int _currentPage{-1}, _lastPage{-1};
+-
+-  PDFSearcher _searcher;
+-  QList<QGraphicsItem *> _searchResults;
+-  int _currentSearchResult{-1};
+-  QBrush _searchResultHighlightBrush;
+-  QBrush _currentSearchResultHighlightBrush;
+-  PDFRuler _ruler{this};
+-  bool _useGrayScale{false};
+-
+   friend class DocumentTool::AbstractTool;
+   friend class DocumentTool::Select;
+ 
+@@ -59,12 +46,13 @@
+   enum PageMode { PageMode_SinglePage, PageMode_OneColumnContinuous, PageMode_TwoColumnContinuous, PageMode_Presentation };
+   enum MouseMode { MouseMode_MagnifyingGlass, MouseMode_Move, MouseMode_MarqueeZoom, MouseMode_Measure, MouseMode_Select };
+   enum Dock { Dock_TableOfContents, Dock_MetaData, Dock_Fonts, Dock_Permissions, Dock_Annotations };
++  using size_type = QList<QGraphicsItem*>::size_type;
+ 
+   PDFDocumentView(QWidget *parent = nullptr);
+   ~PDFDocumentView() override;
+   void setScene(QSharedPointer<PDFDocumentScene> a_scene);
+-  int currentPage();
+-  int lastPage();
++  size_type currentPage();
++  size_type lastPage();
+   PageMode pageMode() const { return _pageMode; }
+   qreal zoomLevel() const { return _zoomLevel; }
+   bool useGrayScale() const { return _useGrayScale; }
+@@ -79,10 +67,10 @@
+   QDockWidget * dockWidget(const Dock type, QWidget * parent = nullptr);
+ 
+   DocumentTool::AbstractTool * armedTool() const { return _armedTool; }
+-  void triggerContextClick(const int page, const QPointF pos) { emit contextClick(page, pos); }
++  void triggerContextClick(const size_type page, const QPointF pos) { emit contextClick(page, pos); }
+ 
+-  QGraphicsPathItem * addHighlightPath(const unsigned int page, const QPainterPath & path, const QBrush & brush, const QPen & pen = Qt::NoPen);
+-  QGraphicsPathItem * addHighlightPath(const unsigned int page, const QRectF & rect, const QBrush & brush, const QPen & pen = Qt::NoPen) {
++  QGraphicsPathItem * addHighlightPath(const size_type page, const QPainterPath & path, const QBrush & brush, const QPen & pen = Qt::NoPen);
++  QGraphicsPathItem * addHighlightPath(const size_type page, const QRectF & rect, const QBrush & brush, const QPen & pen = Qt::NoPen) {
+     QPainterPath p;
+     p.addRect(rect);
+     return addHighlightPath(page, p, brush, pen);
+@@ -112,11 +100,11 @@
+   // Qt::AlignHCenter, Qt::AlignTop, Qt::AlignBottom, Qt::AlignVCenter.
+   // 0 corresponds to no alignment, i.e., the view will change so that the
+   // rectangle of page pageNum closest to the original viewport rect is visible.
+-  void goToPage(const int pageNum, const int alignment = Qt::AlignLeft | Qt::AlignTop);
++  void goToPage(const size_type pageNum, const int alignment = Qt::AlignLeft | Qt::AlignTop);
+   // Similar to the one above, but view is aligned at `anchor`. Note that the
+   // default alignment is centering here, which is also used if `alignment` == 0.
+   // `anchor` must be given in item coordinates
+-  void goToPage(const int pageNum, const QPointF anchor, const int alignment = Qt::AlignHCenter | Qt::AlignVCenter);
++  void goToPage(const size_type pageNum, const QPointF anchor, const int alignment = Qt::AlignHCenter | Qt::AlignVCenter);
+   void goToPDFDestination(const PDFDestination & dest, bool saveOldViewRect = true);
+   void setPageMode(const PageMode pageMode, const bool forceRelayout = false);
+   void setSinglePageMode() { setPageMode(PageMode_SinglePage); }
+@@ -154,7 +142,7 @@
+   void showRuler(const bool show = true);
+ 
+ signals:
+-  void changedPage(int pageNum);
++  void changedPage(QtPDF::PDFDocumentView::size_type pageNum);
+   void changedZoom(qreal zoomLevel);
+   void changedPageMode(QtPDF::PDFDocumentView::PageMode newMode);
+   // emitted, e.g., if a new document was loaded, or if the existing document
+@@ -163,14 +151,14 @@
+ 
+   void updated();
+ 
+-  void searchProgressChanged(int percent, int occurrences);
+-  void searchResultHighlighted(const int pageNum, const QList<QPolygonF> region);
++  void searchProgressChanged(int percent, QtPDF::PDFDocumentView::size_type occurrences);
++  void searchResultHighlighted(const QtPDF::PDFDocumentView::size_type pageNum, const QList<QPolygonF> region);
+   void textSelectionChanged(const bool isTextSelected);
+ 
+   void requestOpenUrl(const QUrl url);
+   void requestExecuteCommand(QString command);
+   void requestOpenPdf(QString filename, QtPDF::PDFDestination destination, bool newWindow);
+-  void contextClick(const int page, const QPointF pos);
++  void contextClick(const QtPDF::PDFDocumentView::size_type page, const QPointF pos);
+ 
+ protected:
+   // Keep track of the current page by overloading the widget paint event.
+@@ -198,11 +186,11 @@
+   void pdfActionTriggered(const QtPDF::PDFAction * action);
+   // Note: view specifies which part of the page should be visible and must
+   // therefore be given in page coordinates
+-  void goToPage(const PDFPageGraphicsItem * page, const QRectF view, const bool mayZoom = false);
+-  void goToPage(const PDFPageGraphicsItem * page, const int alignment = Qt::AlignLeft | Qt::AlignTop);
+-  void goToPage(const PDFPageGraphicsItem * page, const QPointF anchor, const int alignment = Qt::AlignHCenter | Qt::AlignVCenter);
+-  void searchResultReady(int pageIndex);
+-  void searchProgressValueChanged(int progressValue);
++  void goToPage(const QtPDF::PDFPageGraphicsItem * page, const QRectF view, const bool mayZoom = false);
++  void goToPage(const QtPDF::PDFPageGraphicsItem * page, const int alignment = Qt::AlignLeft | Qt::AlignTop);
++  void goToPage(const QtPDF::PDFPageGraphicsItem * page, const QPointF anchor, const int alignment = Qt::AlignHCenter | Qt::AlignVCenter);
++  void searchResultReady(PDFSearcher::size_type pageIndex);
++  void searchProgressValueChanged(PDFSearcher::size_type progressValue);
+   void reinitializeFromScene();
+   void notifyTextSelectionChanged();
+ 
+@@ -218,6 +206,19 @@
+ 
+   QStack<PDFDestination> _oldViewRects;
+ 
++  QSharedPointer<PDFDocumentScene> _pdf_scene;
++
++  qreal _zoomLevel{1.0};
++  size_type _currentPage{-1}, _lastPage{-1};
++
++  PDFSearcher _searcher;
++  QList<QGraphicsItem *> _searchResults;
++  size_type _currentSearchResult{-1};
++  QBrush _searchResultHighlightBrush;
++  QBrush _currentSearchResultHighlightBrush;
++  PDFRuler _ruler{this};
++  bool _useGrayScale{false};
++
+   // Never try to set a vanilla QGraphicsScene, always use a PDFGraphicsScene.
+   void setScene(QGraphicsScene *scene);
+   // Parent class has no copy constructor.
+@@ -452,48 +453,37 @@
+ {
+   Q_OBJECT
+   typedef QGraphicsScene Super;
+-
+-  const QSharedPointer<Backend::Document> _doc;
+-
+-  // This may change to a `QSet` in the future
+-  QList<QGraphicsItem*> _pages;
+-  int _lastPage;
+-  PDFPageLayout _pageLayout;
+-  QFileSystemWatcher _fileWatcher;
+-  QTimer _reloadTimer;
+-  double _dpiX, _dpiY;
+-
+-  void handleActionEvent(const PDFActionEvent * action_event);
+-
+ public:
++  using size_type = PDFDocumentView::size_type;
++
+   PDFDocumentScene(QSharedPointer<Backend::Document> a_doc, QObject *parent = nullptr, const double dpiX = -1, const double dpiY = -1);
+   ~PDFDocumentScene() override;
+ 
+   QWeakPointer<Backend::Document> document();
+   QList<QGraphicsItem*> pages();
+   QList<QGraphicsItem*> pages(const QPolygonF &polygon);
+-  QGraphicsItem* pageAt(const int idx) const;
++  QGraphicsItem* pageAt(const size_type idx) const;
+   QGraphicsItem* pageAt(const QPointF &pt) const;
+-  int pageNumAt(const QPolygonF &polygon);
+-  int pageNumAt(const QPointF &pt);
+-  int pageNumFor(const PDFPageGraphicsItem * const graphicsItem) const;
++  size_type pageNumAt(const QPolygonF &polygon);
++  size_type pageNumAt(const QPointF &pt);
++  size_type pageNumFor(const PDFPageGraphicsItem * const graphicsItem) const;
+   PDFPageLayout& pageLayout() { return _pageLayout; }
+ 
+-  void showOnePage(const int pageIdx);
++  void showOnePage(const size_type pageIdx);
+   void showOnePage(const PDFPageGraphicsItem * page);
+   void showAllPages();
+ 
+   bool watchForDocumentChangesOnDisk() const { return _fileWatcher.files().size() > 0; }
+   void setWatchForDocumentChangesOnDisk(const bool doWatch = true);
+ 
+-  int lastPage();
++  size_type lastPage();
+ 
+   const QWeakPointer<Backend::Document> document() const { return _doc.toWeakRef(); }
+ 
+   void setResolution(const double dpiX, const double dpiY);
+ 
+ signals:
+-  void pageChangeRequested(int pageNum);
++  void pageChangeRequested(QtPDF::PDFDocumentScene::size_type pageNum);
+   void pageLayoutChanged();
+   void pdfActionTriggered(const QtPDF::PDFAction * action);
+   void documentChanged(const QWeakPointer<QtPDF::Backend::Document> doc);
+@@ -511,7 +501,7 @@
+ protected:
+   // Used in non-continuous mode to keep track of currently shown page across
+   // reloads. -2 is used in continuous mode. -1 indicates an invalid value.
+-  int _shownPageIdx;
++  size_type _shownPageIdx;
+   bool event(QEvent * event) override;
+ 
+   QWidget * _unlockWidget;
+@@ -520,6 +510,18 @@
+   QGraphicsProxyWidget * _unlockProxy;
+ 
+ private:
++  const QSharedPointer<Backend::Document> _doc;
++
++  // This may change to a `QSet` in the future
++  QList<QGraphicsItem*> _pages;
++  size_type _lastPage;
++  PDFPageLayout _pageLayout;
++  QFileSystemWatcher _fileWatcher;
++  QTimer _reloadTimer;
++  double _dpiX, _dpiY;
++
++  void handleActionEvent(const PDFActionEvent * action_event);
++
+   // Parent has no copy constructor, so this class shouldn't either. Also, we
+   // hold some information in an `auto_ptr` which does interesting things on
+   // copy that C++ newbies may not expect.
+@@ -535,6 +537,7 @@
+ {
+   Q_OBJECT
+   typedef QGraphicsObject Super;
++  using size_type = PDFDocumentScene::size_type;
+ 
+   QWeakPointer<Backend::Page> _page;
+ 
+@@ -542,7 +545,7 @@
+   double _dpiY;
+   // the nominal (i.e., unmagnified) page size in pixel
+   QSizeF _pageSize;
+-  int _pageNum;
++  size_type _pageNum;
+ 
+   bool _linksLoaded;
+   bool _annotationsLoaded;
+@@ -586,7 +589,7 @@
+ 
+   // get the nominal (i.e., unmagnified) page size in pixel
+   QSizeF pageSizeF() const { return _pageSize; }
+-  int pageNum() const { return _pageNum; }
++  size_type pageNum() const { return _pageNum; }
+ 
+ protected:
+   bool event(QEvent * event) override;
+--- texworks.orig/modules/QtPDF/src/PDFGuideline.cpp
++++ texworks/modules/QtPDF/src/PDFGuideline.cpp
+@@ -100,7 +100,7 @@
+   }
+ }
+ 
+-void PDFGuideline::setPage(const int page)
++void PDFGuideline::setPage(const size_type page)
+ {
+   m_pageIdx = page;
+   setPosPage(m_posPage);
+--- texworks.orig/modules/QtPDF/src/PDFGuideline.h
++++ texworks/modules/QtPDF/src/PDFGuideline.h
+@@ -14,6 +14,7 @@
+ #ifndef PDFGUIDELINE_H
+ #define PDFGUIDELINE_H
+ 
++#include <QVector>
+ #include <QWidget>
+ 
+ namespace QtPDF {
+@@ -26,8 +27,10 @@
+   Q_OBJECT
+   constexpr static int padding = 2;
+ 
++  using size_type = QVector<int>::size_type;
++
+   PDFDocumentView * m_parent{nullptr};
+-  int m_pageIdx{-1};
++  size_type m_pageIdx{-1};
+   qreal m_posPage;
+   int m_posWin;
+   Qt::Orientation m_orientation{Qt::Horizontal};
+@@ -51,8 +54,8 @@
+   void setPosPage(const qreal pos);
+   void setPosPage(const QPointF pt);
+ 
+-  int page() const { return m_pageIdx; }
+-  void setPage(const int page);
++  size_type page() const { return m_pageIdx; }
++  void setPage(const size_type page);
+ 
+ protected:
+   void paintEvent(QPaintEvent * event) override;
+--- texworks.orig/modules/QtPDF/src/PDFPageTile.h
++++ texworks/modules/QtPDF/src/PDFPageTile.h
+@@ -17,6 +17,7 @@
+ 
+ #include <QHash>
+ #include <QRect>
++#include <QVector>
+ 
+ #ifdef DEBUG
+ #include <QString>
+@@ -27,11 +28,13 @@
+ namespace Backend {
+ 
+ class Document;
++class Page;
+ 
+ class PDFPageTile
+ {
++  using size_type = QVector<Page*>::size_type;
+ public:
+-  PDFPageTile(double xres, double yres, QRect render_box, const Document * doc, int page_num):
++  PDFPageTile(double xres, double yres, QRect render_box, const Document * doc, size_type page_num):
+     xres(xres), yres(yres),
+     render_box(render_box),
+     doc(doc),
+@@ -41,7 +44,7 @@
+   double xres, yres;
+   QRect render_box;
+   const Document * doc;
+-  int page_num;
++  size_type page_num;
+ 
+   bool operator==(const PDFPageTile &other) const
+   {
+--- texworks.orig/modules/QtPDF/src/PDFRuler.cpp
++++ texworks/modules/QtPDF/src/PDFRuler.cpp
+@@ -235,7 +235,7 @@
+   }
+ }
+ 
+-QRectF PDFRuler::pageRectPx(const int pageIdx) const
++QRectF PDFRuler::pageRectPx(const size_type pageIdx) const
+ {
+   // Obtain pointer to the view and the page object
+   PDFDocumentView * docView = qobject_cast<PDFDocumentView*>(parent());
+@@ -254,7 +254,7 @@
+   return rv.translated(rulerSize + 1, rulerSize + 1);
+ }
+ 
+-QRectF PDFRuler::pageRectBp(const int pageIdx) const
++QRectF PDFRuler::pageRectBp(const size_type pageIdx) const
+ {
+   // Obtain pointer to the view and the page object
+   PDFDocumentView * docView = qobject_cast<PDFDocumentView*>(parent());
+@@ -270,7 +270,7 @@
+   return page->pointScale().inverted().mapRect(QRectF(QPointF(0, 0), page->pageSizeF()));
+ }
+ 
+-QTransform PDFRuler::pagePx2Bp(const int pageIdx) const
++QTransform PDFRuler::pagePx2Bp(const size_type pageIdx) const
+ {
+   const QRectF pageRect = pageRectPx(pageIdx);
+   const QRectF pdfPageRect = pageRectBp(pageIdx);
+--- texworks.orig/modules/QtPDF/src/PDFRuler.h
++++ texworks/modules/QtPDF/src/PDFRuler.h
+@@ -20,6 +20,7 @@
+ #include <QAction>
+ #include <QActionGroup>
+ #include <QMenu>
++#include <QVector>
+ #include <QWidget>
+ 
+ namespace QtPDF {
+@@ -32,6 +33,7 @@
+   friend class PDFGuideline;
+ public:
+   constexpr static unsigned int rulerSize = 20;
++  using size_type = QVector<int>::size_type;
+ 
+   PDFRuler(PDFDocumentView * parent);
+ 
+@@ -51,9 +53,9 @@
+   void mouseMoveEvent(QMouseEvent * event) override;
+   void mouseReleaseEvent(QMouseEvent * event) override;
+ 
+-  QRectF pageRectPx(const int pageIdx) const;
+-  QRectF pageRectBp(const int pageIdx) const;
+-  QTransform pagePx2Bp(const int pageIdx) const;
++  QRectF pageRectPx(const size_type pageIdx) const;
++  QRectF pageRectBp(const size_type pageIdx) const;
++  QTransform pagePx2Bp(const size_type pageIdx) const;
+ 
+ private:
+   Physical::Length::Unit m_Unit{Physical::Length::Centimeters};
+--- texworks.orig/modules/QtPDF/src/PDFSearcher.cpp
++++ texworks/modules/QtPDF/src/PDFSearcher.cpp
+@@ -13,7 +13,9 @@
+  */
+ #include "PDFSearcher.h"
+ 
+-void QtPDF::PDFSearcher::populatePages()
++namespace QtPDF {
++
++void PDFSearcher::populatePages()
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+   m_pages.clear();
+@@ -23,40 +25,40 @@
+     return;
+   }
+ 
+-  const int numPages = doc->numPages();
+-  const int startPage = [=] () {
++  const size_type numPages = doc->numPages();
++  const size_type startPage = [=] () {
+     if (m_startPage >= 0 && m_startPage < numPages) {
+       return m_startPage;
+     }
+-    return 0;
++    return static_cast<size_type>(0);
+   }();
+ 
+   if (!m_searchFlags.testFlag(Backend::Search_Backwards))
+   {
+     // Search forwards
+-    for (int page = startPage; page < numPages; ++page) {
++    for (size_type page = startPage; page < numPages; ++page) {
+       m_pages.append(page);
+     }
+     if (m_searchFlags.testFlag(Backend::Search_WrapAround)) {
+-      for (int page = 0; page < startPage; ++page) {
++      for (size_type page = 0; page < startPage; ++page) {
+         m_pages.append(page);
+       }
+     }
+   }
+   else {
+     // Search backwards
+-    for (int page = startPage; page >= 0; --page) {
++    for (size_type page = startPage; page >= 0; --page) {
+       m_pages.append(page);
+     }
+     if (m_searchFlags.testFlag(Backend::Search_WrapAround)) {
+-      for (int page = numPages - 1; page > startPage; --page) {
++      for (size_type page = numPages - 1; page > startPage; --page) {
+         m_pages.append(page);
+       }
+     }
+   }
+ }
+ 
+-void QtPDF::PDFSearcher::ensureStopped()
++void PDFSearcher::ensureStopped()
+ {
+   if (!isRunning()) {
+     return;
+@@ -69,74 +71,74 @@
+ #endif
+ }
+ 
+-void QtPDF::PDFSearcher::clear()
++void PDFSearcher::clear()
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+   m_pages.clear();
+   m_results.clear();
+ }
+ 
+-void QtPDF::PDFSearcher::stopAndClear()
++void PDFSearcher::stopAndClear()
+ {
+   ensureStopped();
+   clear();
+ }
+ 
+-QString QtPDF::PDFSearcher::searchString() const
++QString PDFSearcher::searchString() const
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+   return m_searchString;
+ }
+ 
+-void QtPDF::PDFSearcher::setSearchString(const QString &searchString)
++void PDFSearcher::setSearchString(const QString &searchString)
+ {
+   stopAndClear();
+   const QMutexLocker mutexLocker{&m_mutex};
+   m_searchString = searchString;
+ }
+ 
+-QtPDF::Backend::SearchFlags QtPDF::PDFSearcher::searchFlags() const
++Backend::SearchFlags PDFSearcher::searchFlags() const
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+   return m_searchFlags;
+ }
+ 
+-void QtPDF::PDFSearcher::setSearchFlags(const Backend::SearchFlags &flags)
++void PDFSearcher::setSearchFlags(const Backend::SearchFlags &flags)
+ {
+   stopAndClear();
+   const QMutexLocker mutexLocker{&m_mutex};
+   m_searchFlags = flags;
+ }
+ 
+-QWeakPointer<QtPDF::Backend::Document> QtPDF::PDFSearcher::document() const
++QWeakPointer<Backend::Document> PDFSearcher::document() const
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+   return m_doc;
+ }
+ 
+-void QtPDF::PDFSearcher::setDocument(const QWeakPointer<Backend::Document> &doc)
++void PDFSearcher::setDocument(const QWeakPointer<Backend::Document> &doc)
+ {
+   stopAndClear();
+   const QMutexLocker mutexLocker{&m_mutex};
+   m_doc = doc;
+ }
+ 
+-int QtPDF::PDFSearcher::startPage() const
++PDFSearcher::size_type PDFSearcher::startPage() const
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+   return m_startPage;
+ }
+ 
+-void QtPDF::PDFSearcher::setStartPage(const int page)
++void PDFSearcher::setStartPage(const size_type page)
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+   m_startPage = page;
+ }
+ 
+-int QtPDF::PDFSearcher::progressValue() const
++PDFSearcher::size_type PDFSearcher::progressValue() const
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+-  int retVal{0};
++  size_type retVal{0};
+   for (const SearchResult & result : m_results) {
+     if (result.finished) {
+       ++retVal;
+@@ -145,13 +147,13 @@
+   return retVal;
+ }
+ 
+-int QtPDF::PDFSearcher::progressMaximum() const
++PDFSearcher::size_type PDFSearcher::progressMaximum() const
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+   return m_pages.size();
+ }
+ 
+-QList<QtPDF::Backend::SearchResult> QtPDF::PDFSearcher::resultAt(int page) const
++QList<Backend::SearchResult> PDFSearcher::resultAt(size_type page) const
+ {
+   const QMutexLocker mutexLocker{&m_mutex};
+   if (page < 0 || page >= m_results.size()) {
+@@ -160,7 +162,7 @@
+   return m_results.at(page).occurences;
+ }
+ 
+-void QtPDF::PDFSearcher::run()
++void PDFSearcher::run()
+ {
+   clear();
+   populatePages();
+@@ -178,11 +180,11 @@
+     m_results.resize(doc->numPages());
+   }
+ 
+-  for (const int & pageIndex : m_pages) {
++  for (const size_type & pageIndex : m_pages) {
+     if (isInterruptionRequested()) {
+       break;
+     }
+-    const QSharedPointer<QtPDF::Backend::Page> page{doc->page(pageIndex).toStrongRef()};
++    const QSharedPointer<Backend::Page> page{doc->page(pageIndex).toStrongRef()};
+     if (!page) {
+       continue;
+     }
+@@ -196,3 +198,5 @@
+     emit progressValueChanged(progressValue());
+   }
+ }
++
++} // namespace QtPDF
+--- texworks.orig/modules/QtPDF/src/PDFSearcher.h
++++ texworks/modules/QtPDF/src/PDFSearcher.h
+@@ -25,25 +25,9 @@
+ {
+ 	Q_OBJECT
+ 
+-  struct SearchResult {
+-    QList<Backend::SearchResult> occurences;
+-    bool finished{false};
+-  };
+-
+-  QString m_searchString;
+-  Backend::SearchFlags m_searchFlags;
+-  int m_startPage{0};
+-  QVector<SearchResult> m_results;
+-  QWeakPointer<Backend::Document> m_doc;
+-  QVector<int> m_pages;
+-  mutable QMutex m_mutex;
+-
+-  void populatePages();
+-
+-protected:
+-  void stopAndClear();
+-
+ public:
++  using size_type = Backend::Document::size_type;
++
+   void ensureStopped();
+   void clear();
+ 
+@@ -53,21 +37,38 @@
+   void setSearchFlags(const Backend::SearchFlags & flags);
+   QWeakPointer<QtPDF::Backend::Document> document() const;
+   void setDocument(const QWeakPointer<QtPDF::Backend::Document> & doc);
+-  int startPage() const;
+-  void setStartPage(int page);
++  size_type startPage() const;
++  void setStartPage(size_type page);
+ 
+-  int progressValue() const;
+-  int progressMinimum() const { return 0; }
+-  int progressMaximum() const;
++  size_type progressValue() const;
++  size_type progressMinimum() const { return 0; }
++  size_type progressMaximum() const;
+ 
+-  QList<Backend::SearchResult> resultAt(int page) const;
++  QList<Backend::SearchResult> resultAt(size_type page) const;
+ 
+ signals:
+-  void resultReady(int page);
+-  void progressValueChanged(int progressValue);
++  void resultReady(QtPDF::PDFSearcher::size_type page);
++  void progressValueChanged(QtPDF::PDFSearcher::size_type progressValue);
+ 
+ protected:
+   void run() final;
++  void stopAndClear();
++
++private:
++  struct SearchResult {
++    QList<Backend::SearchResult> occurences;
++    bool finished{false};
++  };
++
++  QString m_searchString;
++  Backend::SearchFlags m_searchFlags;
++  size_type m_startPage{0};
++  QVector<SearchResult> m_results;
++  QWeakPointer<Backend::Document> m_doc;
++  QVector<size_type> m_pages;
++  mutable QMutex m_mutex;
++
++  void populatePages();
+ };
+ 
+ } // namespace QtPDF
+--- texworks.orig/modules/QtPDF/src/backends/PopplerQtBackend.cpp
++++ texworks/modules/QtPDF/src/backends/PopplerQtBackend.cpp
+@@ -204,6 +204,7 @@
+ void Document::parseDocument()
+ {
+   QWriteLocker docLocker(_docLock.data());
++  using poppler_size_type = decltype(_poppler_doc->numPages());
+ 
+   clearMetaData();
+   _meta_fileSize = QFileInfo(_fileName).size();
+@@ -279,14 +280,14 @@
+   }
+ 
+   // Get the most often used page size
+-  QMap<QSizeF, int> pageSizes;
+-  for (int i = 0; i < _numPages; ++i) {
++  QMap<QSizeF, size_type> pageSizes;
++  for (poppler_size_type i = 0; i < _numPages; ++i) {
+     const std::unique_ptr<::Poppler::Page> page{_poppler_doc->page(i)};
+     QSizeF ps = page->pageSizeF();
+     if (pageSizes.contains(ps)) ++pageSizes[ps];
+     else pageSizes[ps] = 1;
+   }
+-  int occurrences = -1;
++  size_type occurrences = -1;
+   _meta_pageSize = QSizeF();
+   Q_FOREACH(QSizeF ps, pageSizes.keys()) {
+       if (occurrences < pageSizes[ps]) {
+@@ -305,7 +306,7 @@
+     _meta_other[key] = _poppler_doc->info(key);
+ }
+ 
+-QWeakPointer<Backend::Page> Document::page(int at)
++QWeakPointer<Backend::Page> Document::page(size_type at)
+ {
+   {
+     QReadLocker docLocker(_docLock.data());
+@@ -567,10 +568,12 @@
+ 
+ // Page Class
+ // ==========
+-Page::Page(Document *parent, int at, QSharedPointer<QReadWriteLock> docLock):
++Page::Page(Document *parent, size_type at, QSharedPointer<QReadWriteLock> docLock):
+   Super(parent, at, docLock)
+ {
+-  _poppler_page = std::unique_ptr< ::Poppler::Page >(dynamic_cast<Document *>(_parent)->_poppler_doc->page(at));
++  const auto & poppler_doc = dynamic_cast<Document *>(_parent)->_poppler_doc;
++  using poppler_size_type = decltype(poppler_doc->numPages());
++  _poppler_page = std::unique_ptr<::Poppler::Page>(poppler_doc->page(static_cast<poppler_size_type>(at)));
+   loadTransitionData();
+ }
+ 
+@@ -881,7 +884,7 @@
+   if (!_parent)
+     return results;
+ 
+-  result.pageNum = static_cast<unsigned int>(_n);
++  result.pageNum = _n;
+ 
+   QMutexLocker popplerDocLock(dynamic_cast<Document *>(_parent)->_poppler_docLock);
+ 
+@@ -1028,6 +1031,7 @@
+ {
+   QReadLocker pageLocker(&_pageLock);
+   Q_ASSERT(_poppler_page != nullptr);
++  using poppler_size_type = decltype(dynamic_cast<Document*>(_parent)->_poppler_doc->numPages());
+   // Using the bounding rects of the selection polygons is almost
+   // certainly wrong! However, poppler-qt4 doesn't offer any alternative AFAICS
+   // (except for positioning each char in the string manually).
+@@ -1060,7 +1064,7 @@
+ 
+     // Determine which characters to include (if any)
+     QBitArray include(poppler_box->text().length());
+-    for (int i = 0; i < poppler_box->text().length(); ++i) {
++    for (poppler_size_type i = 0; i < poppler_box->text().length(); ++i) {
+       QPolygonF remainder(poppler_box->charBoundingBox(i));
+       foreach (const QPolygonF & p, selection) {
+         // Include characters if they are entirely inside the selection area or
+@@ -1119,7 +1123,7 @@
+     insertSpace = false;
+ 
+     // Insert the actual characters
+-    for (int i = 0; i < poppler_box->text().length(); ++i) {
++    for (poppler_size_type i = 0; i < poppler_box->text().length(); ++i) {
+       if (!include.testBit(i)) continue;
+ 
+       retVal += poppler_box->text()[i];
+--- texworks.orig/modules/QtPDF/src/backends/PopplerQtBackend.h
++++ texworks/modules/QtPDF/src/backends/PopplerQtBackend.h
+@@ -77,7 +77,7 @@
+   void reload() override;
+   bool unlock(const QString password) override;
+ 
+-  QWeakPointer<Backend::Page> page(int at) override;
++  QWeakPointer<Backend::Page> page(size_type at) override;
+   PDFDestination resolveDestination(const PDFDestination & namedDestination) const override;
+ 
+   PDFToC toc() const override;
+@@ -104,7 +104,7 @@
+   void loadTransitionData();
+ 
+ protected:
+-  Page(Document *parent, int at, QSharedPointer<QReadWriteLock> docLock);
++  Page(Document *parent, size_type at, QSharedPointer<QReadWriteLock> docLock);
+ 
+ public:
+   ~Page() override;
