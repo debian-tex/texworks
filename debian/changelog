@@ -1,4 +1,4 @@
-texworks (0.6.8-3) UNRELEASED; urgency=medium
+texworks (0.6.8-3) unstable; urgency=medium
 
   * Patches from upstream:
     - 417ac77edbeac78403541c1653843fc9451faf90
@@ -12,7 +12,7 @@ texworks (0.6.8-3) UNRELEASED; urgency=medium
     - e6fb33b44f5736e98b8c34c5a3296a342394c3fa
       [PATCH] Fix compilation with Qt 6.5
 
- -- Hilmar Preusse <hille42@web.de>  Thu, 02 Mar 2023 22:15:52 +0100
+ -- Hilmar Preusse <hille42@web.de>  Sun, 11 Jun 2023 23:43:47 +0200
 
 texworks (0.6.8-2) experimental; urgency=medium
 
