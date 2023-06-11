@@ -18,7 +18,8 @@ endif
 	dh $@
 
 override_dh_auto_configure:
-	mkdir build && cd build && cmake .. -DTW_BUILD_ID='Debian' -DCMAKE_INSTALL_PREFIX='/usr' -DWITH_PYTHON=ON -DTeXworks_HELP_DIR='/usr/share/texworks-help' && cd ..
+	mkdir build && cd build && cmake .. -DTW_BUILD_ID='Debian' -DCMAKE_INSTALL_PREFIX='/usr' -DWITH_PYTHON=ON \
+	-DTeXworks_HELP_DIR='/usr/share/texworks-help' -DQT_DEFAULT_MAJOR_VERSION=6 && cd ..
 
 override_dh_auto_build:
 	cd build && $(MAKE) $(NJOBS) VERBOSE=1
