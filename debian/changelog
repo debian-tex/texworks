@@ -1,3 +1,9 @@
+texworks (0.6.9-1) UNRELEASED; urgency=medium
+
+  * New upstream version, disable obsolete patches.
+
+ -- Hilmar Preusse <hille42@web.de>  Thu, 15 Feb 2024 18:28:41 +0100
+
 texworks (0.6.8-3) unstable; urgency=medium
 
   * Patches from upstream:
