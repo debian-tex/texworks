@@ -1,4 +1,5 @@
 Tests: test-suite
+Architecture:  amd64, arm64, armel, armhf, ppc64el, riscv64
 Depends: @builddeps@,
 	poppler-data,
 	xvfb,
