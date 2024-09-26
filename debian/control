@@ -17,7 +17,7 @@ Build-Depends: debhelper-compat (= 13),
  python3-dev,
  zlib1g-dev,
  libsynctex-dev
-Standards-Version: 4.2.1
+Standards-Version: 4.7.0
 Rules-Requires-Root: no
 Homepage: https://www.tug.org/texworks/
 Vcs-Git: https://github.com/debian-tex/texworks.git
