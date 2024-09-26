@@ -5,7 +5,7 @@ Maintainer: Debian TeX Task Force <debian-tex-maint@lists.debian.org>
 Uploaders: Norbert Preining <norbert@preining.info>,
   Hilmar Preuße <hille42@debian.org>
 Build-Depends: debhelper-compat (= 13),
- pkg-config,
+ pkgconf,
  cmake,
  libhunspell-dev,
  qt6-5compat-dev,

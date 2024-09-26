@@ -1,3 +1,9 @@
+texworks (0.6.9-3) UNRELEASED; urgency=medium
+
+  * Lintian: build-depends-on-obsolete-package
+
+ -- Hilmar Preuße <hille42@debian.org>  Thu, 26 Sep 2024 08:05:18 +0200
+
 texworks (0.6.9-2) unstable; urgency=medium
 
   * Limit autopkg test to LE arches as long as #1059943 is not solved.
