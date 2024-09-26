@@ -1,6 +1,7 @@
 From dae1586af7a218e9bbe9ce3031a97e8efcac980a Mon Sep 17 00:00:00 2001
 From: Atri Bhattacharya <A.Bhattacharya@uliege.be>
 Date: Thu, 15 Feb 2024 20:03:50 +0100
+Origin: https://github.com/TeXworks/texworks/commit/dae1586af7a218e9bbe9ce3031a97e8efcac980a
 Subject: [PATCH] Fix finding Python with CMake >= 3.27 (fixes #1039)
 
 ---

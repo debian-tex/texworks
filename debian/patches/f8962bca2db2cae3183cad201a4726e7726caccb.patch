@@ -1,6 +1,7 @@
 From f8962bca2db2cae3183cad201a4726e7726caccb Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Stefan=20L=C3=B6ffler?= <st.loeffler@gmail.com>
 Date: Thu, 15 Feb 2024 20:05:39 +0100
+Origin: https://github.com/TeXworks/texworks/commit/f8962bca2db2cae3183cad201a4726e7726caccb
 Subject: [PATCH] Fix building the python scripting plugin (fixes #1038)
 
 ---
