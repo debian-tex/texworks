@@ -1,73 +1,100 @@
-This work was packaged for Debian by:
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Jonathan Kew, Stefan Löffler, Charlie Sharpsteen, Jérôme Laurens, Till Tantau
+Upstream-Contact: Stefan Löffler <st.loeffler@gmail.com>
+Source: https://github.com/TeXworks/texwork/releases
+Files-Excluded:
+ win32/fonts/*.pfb
 
-    Atsuhito KOHDA <kohda@debian.org> on Sun, 11 Oct 2009 15:25:52 +0900
+Files: *
+Copyright: Copyright (C) 2007-2012 Jonathan Kew <jfkthame AT googlemail DOT com>
+           Copyright (C) 2007-2012 Stefan Löffler <st DOT loeffler AT gmail DOT com>
+           Copyright (C) 2007-2012 Charlie Sharpsteen <chuck AT sharpsteen DOT net>
+License: GPL-2+
 
-It was downloaded from <https://github.com/TeXworks/texwork/releases>
+Files: res/org.tug.texworks.metainfo.xml
+Copyright: Copyright (C) 2007-2012 Stefan Löffler <st DOT loeffler AT gmail DOT com>
+License: CC0-1.0
 
-Upstream Authors:
+Files: modules/synctex/*
+Copyright: Copyright (C) 2008-2009 Jérôme Laurens <jerome DOT laurens AT u-bourgogne DOT fr>
+License: MIT/X11
 
-    Jonathan Kew <jfkthame AT googlemail DOT com>
-    Stefan Löffler <st DOT loeffler AT gmail DOT com>
-    Charlie Sharpsteen <chuck AT sharpsteen DOT net>
-    Jérôme Laurens <jerome DOT laurens AT u-bourgogne DOT fr>
-    Till Tantau <tantau AT users DOT sourceforge DOT net>
+Files: res/resfiles/templates/Beamer*presentations/*
+Copyright: Copyright (C) 2007-2012 Till Tantau <tantau AT users DOT sourceforge DOT net>
+License: GPL-2
 
-Copyright:
+Files: debian/*
+Copyright: Copyright (C) 2009-20xx Atsuhito KOHDA <kohda@debian.org>
+           Copyright (C) 2016-2020 Norbert Preining <preining@debian.org>
+           Copyright (C) 2019-2025 Hilmar Preuße
+License: GPL-2+
 
-    TeXworks is copyright (C) 2007-2012 by Jonathan Kew, Stefan Löffler, 
-    and Charlie Sharpsteen.
-    The SyncTeX code is copyright (c) 2008, 2009 by Jérôme Laurens
-    Beamer templates are Copyright 2004 by Till Tantau 
+License: GPL-2
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; version 2 of the License.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <https://www.gnu.org/licenses/>
+Comment:
+ On Debian systems, the complete text of the GNU General Public
+ License version 2 can be found in "/usr/share/common-licenses/GPL-2".
 
-License of TeXworks:
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+Comment:
+ On Debian systems, the complete text of the GNU General Public
+ License version 2 can be found in `/usr/share/common-licenses/GPL-2'.
 
-    Distributed under the terms of the GNU General Public License, version 2 or    (at your option) any later version.
+License: MIT/X11
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the "Software"),
+ to deal in the Software without restriction, including without limitation
+ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the Software, and to permit persons to whom the
+ Software is furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+ AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ .
+ Except as contained in this notice, the name of <copyright holders> shall
+ not be used in advertising or otherwise to promote the sale, use or other
+ dealings in this Software without prior written authorization from
+ copyright holders.
 
-License of the SyncTeX:
-
-    Permission is hereby granted, free of charge, to any person
-    obtaining a copy of this software and associated documentation
-    files (the "Software"), to deal in the Software without
-    restriction, including without limitation the rights to use,
-    copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the
-    Software is furnished to do so, subject to the following
-    conditions:
-
-    The above copyright notice and this permission notice shall be
-    included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-    OTHER DEALINGS IN THE SOFTWARE
-
-    Except as contained in this notice, the name of the copyright holder  
-    shall not be used in advertising or otherwise to promote the sale,  
-    use or other dealings in this Software without prior written  
-    authorization from the copyright holder.
-
-License of the Beamer templates:
-
-    % In principle, this file can be redistributed and/or modified under
-    % the terms of the GNU General Public License, version 2.
-    %
-    % However, this file is supposed to be a template to be modified
-    % for your own needs. For this reason, if you use this file as a
-    % template and not specifically distribute it as part of a another
-    % package/program, I grant the extra permission to freely copy and
-    % modify this file as you see fit and even to delete this copyright
-    % notice. 
-
-The Debian packaging is:
-
-    Copyright (C) 2009 Atsuhito KOHDA <kohda@debian.org>
-    Copyright (C) 2016 Norbert Preining <preining@debian.org>
-
-and is licensed under the GPL version 3, 
-see `/usr/share/common-licenses/GPL-3'.
-
+License: CC0-1.0
+ CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
+ LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN
+ ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS
+ INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES
+ REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS
+ PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM
+ THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED
+ HEREUNDER.
+Comment:
+ On Debian systems, the complete text of the GNU General Public
+ License version 2 can be found in `/usr/share/common-licenses/CC0-1.0'.
