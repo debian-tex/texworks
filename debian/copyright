@@ -7,16 +7,16 @@ Files-Excluded:
 
 Files: *
 Copyright: Copyright (C) 2007-2012 Jonathan Kew <jfkthame AT googlemail DOT com>
-           Copyright (C) 2007-2012 Stefan Löffler <st DOT loeffler AT gmail DOT com>
-           Copyright (C) 2007-2012 Charlie Sharpsteen <chuck AT sharpsteen DOT net>
+           Copyright (C) 2008-2025 Stefan Löffler <st DOT loeffler AT gmail DOT com>
+           Copyright (C) 2011-2012 Charlie Sharpsteen <chuck AT sharpsteen DOT net>
 License: GPL-2+
 
 Files: res/org.tug.texworks.metainfo.xml
-Copyright: Copyright (C) 2007-2012 Stefan Löffler <st DOT loeffler AT gmail DOT com>
+Copyright: Copyright (C) 2024-2025 Stefan Löffler <st DOT loeffler AT gmail DOT com>
 License: CC0-1.0
 
 Files: modules/synctex/*
-Copyright: Copyright (C) 2008-2009 Jérôme Laurens <jerome DOT laurens AT u-bourgogne DOT fr>
+Copyright: Copyright (C) 2008-2025 Jérôme Laurens <jerome DOT laurens AT u-bourgogne DOT fr>
 License: MIT/X11
 
 Files: res/resfiles/templates/Beamer*presentations/*
@@ -24,9 +24,9 @@ Copyright: Copyright (C) 2007-2012 Till Tantau <tantau AT users DOT sourceforge 
 License: GPL-2
 
 Files: debian/*
-Copyright: Copyright (C) 2009-20xx Atsuhito KOHDA <kohda@debian.org>
+Copyright: Copyright (C) 2009-2014 Atsuhito KOHDA <kohda@debian.org>
            Copyright (C) 2016-2020 Norbert Preining <preining@debian.org>
-           Copyright (C) 2019-2025 Hilmar Preuße
+           Copyright (C) 2016-2025 Hilmar Preuße <hille42@debian.org>
 License: GPL-2+
 
 License: GPL-2
