@@ -1,11 +1,12 @@
-texworks (0.6.10+ds-1) UNRELEASED; urgency=medium
+texworks (0.6.10+ds-1) unstable; urgency=medium
 
   * New upstream release, disable obsolete patches.
   * Lintian: build-depends-on-obsolete-package
     + Add lintian overrides.
+    + no-dep5-copyright
   * Bump Standards version, no changes needed.
 
- -- Hilmar Preuße <hille42@debian.org>  Thu, 26 Sep 2024 08:05:18 +0200
+ -- Hilmar Preuße <hille42@debian.org>  Sat, 15 Feb 2025 17:25:39 +0100
 
 texworks (0.6.9-2) unstable; urgency=medium
 
