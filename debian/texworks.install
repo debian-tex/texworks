@@ -1,5 +1,5 @@
 usr/bin/texworks
-usr/share/applications/texworks.desktop
+usr/share/applications/org.tug.texworks.desktop
 usr/share/metainfo
 usr/share/man/
 usr/share/icons
